@@ -191,7 +191,7 @@ class _AccountGroupTable extends StatelessWidget {
             for (final group in groups)
               DataRow(
                 cells: [
-                  DataCell(Text('#${group.id}')),
+                  DataCell(Text('${group.id}')),
                   DataCell(
                     Text(
                       group.name,

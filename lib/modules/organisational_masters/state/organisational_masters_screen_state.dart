@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../config/theme/app_theme.dart';
 import '../modules/country/screens/country_screen.dart';
+import '../modules/financial_year/screens/financial_year_screen.dart';
 import '../modules/state/screens/state_screen.dart';
 import '../screens/organisational_masters_screen.dart';
 import '../widgets/master_card.dart';
@@ -22,6 +23,12 @@ class OrganisationalMastersScreenState extends State<OrganisationalMastersScreen
       icon: Icons.map_rounded,
       color: Color(0xFF1D4ED8),
     ),
+    (
+      title: 'Financial Year',
+      subtitle: 'Maintain fiscal years for accounting transactions',
+      icon: Icons.calendar_month_rounded,
+      color: Color(0xFF7C3AED),
+    ),
     // Add more masters here: District, City, ...
   ];
 
@@ -34,6 +41,10 @@ class OrganisationalMastersScreenState extends State<OrganisationalMastersScreen
       case 1:
         Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => const StateScreen()),
+        );
+      case 2:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const FinancialYearScreen()),
         );
     }
   }

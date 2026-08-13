@@ -186,7 +186,7 @@ class _CountryTable extends StatelessWidget {
             for (final country in countries)
               DataRow(
                 cells: [
-                  DataCell(Text('#${country.id}')),
+                  DataCell(Text('${country.id}')),
                   DataCell(
                     Text(
                       country.name,

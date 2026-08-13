@@ -13,6 +13,8 @@ import 'modules/accounting_masters/modules/account_group/repository/account_grou
 import 'modules/accounting_masters/modules/account_group/viewModel/account_group_view_model.dart';
 import 'modules/accounting_masters/modules/account_nature/repository/account_nature_repository.dart';
 import 'modules/accounting_masters/modules/account_nature/viewModel/account_nature_view_model.dart';
+import 'modules/accounting_masters/modules/voucher_type/repository/voucher_type_repository.dart';
+import 'modules/accounting_masters/modules/voucher_type/viewModel/voucher_type_view_model.dart';
 import 'modules/items/repository/item_repository.dart';
 import 'modules/items/viewModel/item_view_model.dart';
 import 'modules/inventory_masters/modules/stock_category/repository/stock_category_repository.dart';
@@ -23,8 +25,12 @@ import 'modules/inventory_masters/modules/unit/repository/unit_repository.dart';
 import 'modules/inventory_masters/modules/unit/viewModel/unit_view_model.dart';
 import 'modules/organisational_masters/modules/country/repository/country_repository.dart';
 import 'modules/organisational_masters/modules/country/viewModel/country_view_model.dart';
+import 'modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
+import 'modules/organisational_masters/modules/financial_year/viewModel/financial_year_view_model.dart';
 import 'modules/organisational_masters/modules/state/repository/state_repository.dart';
 import 'modules/organisational_masters/modules/state/viewModel/state_view_model.dart';
+import 'modules/utility/modules/calculator/viewModel/calculator_view_model.dart';
+import 'modules/utility/modules/terminal/viewModel/terminal_view_model.dart';
 import 'network/service_locator.dart';
 import 'routing/app_routes.dart';
 
@@ -70,6 +76,10 @@ class AccountErpApp extends StatelessWidget {
             globalService<CountryRepository>(),
           ),
         ),
+        ChangeNotifierProvider<FinancialYearViewModel>(
+          create: (_) =>
+              FinancialYearViewModel(globalService<FinancialYearRepository>()),
+        ),
         ChangeNotifierProvider<AccountNatureViewModel>(
           create: (_) =>
               AccountNatureViewModel(globalService<AccountNatureRepository>()),
@@ -77,6 +87,16 @@ class AccountErpApp extends StatelessWidget {
         ChangeNotifierProvider<AccountGroupViewModel>(
           create: (_) =>
               AccountGroupViewModel(globalService<AccountGroupRepository>()),
+        ),
+        ChangeNotifierProvider<VoucherTypeViewModel>(
+          create: (_) =>
+              VoucherTypeViewModel(globalService<VoucherTypeRepository>()),
+        ),
+        ChangeNotifierProvider<CalculatorViewModel>(
+          create: (_) => CalculatorViewModel(),
+        ),
+        ChangeNotifierProvider<TerminalViewModel>(
+          create: (_) => TerminalViewModel(),
         ),
         // Register additional global ViewModels here.
       ],

@@ -180,7 +180,7 @@ class _UnitTable extends StatelessWidget {
             for (final unit in units)
               DataRow(
                 cells: [
-                  DataCell(Text('#${unit.id}')),
+                  DataCell(Text('${unit.id}')),
                   DataCell(
                     Text(
                       unit.name,

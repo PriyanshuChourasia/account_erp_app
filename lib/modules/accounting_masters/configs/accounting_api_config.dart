@@ -14,4 +14,9 @@ class AccountingApiConfig {
   static const String accountLedgerAPI = "/account_ledgers";
   static const String createAccountLedgerAPI = "$accountLedgerAPI/create";
   static String accountLedgerEndpoint(int id) => "$accountLedgerAPI/$id";
+
+  /// voucher types
+  static const String voucherTypeAPI = "/voucher_types";
+  static const String createVoucherTypeAPI = "$voucherTypeAPI/create";
+  static String voucherTypeEndpoint(int id) => "$voucherTypeAPI/$id";
 }

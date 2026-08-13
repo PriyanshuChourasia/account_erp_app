@@ -20,7 +20,7 @@ class StateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '#${state.id}',
+      '${state.id}',
       if (state.code != null) state.code!,
       ?countryName,
     ].join(' · ');

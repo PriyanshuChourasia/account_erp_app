@@ -14,7 +14,7 @@ class CountryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '#${country.id}',
+      '${country.id}',
       if (country.code != null) country.code!,
       if (country.alias != null) 'aka ${country.alias}',
     ].join(' · ');

@@ -14,7 +14,7 @@ class UnitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '#${unit.id}',
+      '${unit.id}',
       if (unit.code != null) unit.code!,
     ].join(' · ');
 

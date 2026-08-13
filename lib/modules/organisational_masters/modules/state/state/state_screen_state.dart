@@ -197,7 +197,7 @@ class _StateTable extends StatelessWidget {
             for (final state in states)
               DataRow(
                 cells: [
-                  DataCell(Text('#${state.id}')),
+                  DataCell(Text('${state.id}')),
                   DataCell(
                     Text(
                       state.name,

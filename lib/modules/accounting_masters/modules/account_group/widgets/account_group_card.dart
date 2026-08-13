@@ -14,7 +14,7 @@ class AccountGroupCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '#${group.id}',
+      '${group.id}',
       if (group.alias != null) 'aka ${group.alias}',
     ].join(' · ');
 

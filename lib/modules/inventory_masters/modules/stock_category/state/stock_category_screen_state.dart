@@ -190,7 +190,7 @@ class _StockCategoryTable extends StatelessWidget {
             for (final category in categories)
               DataRow(
                 cells: [
-                  DataCell(Text('#${category.id}')),
+                  DataCell(Text('${category.id}')),
                   DataCell(
                     Text(
                       category.name,

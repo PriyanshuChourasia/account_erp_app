@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../modules/account_nature/screens/account_nature_screen.dart';
 import '../modules/account_group/screens/account_group_screen.dart';
+import '../modules/voucher_type/screens/voucher_type_screen.dart';
 import '../screens/accounting_masters_screen.dart';
 import '../widgets/master_card.dart';
 
@@ -22,7 +23,13 @@ class AccountingMastersScreenState extends State<AccountingMastersScreen> {
       icon: Icons.category_rounded,
       color: Color(0xFF0D9488),
     ),
-    // Add more masters here: Ledger, Voucher Type, ...
+    (
+      title: 'Voucher Type',
+      subtitle: 'Classify vouchers such as payment, receipt and journal',
+      icon: Icons.receipt_long_rounded,
+      color: Color(0xFF1D4ED8),
+    ),
+    // Add more masters here: Ledger, ...
   ];
 
   void _openMaster(int index) {
@@ -34,6 +41,10 @@ class AccountingMastersScreenState extends State<AccountingMastersScreen> {
       case 1:
         Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => const AccountNatureScreen()),
+        );
+      case 2:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const VoucherTypeScreen()),
         );
     }
   }

@@ -17,4 +17,5 @@ class AppRoutes {
   static const String accountingMasters = '/accounting-masters';
   static const String inventoryMasters = '/inventory-masters';
   static const String organisationalMasters = '/organisational-masters';
+  static const String utilities = '/utilities';
 }

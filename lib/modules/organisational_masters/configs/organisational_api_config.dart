@@ -9,4 +9,11 @@ class OrganisationalApiConfig {
   static const String stateAPI = "/states";
   static const String createStateAPI = "$stateAPI/create";
   static String stateEndpoint(int id) => "$stateAPI/$id";
+
+  /// financial years
+  static const String financialYearAPI = "/financial-years";
+  static const String createFinancialYearAPI = "$financialYearAPI/create";
+
+  /// organisation's current fiscal year.
+  static const String updateFinancialYearCurrentAPI = "$financialYearAPI/current";
 }

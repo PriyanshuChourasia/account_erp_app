@@ -6,8 +6,10 @@ import '../../../modules/accounting_masters/screens/accounting_masters_screen.da
 import '../../../modules/inventory_masters/screens/inventory_masters_screen.dart';
 import '../../../modules/items/screens/item_screen.dart';
 import '../../../modules/organisational_masters/screens/organisational_masters_screen.dart';
+import '../../../modules/utility/screens/utility_screen.dart';
 import '../screens/dashboard_screen.dart';
 import '../viewModel/dashboard_view_model.dart';
+import '../widgets/financial_year_selector.dart';
 import '../widgets/sidebar.dart';
 import '../widgets/sidebar_menu.dart';
 import '../widgets/stat_card.dart';
@@ -71,6 +73,8 @@ class DashboardScreenState extends State<DashboardScreen> {
         return const InventoryMastersScreen();
       case 4:
         return const OrganisationalMastersScreen();
+      case 5:
+        return const UtilityScreen();
       default:
         if (_selectedIndex == 0) return _buildDashboard();
         return _PlaceholderView(label: _selectedLabel);
@@ -186,6 +190,7 @@ class _SectionHeader extends StatelessWidget {
                   ),
             ),
           ),
+          const FinancialYearSelector(),
         ],
       ),
     );
