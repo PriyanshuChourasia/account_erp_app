@@ -14,8 +14,8 @@ class CreateVoucherTypeRequest {
   final String? description;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        if (code != null && code!.isNotEmpty) 'code': code,
-        if (description != null) 'description': description,
-      };
+    'name': name,
+    if (code != null && code!.isNotEmpty) 'code': code,
+    if (description != null) 'description': description,
+  };
 }

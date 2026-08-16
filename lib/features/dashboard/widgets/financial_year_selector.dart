@@ -118,11 +118,7 @@ class _AddYearButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Add financial year',
       onPressed: onPressed,
-      icon: const Icon(
-        Icons.add_rounded,
-        size: 20,
-        color: AppColors.primary,
-      ),
+      icon: const Icon(Icons.add_rounded, size: 20, color: AppColors.primary),
     );
   }
 }
@@ -153,9 +149,9 @@ class _SelectorButton extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(width: 4),
           const Icon(
@@ -184,9 +180,9 @@ class _NoYearsLabel extends StatelessWidget {
         Text(
           'No financial year',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );

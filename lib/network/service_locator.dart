@@ -15,10 +15,12 @@ import '../modules/inventory_masters/modules/stock_category/repository/stock_cat
 import '../modules/inventory_masters/modules/stock_category/services/stock_category_service.dart';
 import '../modules/inventory_masters/modules/stock_group/repository/stock_group_repository.dart';
 import '../modules/inventory_masters/modules/stock_group/services/stock_group_service.dart';
+import '../modules/inventory_masters/modules/stock_item/repository/stock_item_repository.dart';
+import '../modules/inventory_masters/modules/stock_item/services/stock_item_service.dart';
 import '../modules/inventory_masters/modules/unit/repository/unit_repository.dart';
 import '../modules/inventory_masters/modules/unit/services/unit_service.dart';
-import '../modules/inventory_masters/modules/uqc/repository/uqc_repository.dart';
-import '../modules/inventory_masters/modules/uqc/services/uqc_service.dart';
+import '../modules/inventory_masters/modules/unique_quantity_code/repository/unique_quantity_code_repository.dart';
+import '../modules/inventory_masters/modules/unique_quantity_code/services/unique_quantity_code_service.dart';
 import '../modules/organisational_masters/modules/country/repository/country_repository.dart';
 import '../modules/organisational_masters/modules/country/services/country_service.dart';
 import '../modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
@@ -81,17 +83,25 @@ Future<void> initServiceLocator() async {
     ..registerLazySingleton<StockCategoryRepository>(
       () => StockCategoryRepository(globalService<StockCategoryService>()),
     )
+    ..registerLazySingleton<StockItemService>(
+      () => StockItemService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<StockItemRepository>(
+      () => StockItemRepository(globalService<StockItemService>()),
+    )
     ..registerLazySingleton<UnitService>(
       () => UnitService(globalService<ApiService>()),
     )
     ..registerLazySingleton<UnitRepository>(
       () => UnitRepository(globalService<UnitService>()),
     )
-    ..registerLazySingleton<UqcService>(
-      () => UqcService(globalService<ApiService>()),
+    ..registerLazySingleton<UniqueQuantityCodeService>(
+      () => UniqueQuantityCodeService(globalService<ApiService>()),
     )
-    ..registerLazySingleton<UqcRepository>(
-      () => UqcRepository(globalService<UqcService>()),
+    ..registerLazySingleton<UniqueQuantityCodeRepository>(
+      () => UniqueQuantityCodeRepository(
+        globalService<UniqueQuantityCodeService>(),
+      ),
     )
     ..registerLazySingleton<AccountNatureService>(
       () => AccountNatureService(globalService<ApiService>()),

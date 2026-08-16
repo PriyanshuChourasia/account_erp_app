@@ -36,10 +36,7 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
     }
   }
 
-  Future<void> _confirmDelete(
-    AccountGroupViewModel viewModel,
-    int id,
-  ) async {
+  Future<void> _confirmDelete(AccountGroupViewModel viewModel, int id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -98,10 +95,14 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.error.withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -115,7 +116,8 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                       Expanded(
                         child: Text(
                           viewModel.error!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.error,
                               ),
                         ),
@@ -129,36 +131,32 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : groups.isEmpty
-                        ? const _EmptyState()
-                        : LayoutBuilder(
-                            builder: (context, constraints) =>
-                                constraints.maxWidth >= 720
-                                    ? _AccountGroupTable(
-                                        groups: groups,
-                                        onEdit: (id) => _openForm(
-                                          groups
-                                              .firstWhere(
-                                                  (g) => g.id == id),
-                                        ),
-                                        onDelete: (id) =>
-                                            _confirmDelete(viewModel, id),
-                                      )
-                                    : ListView.separated(
-                                        itemCount: groups.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 10),
-                                        itemBuilder: (context, index) {
-                                          final group = groups[index];
-                                          return AccountGroupCard(
-                                            group: group,
-                                            onEdit: () =>
-                                                _openForm(group),
-                                            onDelete: () => _confirmDelete(
-                                                viewModel, group.id),
-                                          );
-                                        },
-                                      ),
-                          ),
+                    ? const _EmptyState()
+                    : LayoutBuilder(
+                        builder: (context, constraints) =>
+                            constraints.maxWidth >= 720
+                            ? _AccountGroupTable(
+                                groups: groups,
+                                onEdit: (id) => _openForm(
+                                  groups.firstWhere((g) => g.id == id),
+                                ),
+                                onDelete: (id) => _confirmDelete(viewModel, id),
+                              )
+                            : ListView.separated(
+                                itemCount: groups.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final group = groups[index];
+                                  return AccountGroupCard(
+                                    group: group,
+                                    onEdit: () => _openForm(group),
+                                    onDelete: () =>
+                                        _confirmDelete(viewModel, group.id),
+                                  );
+                                },
+                              ),
+                      ),
               ),
             ],
           ),

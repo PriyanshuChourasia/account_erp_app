@@ -37,6 +37,11 @@ class ApiConfig {
   static const String stockCategoryCreateEndpoint = '/stock-categories/create';
   static String stockCategoryEndpoint(int id) => '/stock-categories/$id';
 
+  // ---- Stock item endpoints ----
+  static const String stockItemsEndpoint = '/stock-items';
+  static const String stockItemCreateEndpoint = '/stock-items/create';
+  static String stockItemEndpoint(int id) => '/stock-items/$id';
+
   // ---- Unit endpoints ----
   static const String unitCreateEndpoint = '/units/create';
   static String unitEndpoint(int id) => '/units/$id';

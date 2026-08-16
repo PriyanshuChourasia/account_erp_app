@@ -25,10 +25,7 @@ class TerminalViewModel extends ChangeNotifier {
     final command = rawCommand.trim();
 
     _lines.add(
-      TerminalLine(
-        text: '$_prompt $command',
-        kind: TerminalLineKind.command,
-      ),
+      TerminalLine(text: '$_prompt $command', kind: TerminalLineKind.command),
     );
     if (command.isEmpty) {
       notifyListeners();
@@ -57,7 +54,9 @@ class TerminalViewModel extends ChangeNotifier {
       case 'pwd':
         _lines.add(const TerminalLine(text: '/home/guest'));
       case 'ls':
-        _lines.add(const TerminalLine(text: 'documents/  downloads/  projects/'));
+        _lines.add(
+          const TerminalLine(text: 'documents/  downloads/  projects/'),
+        );
       case 'version':
         _lines.add(
           TerminalLine(text: 'Account ERP terminal v${AppVersion.current}'),
@@ -86,7 +85,8 @@ class TerminalViewModel extends ChangeNotifier {
       default:
         _lines.add(
           TerminalLine(
-            text: '$name: command not found. Type `help` for available commands.',
+            text:
+                '$name: command not found. Type `help` for available commands.',
             kind: TerminalLineKind.error,
           ),
         );

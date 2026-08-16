@@ -5,11 +5,7 @@ import '../models/account_nature.dart';
 
 /// Row card for a single account nature.
 class AccountNatureCard extends StatelessWidget {
-  const AccountNatureCard({
-    super.key,
-    required this.nature,
-    this.onDelete,
-  });
+  const AccountNatureCard({super.key, required this.nature, this.onDelete});
 
   final AccountNature nature;
   final VoidCallback? onDelete;

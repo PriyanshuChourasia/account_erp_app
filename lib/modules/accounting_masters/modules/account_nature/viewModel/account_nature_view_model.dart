@@ -28,11 +28,13 @@ class AccountNatureViewModel extends ChangeNotifier {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _accountNatures;
     return _accountNatures
-        .where((nature) =>
-            nature.name.toLowerCase().contains(query) ||
-            nature.id.toString().contains(query) ||
-            (nature.code?.toString().contains(query) ?? false) ||
-            (nature.description?.toLowerCase().contains(query) ?? false))
+        .where(
+          (nature) =>
+              nature.name.toLowerCase().contains(query) ||
+              nature.id.toString().contains(query) ||
+              (nature.code?.toString().contains(query) ?? false) ||
+              (nature.description?.toLowerCase().contains(query) ?? false),
+        )
         .toList();
   }
 

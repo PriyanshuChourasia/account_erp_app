@@ -29,6 +29,11 @@ class AuthViewModel extends ChangeNotifier {
     _isCheckingSession = true;
     notifyListeners();
     try {
+      if (!await _repository.hasStoredToken()) {
+        _user = null;
+        _isAuthenticated = false;
+        return;
+      }
       _user = await _repository.fetchCurrentUser();
       _isAuthenticated = _user != null;
     } on AppException {

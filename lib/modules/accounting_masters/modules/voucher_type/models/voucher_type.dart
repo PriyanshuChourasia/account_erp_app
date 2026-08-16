@@ -26,9 +26,9 @@ class VoucherType {
   final Color color;
 
   factory VoucherType.fromJson(Map<String, dynamic> json) => VoucherType(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: json['code'] as String?,
-        description: json['description'] as String?,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: json['code'] as String?,
+    description: json['description'] as String?,
+  );
 }

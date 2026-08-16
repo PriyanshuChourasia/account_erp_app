@@ -28,22 +28,22 @@ class Item {
   final Color color;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
-        id: '${json['id'] ?? ''}',
-        name: json['name'] as String? ?? '',
-        category: json['category'] as String? ?? 'General',
-        price: (json['price'] as num?)?.toDouble() ?? 0,
-        stock: (json['stock'] as num?)?.toInt() ?? 0,
-        unit: json['unit'] as String? ?? 'pcs',
-      );
+    id: '${json['id'] ?? ''}',
+    name: json['name'] as String? ?? '',
+    category: json['category'] as String? ?? 'General',
+    price: (json['price'] as num?)?.toDouble() ?? 0,
+    stock: (json['stock'] as num?)?.toInt() ?? 0,
+    unit: json['unit'] as String? ?? 'pcs',
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'category': category,
-        'price': price,
-        'stock': stock,
-        'unit': unit,
-      };
+    'id': id,
+    'name': name,
+    'category': category,
+    'price': price,
+    'stock': stock,
+    'unit': unit,
+  };
 
   static const List<Item> demo = [
     Item(

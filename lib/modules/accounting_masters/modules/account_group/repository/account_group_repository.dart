@@ -41,8 +41,10 @@ class AccountGroupRepository {
   }
 
   Future<void> updateAccountGroup(UpdateAccountGroupRequest request) async {
-    final json =
-        await _accountingGroupService.updateAccountGroup(request.id, request);
+    final json = await _accountingGroupService.updateAccountGroup(
+      request.id,
+      request,
+    );
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {
       throw AppException(

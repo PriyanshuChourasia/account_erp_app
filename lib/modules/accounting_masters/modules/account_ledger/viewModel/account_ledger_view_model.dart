@@ -44,11 +44,13 @@ class AccountLedgerViewModel extends ChangeNotifier {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _accountLedgers;
     return _accountLedgers
-        .where((ledger) =>
-            ledger.name.toLowerCase().contains(query) ||
-            ledger.id.toString().contains(query) ||
-            (ledger.alias?.toLowerCase().contains(query) ?? false) ||
-            groupNameOf(ledger).toLowerCase().contains(query))
+        .where(
+          (ledger) =>
+              ledger.name.toLowerCase().contains(query) ||
+              ledger.id.toString().contains(query) ||
+              (ledger.alias?.toLowerCase().contains(query) ?? false) ||
+              groupNameOf(ledger).toLowerCase().contains(query),
+        )
         .toList();
   }
 

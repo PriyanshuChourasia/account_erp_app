@@ -34,14 +34,14 @@ class AccountLedger {
   final Color color;
 
   factory AccountLedger.fromJson(Map<String, dynamic> json) => AccountLedger(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        alias: json['alias'] as String?,
-        description: json['description'] as String?,
-        groupId: (json['groupId'] as num?)?.toInt(),
-        groupName: json['groupName'] as String?,
-        isActive: json['isActive'] == true,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    alias: json['alias'] as String?,
+    description: json['description'] as String?,
+    groupId: (json['groupId'] as num?)?.toInt(),
+    groupName: json['groupName'] as String?,
+    isActive: json['isActive'] == true,
+  );
 
   static const List<AccountLedger> demo = [
     AccountLedger(

@@ -99,13 +99,14 @@ class FinancialYearScreenState extends State<FinancialYearScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .error
-                        .withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -119,9 +120,7 @@ class FinancialYearScreenState extends State<FinancialYearScreen> {
                       Expanded(
                         child: Text(
                           viewModel.error!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.error,
                               ),
@@ -136,31 +135,30 @@ class FinancialYearScreenState extends State<FinancialYearScreen> {
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : financialYears.isEmpty
-                        ? const _EmptyState()
-                        : LayoutBuilder(
-                            builder: (context, constraints) =>
-                                constraints.maxWidth >= 760
-                                    ? _FinancialYearTable(
-                                        financialYears: financialYears,
-                                        onSetCurrent: (id) =>
-                                            _setCurrent(viewModel, id),
-                                      )
-                                    : ListView.separated(
-                                        itemCount: financialYears.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 10),
-                                        itemBuilder: (context, index) {
-                                          final year = financialYears[index];
-                                          return FinancialYearCard(
-                                            financialYear: year,
-                                            onSetCurrent: year.isCurrent
-                                                ? null
-                                                : () => _setCurrent(
-                                                    viewModel, year.id),
-                                          );
-                                        },
-                                      ),
-                          ),
+                    ? const _EmptyState()
+                    : LayoutBuilder(
+                        builder: (context, constraints) =>
+                            constraints.maxWidth >= 760
+                            ? _FinancialYearTable(
+                                financialYears: financialYears,
+                                onSetCurrent: (id) =>
+                                    _setCurrent(viewModel, id),
+                              )
+                            : ListView.separated(
+                                itemCount: financialYears.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final year = financialYears[index];
+                                  return FinancialYearCard(
+                                    financialYear: year,
+                                    onSetCurrent: year.isCurrent
+                                        ? null
+                                        : () => _setCurrent(viewModel, year.id),
+                                  );
+                                },
+                              ),
+                      ),
               ),
             ],
           ),
@@ -171,76 +169,231 @@ class FinancialYearScreenState extends State<FinancialYearScreen> {
 }
 
 /// Table view of financial years for wide screens.
+///
+/// Built from flex-aligned rows instead of [DataTable] — same approach as
+/// account_nature's and UQC's tables — so it fills the available width,
+/// scrolls vertically when the list is long (with a header that stays
+/// pinned), and gives the fiscal-year code its own badge treatment instead
+/// of flat text.
 class _FinancialYearTable extends StatelessWidget {
   const _FinancialYearTable({
     required this.financialYears,
     required this.onSetCurrent,
   });
 
+  static const _slNoColumnWidth = 56.0;
+  static const _codeColumnWidth = 72.0;
+  static const _statusColumnWidth = 96.0;
+
   final List<FinancialYear> financialYears;
   final ValueChanged<int> onSetCurrent;
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          const _FinancialYearTableHeader(
+            slNoColumnWidth: _slNoColumnWidth,
+            codeColumnWidth: _codeColumnWidth,
+            statusColumnWidth: _statusColumnWidth,
+          ),
+          const Divider(height: 1, color: AppColors.border),
+          Expanded(
+            child: ListView.separated(
+              itemCount: financialYears.length,
+              separatorBuilder: (_, _) =>
+                  const Divider(height: 1, color: AppColors.border),
+              itemBuilder: (context, index) => _FinancialYearTableRow(
+                slNo: index + 1,
+                financialYear: financialYears[index],
+                zebra: index.isOdd,
+                slNoColumnWidth: _slNoColumnWidth,
+                codeColumnWidth: _codeColumnWidth,
+                statusColumnWidth: _statusColumnWidth,
+                onSetCurrent: () => onSetCurrent(financialYears[index].id),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FinancialYearTableHeader extends StatelessWidget {
+  const _FinancialYearTableHeader({
+    required this.slNoColumnWidth,
+    required this.codeColumnWidth,
+    required this.statusColumnWidth,
+  });
+
+  final double slNoColumnWidth;
+  final double codeColumnWidth;
+  final double statusColumnWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: AppColors.textSecondary,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.4,
+    );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+      child: Row(
+        children: [
+          SizedBox(
+            width: slNoColumnWidth,
+            child: Text('SL NO', style: labelStyle),
+          ),
+          Expanded(flex: 3, child: Text('NAME', style: labelStyle)),
+          SizedBox(
+            width: codeColumnWidth,
+            child: Text('CODE', style: labelStyle),
+          ),
+          Expanded(flex: 3, child: Text('PERIOD', style: labelStyle)),
+          SizedBox(
+            width: statusColumnWidth,
+            child: Text('STATUS', style: labelStyle),
+          ),
+          const SizedBox(width: 40),
+        ],
+      ),
+    );
+  }
+}
+
+class _FinancialYearTableRow extends StatelessWidget {
+  const _FinancialYearTableRow({
+    required this.slNo,
+    required this.financialYear,
+    required this.zebra,
+    required this.slNoColumnWidth,
+    required this.codeColumnWidth,
+    required this.statusColumnWidth,
+    required this.onSetCurrent,
+  });
+
+  final int slNo;
+  final FinancialYear financialYear;
+  final bool zebra;
+  final double slNoColumnWidth;
+  final double codeColumnWidth;
+  final double statusColumnWidth;
+  final VoidCallback onSetCurrent;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columnSpacing: 24,
-          headingRowColor: WidgetStatePropertyAll(AppColors.background),
-          columns: const [
-            DataColumn(label: Text('ID')),
-            DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Code')),
-            DataColumn(label: Text('Period')),
-            DataColumn(label: Text('Status')),
-            DataColumn(label: Text('')),
-          ],
-          rows: [
-            for (final year in financialYears)
-              DataRow(
-                cells: [
-                  DataCell(Text('${year.id}')),
-                  DataCell(
-                    Text(
-                      year.name,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+    return Container(
+      color: zebra ? AppColors.background.withValues(alpha: 0.4) : null,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          SizedBox(
+            width: slNoColumnWidth,
+            child: Text(
+              '$slNo',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              financialYear.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: codeColumnWidth,
+            child: financialYear.code == null
+                ? Text(
+                    '—',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  )
+                : Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        financialYear.code!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
                   ),
-                  DataCell(Text(year.code ?? '—')),
-                  DataCell(
-                    Text(
-                      '${formatFinancialDateString(year.startDate)} → '
-                      '${formatFinancialDateString(year.endDate)}',
-                    ),
-                  ),
-                  DataCell(
-                    year.isCurrent ? const _CurrentBadge() : const Text('—'),
-                  ),
-                  DataCell(
-                    year.isCurrent
-                        ? const Icon(
-                            Icons.star_rounded,
-                            size: 20,
-                            color: AppColors.primary,
-                          )
-                        : IconButton(
-                            tooltip: 'Set as current year',
-                            icon: const Icon(
-                              Icons.star_outline_rounded,
-                              size: 20,
-                              color: AppColors.textSecondary,
-                            ),
-                            onPressed: () => onSetCurrent(year.id),
-                          ),
-                  ),
-                ],
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              '${formatFinancialDateString(financialYear.startDate)} → '
+              '${formatFinancialDateString(financialYear.endDate)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
               ),
-          ],
-        ),
+            ),
+          ),
+          SizedBox(
+            width: statusColumnWidth,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: financialYear.isCurrent
+                  ? const _CurrentBadge()
+                  : Text(
+                      '—',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+            ),
+          ),
+          SizedBox(
+            width: 40,
+            child: financialYear.isCurrent
+                ? const Icon(
+                    Icons.star_rounded,
+                    size: 18,
+                    color: AppColors.primary,
+                  )
+                : IconButton(
+                    tooltip: 'Set as current year',
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(
+                      Icons.star_outline_rounded,
+                      size: 18,
+                      color: AppColors.textSecondary,
+                    ),
+                    onPressed: onSetCurrent,
+                  ),
+          ),
+        ],
       ),
     );
   }

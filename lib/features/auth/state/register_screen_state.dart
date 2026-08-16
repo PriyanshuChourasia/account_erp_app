@@ -58,8 +58,9 @@ class RegisterScreenState extends State<RegisterScreen> {
     if (value == null || value.trim().isEmpty) {
       return 'Enter your email';
     }
-    final isValid = RegExp(r'^[\w\.\-+]+@[\w\-]+(\.[\w\-]+)+$')
-        .hasMatch(value.trim());
+    final isValid = RegExp(
+      r'^[\w\.\-+]+@[\w\-]+(\.[\w\-]+)+$',
+    ).hasMatch(value.trim());
     return isValid ? null : 'Enter a valid email address';
   }
 
@@ -117,8 +118,9 @@ class RegisterScreenState extends State<RegisterScreen> {
                                     borderRadius: BorderRadius.circular(18),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppColors.primary
-                                            .withValues(alpha: 0.3),
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.3,
+                                        ),
                                         blurRadius: 18,
                                         offset: const Offset(0, 8),
                                       ),
@@ -155,13 +157,14 @@ class RegisterScreenState extends State<RegisterScreen> {
                                 autofillHints: const [AutofillHints.name],
                                 decoration: const InputDecoration(
                                   labelText: 'Full name',
-                                  prefixIcon:
-                                      Icon(Icons.person_outline_rounded),
+                                  prefixIcon: Icon(
+                                    Icons.person_outline_rounded,
+                                  ),
                                 ),
                                 validator: (value) =>
                                     (value == null || value.trim().isEmpty)
-                                        ? 'Enter your full name'
-                                        : null,
+                                    ? 'Enter your full name'
+                                    : null,
                               ),
                               const SizedBox(height: 16),
                               TextFormField(
@@ -198,12 +201,15 @@ class RegisterScreenState extends State<RegisterScreen> {
                                 controller: _passwordController,
                                 obscureText: _obscurePassword,
                                 textInputAction: TextInputAction.done,
-                                autofillHints: const [AutofillHints.newPassword],
+                                autofillHints: const [
+                                  AutofillHints.newPassword,
+                                ],
                                 onFieldSubmitted: (_) => _submit(),
                                 decoration: InputDecoration(
                                   labelText: 'Password',
-                                  prefixIcon:
-                                      const Icon(Icons.lock_outline_rounded),
+                                  prefixIcon: const Icon(
+                                    Icons.lock_outline_rounded,
+                                  ),
                                   suffixIcon: IconButton(
                                     tooltip: _obscurePassword
                                         ? 'Show password'
@@ -214,8 +220,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                                           : Icons.visibility_off_outlined,
                                     ),
                                     onPressed: () => setState(
-                                      () => _obscurePassword =
-                                          !_obscurePassword,
+                                      () =>
+                                          _obscurePassword = !_obscurePassword,
                                     ),
                                   ),
                                 ),
@@ -233,8 +239,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                                 label: 'Sign up',
                                 icon: Icons.person_add_alt_1_rounded,
                                 loading: viewModel.isLoading,
-                                onPressed:
-                                    viewModel.isLoading ? null : _submit,
+                                onPressed: viewModel.isLoading ? null : _submit,
                               ),
                               const SizedBox(height: 16),
                               Row(

@@ -78,8 +78,9 @@ class _ItemAddDialogState extends State<ItemAddDialog> {
                   Expanded(
                     child: TextFormField(
                       controller: _priceController,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
@@ -100,17 +101,14 @@ class _ItemAddDialogState extends State<ItemAddDialog> {
                     child: TextFormField(
                       controller: _stockController,
                       keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                         labelText: 'Stock',
                         prefixIcon: Icon(Icons.numbers_rounded),
                       ),
-                      validator: (value) =>
-                          (int.tryParse(value ?? '') == null)
-                              ? 'Enter stock'
-                              : null,
+                      validator: (value) => (int.tryParse(value ?? '') == null)
+                          ? 'Enter stock'
+                          : null,
                     ),
                   ),
                 ],
@@ -124,10 +122,7 @@ class _ItemAddDialogState extends State<ItemAddDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
         ),
-        FilledButton(
-          onPressed: _submit,
-          child: const Text('Save'),
-        ),
+        FilledButton(onPressed: _submit, child: const Text('Save')),
       ],
     );
   }

@@ -3,8 +3,8 @@
 /// Mirrors the backend `CreateUQCDTO` record: `name` and `code` are both
 /// `@NotBlank`, and `code` is capped at 3 characters. `alias` and
 /// `description` are optional and omitted from JSON when absent.
-class CreateUqcRequest {
-  const CreateUqcRequest({
+class CreateUniqueQuantityCodeRequest {
+  const CreateUniqueQuantityCodeRequest({
     required this.name,
     required this.code,
     this.alias,

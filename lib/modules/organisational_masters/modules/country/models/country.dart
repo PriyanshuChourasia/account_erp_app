@@ -30,13 +30,13 @@ class Country {
   final Color color;
 
   factory Country.fromJson(Map<String, dynamic> json) => Country(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: json['code'] as String?,
-        alias: json['alias'] as String?,
-        description: json['description'] as String?,
-        isActive: json['isActive'] == true,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: json['code'] as String?,
+    alias: json['alias'] as String?,
+    description: json['description'] as String?,
+    isActive: json['isActive'] == true,
+  );
 
   static const List<Country> demo = [
     Country(

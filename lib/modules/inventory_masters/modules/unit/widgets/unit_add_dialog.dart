@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
-import '../../uqc/models/uqc.dart';
-import '../../uqc/viewModel/uqc_view_model.dart';
+import '../../unique_quantity_code/models/unique_quantity_code.dart';
+import '../../unique_quantity_code/viewModel/unique_quantity_code_view_model.dart';
 import '../models/create_unit_request.dart';
 import '../models/stock_unit_type.dart';
 
@@ -38,15 +38,16 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
   final _codeController = TextEditingController();
   final _descriptionController = TextEditingController();
   StockUnitType _unitType = StockUnitType.simple;
-  Uqc? _uqc;
+  UniqueQuantityCode? _uqc;
+  double _uqcFieldWidth = 420;
 
   @override
   void initState() {
     super.initState();
-    final uqcViewModel = context.read<UqcViewModel>();
+    final uqcViewModel = context.read<UniqueQuantityCodeViewModel>();
     if (uqcViewModel.uqcs.isEmpty && !uqcViewModel.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) uqcViewModel.loadUqcs();
+        if (mounted) uqcViewModel.loadUniqueQuantityCodes();
       });
     }
   }
@@ -76,9 +77,75 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
     );
   }
 
-  List<Uqc> get _uqcOptions {
-    final uqcs = context.read<UqcViewModel>().uqcs;
-    return uqcs.isEmpty ? Uqc.demo : uqcs;
+  List<UniqueQuantityCode> get _uqcOptions {
+    final uqcs = context.read<UniqueQuantityCodeViewModel>().uqcs;
+    return uqcs.isEmpty ? UniqueQuantityCode.demo : uqcs;
+  }
+
+  String _uqcLabel(UniqueQuantityCode uqc) =>
+      uqc.code == null ? uqc.name : '${uqc.code} — ${uqc.name}';
+
+  Widget _buildUniqueQuantityCodeField() {
+    return Autocomplete<UniqueQuantityCode>(
+      initialValue: TextEditingValue(
+        text: _uqc == null ? '' : _uqcLabel(_uqc!),
+      ),
+      displayStringForOption: _uqcLabel,
+      optionsBuilder: (TextEditingValue value) {
+        final query = value.text.trim().toLowerCase();
+        if (query.isEmpty) return _uqcOptions;
+        return _uqcOptions
+            .where(
+              (uqc) =>
+                  uqc.name.toLowerCase().contains(query) ||
+                  (uqc.code?.toLowerCase().contains(query) ?? false),
+            )
+            .toList();
+      },
+      onSelected: (uqc) => setState(() => _uqc = uqc),
+      fieldViewBuilder: (context, controller, focusNode, _) {
+        return TextField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: const InputDecoration(
+            labelText: 'UQC (optional)',
+            hintText: 'Search and select a UQC',
+            prefixIcon: Icon(Icons.pin_outlined),
+            suffixIcon: Icon(Icons.arrow_drop_down_rounded),
+          ),
+        );
+      },
+      optionsViewBuilder: (context, onSelected, options) {
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Material(
+            elevation: 4,
+            borderRadius: BorderRadius.circular(12),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: _uqcFieldWidth),
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                children: [
+                  for (final uqc in options)
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(
+                        Icons.straighten_rounded,
+                        size: 20,
+                        color: AppColors.textSecondary,
+                      ),
+                      title: Text(uqc.name),
+                      subtitle: uqc.code != null ? Text(uqc.code!) : null,
+                      onTap: () => onSelected(uqc),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -156,40 +223,18 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                     for (final type in StockUnitType.values)
                       DropdownMenuItem(
                         value: type,
-                        child: Text(
-                          type.name.toUpperCase(),
-                        ),
+                        child: Text(type.name.toUpperCase()),
                       ),
                   ],
                   onChanged: (value) =>
                       setState(() => _unitType = value ?? _unitType),
                 ),
                 const SizedBox(height: 14),
-                DropdownButtonFormField<int>(
-                  initialValue: _uqc?.id,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    labelText: 'UQC (optional)',
-                    hintText: 'Select a Unit Quantity Code',
-                    prefixIcon: Icon(Icons.pin_outlined),
-                  ),
-                  items: [
-                    for (final uqc in _uqcOptions)
-                      DropdownMenuItem(
-                        value: uqc.id,
-                        child: Text(
-                          uqc.code == null
-                              ? uqc.name
-                              : '${uqc.code} — ${uqc.name}',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                  ],
-                  onChanged: (value) => setState(() {
-                    _uqc = _uqcOptions
-                        .where((uqc) => uqc.id == value)
-                        .firstOrNull;
-                  }),
+                LayoutBuilder(
+                  builder: (context, uqcConstraints) {
+                    _uqcFieldWidth = uqcConstraints.maxWidth;
+                    return _buildUniqueQuantityCodeField();
+                  },
                 ),
                 const SizedBox(height: 20),
                 const _SectionLabel('Notes'),

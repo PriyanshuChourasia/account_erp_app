@@ -23,10 +23,14 @@ class ItemViewModel extends ChangeNotifier {
   List<Item> get filteredItems {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _items;
-    return _items.where((item) =>
-        item.name.toLowerCase().contains(query) ||
-        item.category.toLowerCase().contains(query) ||
-        item.id.toLowerCase().contains(query)).toList();
+    return _items
+        .where(
+          (item) =>
+              item.name.toLowerCase().contains(query) ||
+              item.category.toLowerCase().contains(query) ||
+              item.id.toLowerCase().contains(query),
+        )
+        .toList();
   }
 
   Future<void> loadItems() async {

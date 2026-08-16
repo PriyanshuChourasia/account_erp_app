@@ -34,9 +34,7 @@ class CountryScreenState extends State<CountryScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete country?'),
-        content: const Text(
-          'This will remove the country from your master.',
-        ),
+        content: const Text('This will remove the country from your master.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -88,13 +86,14 @@ class CountryScreenState extends State<CountryScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .error
-                        .withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -108,9 +107,7 @@ class CountryScreenState extends State<CountryScreen> {
                       Expanded(
                         child: Text(
                           viewModel.error!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.error,
                               ),
@@ -125,29 +122,28 @@ class CountryScreenState extends State<CountryScreen> {
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : countries.isEmpty
-                        ? const _EmptyState()
-                        : LayoutBuilder(
-                            builder: (context, constraints) =>
-                                constraints.maxWidth >= 720
-                                    ? _CountryTable(
-                                        countries: countries,
-                                        onDelete: (id) =>
-                                            _confirmDelete(viewModel, id),
-                                      )
-                                    : ListView.separated(
-                                        itemCount: countries.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 10),
-                                        itemBuilder: (context, index) {
-                                          final country = countries[index];
-                                          return CountryCard(
-                                            country: country,
-                                            onDelete: () => _confirmDelete(
-                                                viewModel, country.id),
-                                          );
-                                        },
-                                      ),
-                          ),
+                    ? const _EmptyState()
+                    : LayoutBuilder(
+                        builder: (context, constraints) =>
+                            constraints.maxWidth >= 720
+                            ? _CountryTable(
+                                countries: countries,
+                                onDelete: (id) => _confirmDelete(viewModel, id),
+                              )
+                            : ListView.separated(
+                                itemCount: countries.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final country = countries[index];
+                                  return CountryCard(
+                                    country: country,
+                                    onDelete: () =>
+                                        _confirmDelete(viewModel, country.id),
+                                  );
+                                },
+                              ),
+                      ),
               ),
             ],
           ),

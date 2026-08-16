@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'config/theme/app_theme.dart';
+import 'config/auth_gate.dart';
 import 'features/auth/repository/auth_repository.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/auth/screens/register_screen.dart';
@@ -21,10 +22,12 @@ import 'modules/inventory_masters/modules/stock_category/repository/stock_catego
 import 'modules/inventory_masters/modules/stock_category/viewModel/stock_category_view_model.dart';
 import 'modules/inventory_masters/modules/stock_group/repository/stock_group_repository.dart';
 import 'modules/inventory_masters/modules/stock_group/viewModel/stock_group_view_model.dart';
+import 'modules/inventory_masters/modules/stock_item/repository/stock_item_repository.dart';
+import 'modules/inventory_masters/modules/stock_item/viewModel/stock_item_view_model.dart';
 import 'modules/inventory_masters/modules/unit/repository/unit_repository.dart';
 import 'modules/inventory_masters/modules/unit/viewModel/unit_view_model.dart';
-import 'modules/inventory_masters/modules/uqc/repository/uqc_repository.dart';
-import 'modules/inventory_masters/modules/uqc/viewModel/uqc_view_model.dart';
+import 'modules/inventory_masters/modules/unique_quantity_code/repository/unique_quantity_code_repository.dart';
+import 'modules/inventory_masters/modules/unique_quantity_code/viewModel/unique_quantity_code_view_model.dart';
 import 'modules/organisational_masters/modules/country/repository/country_repository.dart';
 import 'modules/organisational_masters/modules/country/viewModel/country_view_model.dart';
 import 'modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
@@ -66,11 +69,17 @@ class AccountErpApp extends StatelessWidget {
           create: (_) =>
               StockCategoryViewModel(globalService<StockCategoryRepository>()),
         ),
+        ChangeNotifierProvider<StockItemViewModel>(
+          create: (_) =>
+              StockItemViewModel(globalService<StockItemRepository>()),
+        ),
         ChangeNotifierProvider<UnitViewModel>(
           create: (_) => UnitViewModel(globalService<UnitRepository>()),
         ),
-        ChangeNotifierProvider<UqcViewModel>(
-          create: (_) => UqcViewModel(globalService<UqcRepository>()),
+        ChangeNotifierProvider<UniqueQuantityCodeViewModel>(
+          create: (_) => UniqueQuantityCodeViewModel(
+            globalService<UniqueQuantityCodeRepository>(),
+          ),
         ),
         ChangeNotifierProvider<CountryViewModel>(
           create: (_) => CountryViewModel(globalService<CountryRepository>()),
@@ -109,7 +118,7 @@ class AccountErpApp extends StatelessWidget {
         title: 'Account ERP',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
-        home: const DashboardScreen(),
+        home: const AuthGate(),
         routes: {
           AppRoutes.login: (_) => const LoginScreen(),
           AppRoutes.register: (_) => ChangeNotifierProvider(

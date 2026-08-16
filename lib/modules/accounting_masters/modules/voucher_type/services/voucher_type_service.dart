@@ -13,11 +13,11 @@ class VoucherTypeService {
       _apiService.get(AccountingApiConfig.voucherTypeAPI);
 
   Future<Map<String, dynamic>> createVoucherType(
-          CreateVoucherTypeRequest request) =>
-      _apiService.post(
-        AccountingApiConfig.createVoucherTypeAPI,
-        data: request.toJson(),
-      );
+    CreateVoucherTypeRequest request,
+  ) => _apiService.post(
+    AccountingApiConfig.createVoucherTypeAPI,
+    data: request.toJson(),
+  );
 
   Future<Map<String, dynamic>> deleteVoucherType(int id) =>
       _apiService.delete(AccountingApiConfig.voucherTypeEndpoint(id));

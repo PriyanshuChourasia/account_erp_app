@@ -81,11 +81,7 @@ class FinancialYearCard extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             if (financialYear.isCurrent)
-              const Icon(
-                Icons.star_rounded,
-                size: 20,
-                color: AppColors.primary,
-              )
+              const Icon(Icons.star_rounded, size: 20, color: AppColors.primary)
             else if (onSetCurrent != null)
               IconButton(
                 tooltip: 'Set as current year',

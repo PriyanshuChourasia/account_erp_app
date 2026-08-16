@@ -21,10 +21,10 @@ class CreateFinancialYearRequest {
   final bool isCurrent;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        if (code != null && code!.isNotEmpty) 'code': code,
-        'startDate': toFinancialDateString(startDate),
-        'endDate': toFinancialDateString(endDate),
-        if (isCurrent) 'isCurrent': true,
-      };
+    'name': name,
+    if (code != null && code!.isNotEmpty) 'code': code,
+    'startDate': toFinancialDateString(startDate),
+    'endDate': toFinancialDateString(endDate),
+    if (isCurrent) 'isCurrent': true,
+  };
 }

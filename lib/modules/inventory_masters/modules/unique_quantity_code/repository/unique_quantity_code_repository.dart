@@ -1,19 +1,19 @@
 import '../../../../../core/app_exception.dart';
 import '../../../../../data/models/response_model_wrapper.dart';
-import '../models/create_uqc_request.dart';
-import '../models/update_uqc_request.dart';
-import '../models/uqc.dart';
-import '../services/uqc_service.dart';
+import '../models/create_unique_quantity_code_request.dart';
+import '../models/update_unique_quantity_code_request.dart';
+import '../models/unique_quantity_code.dart';
+import '../services/unique_quantity_code_service.dart';
 
-/// Orchestrates UQC data: calls [UqcService], unwraps the
+/// Orchestrates UQC data: calls [UniqueQuantityCodeService], unwraps the
 /// [ResponseModelWrapper] envelope and throws [AppException] on failure.
-class UqcRepository {
-  UqcRepository(this._uqcService);
+class UniqueQuantityCodeRepository {
+  UniqueQuantityCodeRepository(this._uqcService);
 
-  final UqcService _uqcService;
+  final UniqueQuantityCodeService _uqcService;
 
-  Future<List<Uqc>> fetchUqcs() async {
-    final json = await _uqcService.fetchUqcs();
+  Future<List<UniqueQuantityCode>> fetchUniqueQuantityCodes() async {
+    final json = await _uqcService.fetchUniqueQuantityCodes();
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {
       throw AppException(
@@ -25,12 +25,14 @@ class UqcRepository {
     if (rawResult is! List) return const [];
     return rawResult
         .whereType<Map<String, dynamic>>()
-        .map(Uqc.fromJson)
+        .map(UniqueQuantityCode.fromJson)
         .toList();
   }
 
-  Future<void> createUqc(CreateUqcRequest request) async {
-    final json = await _uqcService.createUqc(request);
+  Future<void> createUniqueQuantityCode(
+    CreateUniqueQuantityCodeRequest request,
+  ) async {
+    final json = await _uqcService.createUniqueQuantityCode(request);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {
       throw AppException(
@@ -40,8 +42,13 @@ class UqcRepository {
     }
   }
 
-  Future<void> updateUqc(UpdateUqcRequest request) async {
-    final json = await _uqcService.updateUqc(request.id, request);
+  Future<void> updateUniqueQuantityCode(
+    UpdateUniqueQuantityCodeRequest request,
+  ) async {
+    final json = await _uqcService.updateUniqueQuantityCode(
+      request.id,
+      request,
+    );
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {
       throw AppException(

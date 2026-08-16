@@ -26,11 +26,11 @@ class UpdateAccountGroupRequest {
   final int accountNatureId;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'code': code,
-        if (alias != null) 'alias': alias,
-        if (description != null) 'description': description,
-        if (parentId != null) 'parentId': parentId,
-        'accountNatureId': accountNatureId,
-      };
+    'name': name,
+    'code': code,
+    if (alias != null) 'alias': alias,
+    if (description != null) 'description': description,
+    if (parentId != null) 'parentId': parentId,
+    'accountNatureId': accountNatureId,
+  };
 }

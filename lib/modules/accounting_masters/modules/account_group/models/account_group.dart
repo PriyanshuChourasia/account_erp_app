@@ -36,17 +36,16 @@ class AccountGroup {
   final IconData icon;
   final Color color;
 
-  factory AccountGroup.fromJson(Map<String, dynamic> json) =>
-      AccountGroup(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: (json['code'] as num?)?.toInt(),
-        alias: json['alias'] as String?,
-        description: json['description'] as String?,
-        isActive: json['isActive'] == true,
-        parentId: (json['parentId'] as num?)?.toInt(),
-        accountNatureId: (json['accountNatureId'] as num?)?.toInt(),
-      );
+  factory AccountGroup.fromJson(Map<String, dynamic> json) => AccountGroup(
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: (json['code'] as num?)?.toInt(),
+    alias: json['alias'] as String?,
+    description: json['description'] as String?,
+    isActive: json['isActive'] == true,
+    parentId: (json['parentId'] as num?)?.toInt(),
+    accountNatureId: (json['accountNatureId'] as num?)?.toInt(),
+  );
 
   static const List<AccountGroup> demo = [
     AccountGroup(

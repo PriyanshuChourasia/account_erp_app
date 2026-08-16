@@ -114,15 +114,17 @@ class _FinancialYearAddDialogState extends State<FinancialYearAddDialog> {
       setState(() => _dateError = 'End date must be after the start date.');
       return;
     }
-    Navigator.of(context).pop(CreateFinancialYearRequest(
-      name: _nameController.text.trim(),
-      code: _codeController.text.trim().isEmpty
-          ? null
-          : _codeController.text.trim().toUpperCase(),
-      startDate: start,
-      endDate: end,
-      isCurrent: _isCurrent,
-    ));
+    Navigator.of(context).pop(
+      CreateFinancialYearRequest(
+        name: _nameController.text.trim(),
+        code: _codeController.text.trim().isEmpty
+            ? null
+            : _codeController.text.trim().toUpperCase(),
+        startDate: start,
+        endDate: end,
+        isCurrent: _isCurrent,
+      ),
+    );
   }
 
   @override
@@ -182,8 +184,8 @@ class _FinancialYearAddDialogState extends State<FinancialYearAddDialog> {
                 Text(
                   _dateError!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
               ],
               const SizedBox(height: 16),
@@ -300,10 +302,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }

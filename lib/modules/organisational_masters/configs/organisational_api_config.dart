@@ -15,5 +15,6 @@ class OrganisationalApiConfig {
   static const String createFinancialYearAPI = "$financialYearAPI/create";
 
   /// organisation's current fiscal year.
-  static const String updateFinancialYearCurrentAPI = "$financialYearAPI/current";
+  static const String updateFinancialYearCurrentAPI =
+      "$financialYearAPI/current";
 }

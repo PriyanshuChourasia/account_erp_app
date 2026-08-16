@@ -29,10 +29,7 @@ class VoucherTypeScreenState extends State<VoucherTypeScreen> {
     await context.read<VoucherTypeViewModel>().addVoucherType(result);
   }
 
-  Future<void> _confirmDelete(
-    VoucherTypeViewModel viewModel,
-    int id,
-  ) async {
+  Future<void> _confirmDelete(VoucherTypeViewModel viewModel, int id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -91,13 +88,14 @@ class VoucherTypeScreenState extends State<VoucherTypeScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .error
-                        .withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -111,9 +109,7 @@ class VoucherTypeScreenState extends State<VoucherTypeScreen> {
                       Expanded(
                         child: Text(
                           viewModel.error!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.error,
                               ),
@@ -128,27 +124,27 @@ class VoucherTypeScreenState extends State<VoucherTypeScreen> {
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : voucherTypes.isEmpty
-                        ? const _EmptyState()
-                        : LayoutBuilder(
-                            builder: (context, constraints) =>
-                                constraints.maxWidth >= 720
-                                    ? _VoucherTypeTable(
-                                        voucherTypes: voucherTypes,
-                                      )
-                                    : ListView.separated(
-                                        itemCount: voucherTypes.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 10),
-                                        itemBuilder: (context, index) {
-                                          final voucherType = voucherTypes[index];
-                                          return VoucherTypeCard(
-                                            voucherType: voucherType,
-                                            onDelete: () => _confirmDelete(
-                                                viewModel, voucherType.id),
-                                          );
-                                        },
-                                      ),
-                          ),
+                    ? const _EmptyState()
+                    : LayoutBuilder(
+                        builder: (context, constraints) =>
+                            constraints.maxWidth >= 720
+                            ? _VoucherTypeTable(voucherTypes: voucherTypes)
+                            : ListView.separated(
+                                itemCount: voucherTypes.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final voucherType = voucherTypes[index];
+                                  return VoucherTypeCard(
+                                    voucherType: voucherType,
+                                    onDelete: () => _confirmDelete(
+                                      viewModel,
+                                      voucherType.id,
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
               ),
             ],
           ),
@@ -221,10 +217,10 @@ class _VoucherTypeTableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: AppColors.textSecondary,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.4,
-        );
+      color: AppColors.textSecondary,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.4,
+    );
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
       child: Row(
@@ -272,8 +268,9 @@ class _VoucherTypeTableRow extends StatelessWidget {
             width: slNoColumnWidth,
             child: Text(
               '$slNo',
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: AppColors.textSecondary),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
           Expanded(
@@ -295,12 +292,15 @@ class _VoucherTypeTableRow extends StatelessWidget {
               child: voucherType.code == null
                   ? Text(
                       '—',
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: AppColors.textSecondary),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     )
                   : Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.background,
                         borderRadius: BorderRadius.circular(6),

@@ -29,10 +29,12 @@ class AccountGroupViewModel extends ChangeNotifier {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _accountingGroups;
     return _accountingGroups
-        .where((group) =>
-            group.name.toLowerCase().contains(query) ||
-            group.id.toString().contains(query) ||
-            (group.alias?.toLowerCase().contains(query) ?? false))
+        .where(
+          (group) =>
+              group.name.toLowerCase().contains(query) ||
+              group.id.toString().contains(query) ||
+              (group.alias?.toLowerCase().contains(query) ?? false),
+        )
         .toList();
   }
 

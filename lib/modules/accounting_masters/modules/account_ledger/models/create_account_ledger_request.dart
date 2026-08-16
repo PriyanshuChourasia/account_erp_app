@@ -18,9 +18,9 @@ class CreateAccountLedgerRequest {
   final int? groupId;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        if (alias != null) 'alias': alias,
-        if (description != null) 'description': description,
-        if (groupId != null) 'groupId': groupId,
-      };
+    'name': name,
+    if (alias != null) 'alias': alias,
+    if (description != null) 'description': description,
+    if (groupId != null) 'groupId': groupId,
+  };
 }

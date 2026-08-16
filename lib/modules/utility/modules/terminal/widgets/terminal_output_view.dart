@@ -86,9 +86,14 @@ class _LineView extends StatelessWidget {
                     style: TextStyle(color: _TerminalColors.prompt),
                   ),
                   const TextSpan(text: ':'),
-                  const TextSpan(text: '~', style: TextStyle(color: _TerminalColors.info)),
+                  const TextSpan(
+                    text: '~',
+                    style: TextStyle(color: _TerminalColors.info),
+                  ),
                   const TextSpan(text: '\$ '),
-                  TextSpan(text: line.text.substring(line.text.indexOf('\$ ') + 2)),
+                  TextSpan(
+                    text: line.text.substring(line.text.indexOf('\$ ') + 2),
+                  ),
                 ]
               : [TextSpan(text: line.text)],
         ),

@@ -87,6 +87,6 @@ const Map<String, dynamic> sidebarMenu = {
 
 /// Ordered, visible sidebar entries (respecting `is_visible`).
 List<Map<String, dynamic>> sidebarMenuItems() => [
-      for (final entry in sidebarMenu.values)
-        if (entry['is_visible'] == true) entry as Map<String, dynamic>,
-    ];
+  for (final entry in sidebarMenu.values)
+    if (entry['is_visible'] == true) entry as Map<String, dynamic>,
+];

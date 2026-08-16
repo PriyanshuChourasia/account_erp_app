@@ -43,22 +43,21 @@ class Sidebar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 children: [
                   ...items.asMap().entries.map(
-                        (entry) => _SidebarItem(
-                          label: entry.value['name'] as String,
-                          icon: (selectedIndex == entry.key
-                              ? entry.value['selected_icon']
-                              : entry.value['icon']) as IconData,
-                          isSelected: selectedIndex == entry.key,
-                          onTap: () => onNavigate(entry.key),
-                        ),
-                      ),
+                    (entry) => _SidebarItem(
+                      label: entry.value['name'] as String,
+                      icon:
+                          (selectedIndex == entry.key
+                                  ? entry.value['selected_icon']
+                                  : entry.value['icon'])
+                              as IconData,
+                      isSelected: selectedIndex == entry.key,
+                      onTap: () => onNavigate(entry.key),
+                    ),
+                  ),
                 ],
               ),
             ),
-            _UserCard(
-              userName: userName,
-              onLogout: onLogout,
-            ),
+            _UserCard(userName: userName, onLogout: onLogout),
             const SizedBox(height: 12),
           ],
         ),
@@ -97,9 +96,9 @@ class _BrandHeader extends StatelessWidget {
             child: Text(
               'Account ERP',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
         ],
@@ -136,31 +135,33 @@ class _SidebarItem extends StatelessWidget {
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                size: 20,
-                color: isSelected
-                    ? AppColors.primary
-                    : AppColors.textSecondary,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.textSecondary,
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 20,
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           ),
         ),
       ),

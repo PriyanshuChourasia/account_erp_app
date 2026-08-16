@@ -13,11 +13,11 @@ class AccountLedgerService {
       _apiService.get(AccountingApiConfig.accountLedgerAPI);
 
   Future<Map<String, dynamic>> createAccountLedger(
-          CreateAccountLedgerRequest request) =>
-      _apiService.post(
-        AccountingApiConfig.createAccountLedgerAPI,
-        data: request.toJson(),
-      );
+    CreateAccountLedgerRequest request,
+  ) => _apiService.post(
+    AccountingApiConfig.createAccountLedgerAPI,
+    data: request.toJson(),
+  );
 
   Future<Map<String, dynamic>> deleteAccountLedger(int id) =>
       _apiService.delete(AccountingApiConfig.accountLedgerEndpoint(id));

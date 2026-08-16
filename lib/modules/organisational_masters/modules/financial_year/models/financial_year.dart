@@ -37,11 +37,11 @@ class FinancialYear {
   final Color color;
 
   factory FinancialYear.fromJson(Map<String, dynamic> json) => FinancialYear(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: json['code'] as String?,
-        startDate: json['startDate'] as String?,
-        endDate: json['endDate'] as String?,
-        isCurrent: json['isCurrent'] == true,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: json['code'] as String?,
+    startDate: json['startDate'] as String?,
+    endDate: json['endDate'] as String?,
+    isCurrent: json['isCurrent'] == true,
+  );
 }

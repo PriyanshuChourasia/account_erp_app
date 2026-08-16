@@ -5,11 +5,7 @@ import '../models/voucher_type.dart';
 
 /// Row card for a single voucher type.
 class VoucherTypeCard extends StatelessWidget {
-  const VoucherTypeCard({
-    super.key,
-    required this.voucherType,
-    this.onDelete,
-  });
+  const VoucherTypeCard({super.key, required this.voucherType, this.onDelete});
 
   final VoucherType voucherType;
   final VoidCallback? onDelete;

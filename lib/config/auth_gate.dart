@@ -58,9 +58,9 @@ class _SplashScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Account ERP',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 32),
             const SizedBox(

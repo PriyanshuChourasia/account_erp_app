@@ -49,16 +49,18 @@ class _StateAddDialogState extends State<StateAddDialog> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    Navigator.of(context).pop(CreateStateRequest(
-      name: _nameController.text.trim(),
-      code: _codeController.text.trim().isEmpty
-          ? null
-          : _codeController.text.trim().toUpperCase(),
-      countryId: _country!.id,
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-    ));
+    Navigator.of(context).pop(
+      CreateStateRequest(
+        name: _nameController.text.trim(),
+        code: _codeController.text.trim().isEmpty
+            ? null
+            : _codeController.text.trim().toUpperCase(),
+        countryId: _country!.id,
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+      ),
+    );
   }
 
   @override
@@ -126,18 +128,18 @@ class _StateAddDialogState extends State<StateAddDialog> {
               const _SectionLabel('Country'),
               const SizedBox(height: 8),
               Autocomplete<Country>(
-                initialValue: TextEditingValue(
-                  text: _country?.name ?? '',
-                ),
+                initialValue: TextEditingValue(text: _country?.name ?? ''),
                 displayStringForOption: (country) => country.name,
                 optionsBuilder: (TextEditingValue value) {
                   final query = value.text.trim().toLowerCase();
                   if (query.isEmpty) return options;
                   return options
-                      .where((country) =>
-                          country.name.toLowerCase().contains(query) ||
-                          (country.code?.toLowerCase().contains(query) ??
-                              false))
+                      .where(
+                        (country) =>
+                            country.name.toLowerCase().contains(query) ||
+                            (country.code?.toLowerCase().contains(query) ??
+                                false),
+                      )
                       .toList();
                 },
                 onSelected: (country) => setState(() => _country = country),
@@ -231,10 +233,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }

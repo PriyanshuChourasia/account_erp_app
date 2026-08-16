@@ -19,22 +19,30 @@ class ApiService {
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
-  }) =>
-      _request(() => _dio.post<dynamic>(path, data: data, queryParameters: queryParameters));
+  }) => _request(
+    () =>
+        _dio.post<dynamic>(path, data: data, queryParameters: queryParameters),
+  );
 
   Future<Map<String, dynamic>> put(
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
-  }) =>
-      _request(() => _dio.put<dynamic>(path, data: data, queryParameters: queryParameters));
+  }) => _request(
+    () => _dio.put<dynamic>(path, data: data, queryParameters: queryParameters),
+  );
 
   Future<Map<String, dynamic>> delete(
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
-  }) =>
-      _request(() => _dio.delete<dynamic>(path, data: data, queryParameters: queryParameters));
+  }) => _request(
+    () => _dio.delete<dynamic>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+    ),
+  );
 
   Future<Map<String, dynamic>> _request(
     Future<Response<dynamic>> Function() call,

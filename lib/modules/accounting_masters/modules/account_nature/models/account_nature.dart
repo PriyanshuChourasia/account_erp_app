@@ -25,11 +25,11 @@ class AccountNature {
   final Color color;
 
   factory AccountNature.fromJson(Map<String, dynamic> json) => AccountNature(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: (json['code'] as num?)?.toInt(),
-        description: json['description'] as String?,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: (json['code'] as num?)?.toInt(),
+    description: json['description'] as String?,
+  );
 
   static const List<AccountNature> demo = [
     AccountNature(

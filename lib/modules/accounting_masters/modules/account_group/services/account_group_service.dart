@@ -14,18 +14,19 @@ class AccountGroupService {
       _apiService.get(AccountingApiConfig.accountGroupAPI);
 
   Future<Map<String, dynamic>> createAccountGroup(
-          CreateAccountGroupRequest request) =>
-      _apiService.post(
-        AccountingApiConfig.createAccountGroupAPI,
-        data: request.toJson(),
-      );
+    CreateAccountGroupRequest request,
+  ) => _apiService.post(
+    AccountingApiConfig.createAccountGroupAPI,
+    data: request.toJson(),
+  );
 
   Future<Map<String, dynamic>> updateAccountGroup(
-          int id, UpdateAccountGroupRequest request) =>
-      _apiService.put(
-        AccountingApiConfig.accountGroupEndpoint(id),
-        data: request.toJson(),
-      );
+    int id,
+    UpdateAccountGroupRequest request,
+  ) => _apiService.put(
+    AccountingApiConfig.accountGroupEndpoint(id),
+    data: request.toJson(),
+  );
 
   Future<Map<String, dynamic>> deleteAccountGroup(int id) =>
       _apiService.delete(AccountingApiConfig.accountGroupEndpoint(id));

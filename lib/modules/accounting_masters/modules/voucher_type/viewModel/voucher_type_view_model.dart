@@ -28,11 +28,13 @@ class VoucherTypeViewModel extends ChangeNotifier {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _voucherTypes;
     return _voucherTypes
-        .where((voucherType) =>
-            voucherType.name.toLowerCase().contains(query) ||
-            voucherType.id.toString().contains(query) ||
-            (voucherType.code?.toLowerCase().contains(query) ?? false) ||
-            (voucherType.description?.toLowerCase().contains(query) ?? false))
+        .where(
+          (voucherType) =>
+              voucherType.name.toLowerCase().contains(query) ||
+              voucherType.id.toString().contains(query) ||
+              (voucherType.code?.toLowerCase().contains(query) ?? false) ||
+              (voucherType.description?.toLowerCase().contains(query) ?? false),
+        )
         .toList();
   }
 

@@ -13,11 +13,11 @@ class AccountNatureService {
       _apiService.get(AccountingApiConfig.accountNatureAPI);
 
   Future<Map<String, dynamic>> createAccountNature(
-          CreateAccountNatureRequest request) =>
-      _apiService.post(
-        AccountingApiConfig.createAccountNatureAPI,
-        data: request.toJson(),
-      );
+    CreateAccountNatureRequest request,
+  ) => _apiService.post(
+    AccountingApiConfig.createAccountNatureAPI,
+    data: request.toJson(),
+  );
 
   Future<Map<String, dynamic>> deleteAccountNature(int id) =>
       _apiService.delete(AccountingApiConfig.accountNatureEndpoint(id));

@@ -5,10 +5,10 @@ import '../../../../../config/theme/app_theme.dart';
 /// A Unit Quantity Code (UQC) — the GST-mandated code describing the unit an
 /// item is measured in (e.g. `NOS` for Numbers, `KGS` for Kilograms).
 ///
-/// Mirrors the backend `UqcDTO` record. [demo] serves as placeholder data
+/// Mirrors the backend `UniqueQuantityCodeDTO` record. [demo] serves as placeholder data
 /// until the backend is reachable.
-class Uqc {
-  const Uqc({
+class UniqueQuantityCode {
+  const UniqueQuantityCode({
     required this.id,
     required this.name,
     this.code,
@@ -30,17 +30,18 @@ class Uqc {
   final IconData icon;
   final Color color;
 
-  factory Uqc.fromJson(Map<String, dynamic> json) => Uqc(
-    id: (json['id'] as num?)?.toInt() ?? 0,
-    name: json['name'] as String? ?? '',
-    code: json['code'] as String?,
-    alias: json['alias'] as String?,
-    description: json['description'] as String?,
-    isActive: json['isActive'] == true,
-  );
+  factory UniqueQuantityCode.fromJson(Map<String, dynamic> json) =>
+      UniqueQuantityCode(
+        id: (json['id'] as num?)?.toInt() ?? 0,
+        name: json['name'] as String? ?? '',
+        code: json['code'] as String?,
+        alias: json['alias'] as String?,
+        description: json['description'] as String?,
+        isActive: json['isActive'] == true,
+      );
 
-  static const List<Uqc> demo = [
-    Uqc(
+  static const List<UniqueQuantityCode> demo = [
+    UniqueQuantityCode(
       id: 1,
       name: 'Numbers',
       code: 'NOS',
@@ -48,7 +49,7 @@ class Uqc {
       icon: Icons.tag_rounded,
       color: Color(0xFF1D4ED8),
     ),
-    Uqc(
+    UniqueQuantityCode(
       id: 2,
       name: 'Kilograms',
       code: 'KGS',
@@ -56,7 +57,7 @@ class Uqc {
       icon: Icons.balance_rounded,
       color: Color(0xFF059669),
     ),
-    Uqc(
+    UniqueQuantityCode(
       id: 3,
       name: 'Litre',
       code: 'LTR',
@@ -64,7 +65,7 @@ class Uqc {
       icon: Icons.local_drink_rounded,
       color: Color(0xFFD97706),
     ),
-    Uqc(
+    UniqueQuantityCode(
       id: 4,
       name: 'Meters',
       code: 'MTR',
@@ -72,7 +73,7 @@ class Uqc {
       icon: Icons.straighten_rounded,
       color: Color(0xFF7C3AED),
     ),
-    Uqc(
+    UniqueQuantityCode(
       id: 5,
       name: 'Boxes',
       code: 'BOX',

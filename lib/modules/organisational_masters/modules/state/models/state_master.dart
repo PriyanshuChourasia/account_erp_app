@@ -34,14 +34,14 @@ class StateMaster {
   final Color color;
 
   factory StateMaster.fromJson(Map<String, dynamic> json) => StateMaster(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: json['code'] as String?,
-        countryId: (json['countryId'] as num?)?.toInt() ?? 0,
-        countryName: json['countryName'] as String?,
-        description: json['description'] as String?,
-        isActive: json['isActive'] == true,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: json['code'] as String?,
+    countryId: (json['countryId'] as num?)?.toInt() ?? 0,
+    countryName: json['countryName'] as String?,
+    description: json['description'] as String?,
+    isActive: json['isActive'] == true,
+  );
 
   static const List<StateMaster> demo = [
     StateMaster(

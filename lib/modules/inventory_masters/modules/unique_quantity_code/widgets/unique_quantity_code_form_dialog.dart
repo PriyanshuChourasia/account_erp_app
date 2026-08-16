@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../../config/theme/app_theme.dart';
-import '../models/create_uqc_request.dart';
-import '../models/update_uqc_request.dart';
-import '../models/uqc.dart';
+import '../models/create_unique_quantity_code_request.dart';
+import '../models/update_unique_quantity_code_request.dart';
+import '../models/unique_quantity_code.dart';
 
 /// Uppercases whatever the user types into a field.
 class _UpperCaseTextFormatter extends TextInputFormatter {
@@ -22,28 +22,37 @@ class _UpperCaseTextFormatter extends TextInputFormatter {
 
 /// Dialog form for creating or editing a UQC.
 ///
-/// When [initialUqc] is provided the dialog is in edit mode, otherwise it
-/// creates a new UQC. Pops a [CreateUqcRequest] or an [UpdateUqcRequest] on
+/// When [initialUniqueQuantityCode] is provided the dialog is in edit mode, otherwise it
+/// creates a new UQC. Pops a [CreateUniqueQuantityCodeRequest] or an [UpdateUniqueQuantityCodeRequest] on
 /// save.
-class UqcFormDialog extends StatefulWidget {
-  const UqcFormDialog({super.key, this.initialUqc});
+class UniqueQuantityCodeFormDialog extends StatefulWidget {
+  const UniqueQuantityCodeFormDialog({
+    super.key,
+    this.initialUniqueQuantityCode,
+  });
 
-  final Uqc? initialUqc;
+  final UniqueQuantityCode? initialUniqueQuantityCode;
 
   @override
-  State<UqcFormDialog> createState() => _UqcFormDialogState();
+  State<UniqueQuantityCodeFormDialog> createState() =>
+      _UniqueQuantityCodeFormDialogState();
 }
 
-class _UqcFormDialogState extends State<UqcFormDialog> {
+class _UniqueQuantityCodeFormDialogState
+    extends State<UniqueQuantityCodeFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  late final _nameController =
-      TextEditingController(text: widget.initialUqc?.name ?? '');
-  late final _aliasController =
-      TextEditingController(text: widget.initialUqc?.alias ?? '');
-  late final _codeController =
-      TextEditingController(text: widget.initialUqc?.code ?? '');
-  late final _descriptionController =
-      TextEditingController(text: widget.initialUqc?.description ?? '');
+  late final _nameController = TextEditingController(
+    text: widget.initialUniqueQuantityCode?.name ?? '',
+  );
+  late final _aliasController = TextEditingController(
+    text: widget.initialUniqueQuantityCode?.alias ?? '',
+  );
+  late final _codeController = TextEditingController(
+    text: widget.initialUniqueQuantityCode?.code ?? '',
+  );
+  late final _descriptionController = TextEditingController(
+    text: widget.initialUniqueQuantityCode?.description ?? '',
+  );
 
   @override
   void dispose() {
@@ -65,22 +74,26 @@ class _UqcFormDialogState extends State<UqcFormDialog> {
         ? null
         : _descriptionController.text.trim();
 
-    final initialUqc = widget.initialUqc;
-    if (initialUqc != null) {
-      Navigator.of(context).pop(UpdateUqcRequest(
-        id: initialUqc.id,
-        name: name,
-        code: code,
-        alias: alias,
-        description: description,
-      ));
+    final initialUniqueQuantityCode = widget.initialUniqueQuantityCode;
+    if (initialUniqueQuantityCode != null) {
+      Navigator.of(context).pop(
+        UpdateUniqueQuantityCodeRequest(
+          id: initialUniqueQuantityCode.id,
+          name: name,
+          code: code,
+          alias: alias,
+          description: description,
+        ),
+      );
     } else {
-      Navigator.of(context).pop(CreateUqcRequest(
-        name: name,
-        code: code,
-        alias: alias,
-        description: description,
-      ));
+      Navigator.of(context).pop(
+        CreateUniqueQuantityCodeRequest(
+          name: name,
+          code: code,
+          alias: alias,
+          description: description,
+        ),
+      );
     }
   }
 
@@ -88,7 +101,7 @@ class _UqcFormDialogState extends State<UqcFormDialog> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final dialogWidth = screenWidth < 480 ? screenWidth * 0.9 : 420.0;
-    final isEditing = widget.initialUqc != null;
+    final isEditing = widget.initialUniqueQuantityCode != null;
 
     return AlertDialog(
       titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),

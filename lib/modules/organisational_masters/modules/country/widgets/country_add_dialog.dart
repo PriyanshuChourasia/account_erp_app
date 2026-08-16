@@ -46,18 +46,20 @@ class _CountryAddDialogState extends State<CountryAddDialog> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    Navigator.of(context).pop(CreateCountryRequest(
-      name: _nameController.text.trim(),
-      code: _codeController.text.trim().isEmpty
-          ? null
-          : _codeController.text.trim().toUpperCase(),
-      alias: _aliasController.text.trim().isEmpty
-          ? null
-          : _aliasController.text.trim(),
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-    ));
+    Navigator.of(context).pop(
+      CreateCountryRequest(
+        name: _nameController.text.trim(),
+        code: _codeController.text.trim().isEmpty
+            ? null
+            : _codeController.text.trim().toUpperCase(),
+        alias: _aliasController.text.trim().isEmpty
+            ? null
+            : _aliasController.text.trim(),
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+      ),
+    );
   }
 
   @override
@@ -180,10 +182,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }

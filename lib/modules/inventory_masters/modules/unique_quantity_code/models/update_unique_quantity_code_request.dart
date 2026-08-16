@@ -2,8 +2,8 @@
 ///
 /// Mirrors the backend `UpdateUQCDTO` record. [id] identifies the UQC being
 /// edited; `name` and `code` are required, `alias` and `description` optional.
-class UpdateUqcRequest {
-  const UpdateUqcRequest({
+class UpdateUniqueQuantityCodeRequest {
+  const UpdateUniqueQuantityCodeRequest({
     required this.id,
     required this.name,
     required this.code,

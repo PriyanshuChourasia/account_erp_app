@@ -2,43 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
-import '../models/create_uqc_request.dart';
-import '../models/update_uqc_request.dart';
-import '../models/uqc.dart';
-import '../screens/uqc_screen.dart';
-import '../viewModel/uqc_view_model.dart';
-import '../widgets/uqc_add_dialog.dart';
-import '../widgets/uqc_card.dart';
+import '../models/create_unique_quantity_code_request.dart';
+import '../models/update_unique_quantity_code_request.dart';
+import '../models/unique_quantity_code.dart';
+import '../screens/unique_quantity_code_screen.dart';
+import '../viewModel/unique_quantity_code_view_model.dart';
+import '../widgets/unique_quantity_code_form_dialog.dart';
+import '../widgets/unique_quantity_code_card.dart';
 
-/// State for [UqcScreen]. Kept out of the screen file to follow the
+/// State for [UniqueQuantityCodeScreen]. Kept out of the screen file to follow the
 /// StatefulWidget split pattern.
-class UqcScreenState extends State<UqcScreen> {
+class UniqueQuantityCodeScreenState extends State<UniqueQuantityCodeScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) context.read<UqcViewModel>().loadUqcs();
+      if (mounted) {
+        context.read<UniqueQuantityCodeViewModel>().loadUniqueQuantityCodes();
+      }
     });
   }
 
-  Future<void> _openForm([Uqc? uqc]) async {
+  Future<void> _openForm([UniqueQuantityCode? uqc]) async {
     final result = await showDialog<dynamic>(
       context: context,
-      builder: (_) => UqcFormDialog(initialUqc: uqc),
+      builder: (_) =>
+          UniqueQuantityCodeFormDialog(initialUniqueQuantityCode: uqc),
     );
     if (result == null || !mounted) return;
-    final viewModel = context.read<UqcViewModel>();
-    if (result is UpdateUqcRequest) {
-      await viewModel.updateUqc(result);
-    } else if (result is CreateUqcRequest) {
-      await viewModel.addUqc(result);
+    final viewModel = context.read<UniqueQuantityCodeViewModel>();
+    if (result is UpdateUniqueQuantityCodeRequest) {
+      await viewModel.updateUniqueQuantityCode(result);
+    } else if (result is CreateUniqueQuantityCodeRequest) {
+      await viewModel.addUniqueQuantityCode(result);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<UqcViewModel>();
-    final uqcs = viewModel.filteredUqcs;
+    final viewModel = context.watch<UniqueQuantityCodeViewModel>();
+    final uqcs = viewModel.filteredUniqueQuantityCodes;
 
     return Scaffold(
       appBar: AppBar(title: const Text('UQCs')),
@@ -111,7 +114,7 @@ class UqcScreenState extends State<UqcScreen> {
                     : LayoutBuilder(
                         builder: (context, constraints) =>
                             constraints.maxWidth >= 720
-                            ? _UqcTable(
+                            ? _UniqueQuantityCodeTable(
                                 uqcs: uqcs,
                                 onEdit: (id) => _openForm(
                                   uqcs.firstWhere((uqc) => uqc.id == id),
@@ -123,7 +126,7 @@ class UqcScreenState extends State<UqcScreen> {
                                     const SizedBox(height: 10),
                                 itemBuilder: (context, index) {
                                   final uqc = uqcs[index];
-                                  return UqcCard(
+                                  return UniqueQuantityCodeCard(
                                     uqc: uqc,
                                     onEdit: () => _openForm(uqc),
                                   );
@@ -145,14 +148,14 @@ class UqcScreenState extends State<UqcScreen> {
 /// account_nature's table — so it fills the available width, scrolls
 /// vertically when the list is long (with a header that stays pinned), and
 /// gives the GST code its own badge treatment instead of flat text.
-class _UqcTable extends StatelessWidget {
-  const _UqcTable({required this.uqcs, required this.onEdit});
+class _UniqueQuantityCodeTable extends StatelessWidget {
+  const _UniqueQuantityCodeTable({required this.uqcs, required this.onEdit});
 
   static const _slNoColumnWidth = 56.0;
   static const _codeColumnWidth = 72.0;
   static const _statusColumnWidth = 84.0;
 
-  final List<Uqc> uqcs;
+  final List<UniqueQuantityCode> uqcs;
   final ValueChanged<int> onEdit;
 
   @override
@@ -166,7 +169,7 @@ class _UqcTable extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          const _UqcTableHeader(
+          const _UniqueQuantityCodeTableHeader(
             slNoColumnWidth: _slNoColumnWidth,
             codeColumnWidth: _codeColumnWidth,
             statusColumnWidth: _statusColumnWidth,
@@ -177,7 +180,7 @@ class _UqcTable extends StatelessWidget {
               itemCount: uqcs.length,
               separatorBuilder: (_, _) =>
                   const Divider(height: 1, color: AppColors.border),
-              itemBuilder: (context, index) => _UqcTableRow(
+              itemBuilder: (context, index) => _UniqueQuantityCodeTableRow(
                 slNo: index + 1,
                 uqc: uqcs[index],
                 zebra: index.isOdd,
@@ -194,8 +197,8 @@ class _UqcTable extends StatelessWidget {
   }
 }
 
-class _UqcTableHeader extends StatelessWidget {
-  const _UqcTableHeader({
+class _UniqueQuantityCodeTableHeader extends StatelessWidget {
+  const _UniqueQuantityCodeTableHeader({
     required this.slNoColumnWidth,
     required this.codeColumnWidth,
     required this.statusColumnWidth,
@@ -238,8 +241,8 @@ class _UqcTableHeader extends StatelessWidget {
   }
 }
 
-class _UqcTableRow extends StatelessWidget {
-  const _UqcTableRow({
+class _UniqueQuantityCodeTableRow extends StatelessWidget {
+  const _UniqueQuantityCodeTableRow({
     required this.slNo,
     required this.uqc,
     required this.zebra,
@@ -250,7 +253,7 @@ class _UqcTableRow extends StatelessWidget {
   });
 
   final int slNo;
-  final Uqc uqc;
+  final UniqueQuantityCode uqc;
   final bool zebra;
   final double slNoColumnWidth;
   final double codeColumnWidth;

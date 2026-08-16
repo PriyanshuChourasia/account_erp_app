@@ -12,10 +12,13 @@ class InventoryApiConfig {
   static const String stockCategoryAPI = "/stock_categories";
   static const String stockCategoryListAPI = "$stockCategoryAPI/list";
   static const String createStockCategoryAPI = "$stockCategoryAPI/create";
-  static const String stockCategoryTreeAPI = "$stockCategoryAPI/all-category-tree";
+  static const String stockCategoryTreeAPI =
+      "$stockCategoryAPI/all-category-tree";
 
   /// unique Quantity Code
   static const String uniqueQuantityCodeAPI = "/unique_quantity_codes";
-  static const String createUniqueQuantityCodeAPI = "$uniqueQuantityCodeAPI/create";
-  static String uniqueQuantityCodeEndpoint(int id) => "$uniqueQuantityCodeAPI/$id";
+  static const String createUniqueQuantityCodeAPI =
+      "$uniqueQuantityCodeAPI/create";
+  static String uniqueQuantityCodeEndpoint(int id) =>
+      "$uniqueQuantityCodeAPI/$id";
 }

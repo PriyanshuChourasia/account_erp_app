@@ -30,7 +30,8 @@ class ResponseModelWrapper<T> {
     final rawData = json['data'];
     return ResponseModelWrapper<T>(
       code: code,
-      success: json['status'] == 'OK' || (code != null && code >= 200 && code < 300),
+      success:
+          json['status'] == 'OK' || (code != null && code >= 200 && code < 300),
       message: json['message'] as String?,
       data: rawData is Map<String, dynamic>
           ? ResponseData<T>.fromJson(rawData, fromJson: fromJson)
@@ -77,7 +78,7 @@ class ApiErrorModel {
   final String? message;
 
   factory ApiErrorModel.fromJson(Map<String, dynamic> json) => ApiErrorModel(
-        code: json['code'] is int ? json['code'] as int : null,
-        message: json['message'] as String?,
-      );
+    code: json['code'] is int ? json['code'] as int : null,
+    message: json['message'] as String?,
+  );
 }

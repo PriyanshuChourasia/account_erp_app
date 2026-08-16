@@ -37,9 +37,7 @@ class StateScreenState extends State<StateScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete state?'),
-        content: const Text(
-          'This will remove the state from your master.',
-        ),
+        content: const Text('This will remove the state from your master.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -91,13 +89,14 @@ class StateScreenState extends State<StateScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .error
-                        .withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -111,9 +110,7 @@ class StateScreenState extends State<StateScreen> {
                       Expanded(
                         child: Text(
                           viewModel.error!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.error,
                               ),
@@ -128,32 +125,30 @@ class StateScreenState extends State<StateScreen> {
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : states.isEmpty
-                        ? const _EmptyState()
-                        : LayoutBuilder(
-                            builder: (context, constraints) =>
-                                constraints.maxWidth >= 720
-                                    ? _StateTable(
-                                        states: states,
-                                        viewModel: viewModel,
-                                        onDelete: (id) =>
-                                            _confirmDelete(viewModel, id),
-                                      )
-                                    : ListView.separated(
-                                        itemCount: states.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 10),
-                                        itemBuilder: (context, index) {
-                                          final state = states[index];
-                                          return StateCard(
-                                            state: state,
-                                            countryName:
-                                                viewModel.countryNameOf(state),
-                                            onDelete: () => _confirmDelete(
-                                                viewModel, state.id),
-                                          );
-                                        },
-                                      ),
-                          ),
+                    ? const _EmptyState()
+                    : LayoutBuilder(
+                        builder: (context, constraints) =>
+                            constraints.maxWidth >= 720
+                            ? _StateTable(
+                                states: states,
+                                viewModel: viewModel,
+                                onDelete: (id) => _confirmDelete(viewModel, id),
+                              )
+                            : ListView.separated(
+                                itemCount: states.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final state = states[index];
+                                  return StateCard(
+                                    state: state,
+                                    countryName: viewModel.countryNameOf(state),
+                                    onDelete: () =>
+                                        _confirmDelete(viewModel, state.id),
+                                  );
+                                },
+                              ),
+                      ),
               ),
             ],
           ),

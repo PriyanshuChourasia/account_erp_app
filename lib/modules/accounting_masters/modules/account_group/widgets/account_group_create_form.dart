@@ -37,14 +37,18 @@ class AccountGroupCreateForm extends StatefulWidget {
 
 class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
   final _formKey = GlobalKey<FormState>();
-  late final _nameController =
-      TextEditingController(text: widget.initialGroup?.name ?? '');
+  late final _nameController = TextEditingController(
+    text: widget.initialGroup?.name ?? '',
+  );
   late final _codeController = TextEditingController(
-      text: widget.initialGroup?.code?.toString() ?? '');
-  late final _aliasController =
-      TextEditingController(text: widget.initialGroup?.alias ?? '');
-  late final _descriptionController =
-      TextEditingController(text: widget.initialGroup?.description ?? '');
+    text: widget.initialGroup?.code?.toString() ?? '',
+  );
+  late final _aliasController = TextEditingController(
+    text: widget.initialGroup?.alias ?? '',
+  );
+  late final _descriptionController = TextEditingController(
+    text: widget.initialGroup?.description ?? '',
+  );
 
   static const _primaryOption = _ParentOption('Primary', null);
   late _ParentOption _parent = _parentOptions.firstWhere(
@@ -57,8 +61,7 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
   void initState() {
     super.initState();
     final natureViewModel = context.read<AccountNatureViewModel>();
-    if (natureViewModel.accountNatures.isEmpty &&
-        !natureViewModel.isLoading) {
+    if (natureViewModel.accountNatures.isEmpty && !natureViewModel.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) natureViewModel.loadAccountNatures();
       });
@@ -84,8 +87,7 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
   }
 
   List<AccountNature> get _natureOptions {
-    final natures =
-        context.read<AccountNatureViewModel>().accountNatures;
+    final natures = context.read<AccountNatureViewModel>().accountNatures;
     return natures.isEmpty ? AccountNature.demo : natures;
   }
 
@@ -102,24 +104,28 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
 
     final initialGroup = widget.initialGroup;
     if (initialGroup != null) {
-      Navigator.of(context).pop(UpdateAccountGroupRequest(
-        id: initialGroup.id,
-        name: name,
-        code: code,
-        alias: alias,
-        description: description,
-        parentId: _parent.id,
-        accountNatureId: _accountNatureId!,
-      ));
+      Navigator.of(context).pop(
+        UpdateAccountGroupRequest(
+          id: initialGroup.id,
+          name: name,
+          code: code,
+          alias: alias,
+          description: description,
+          parentId: _parent.id,
+          accountNatureId: _accountNatureId!,
+        ),
+      );
     } else {
-      Navigator.of(context).pop(CreateAccountGroupRequest(
-        name: name,
-        code: code,
-        alias: alias,
-        description: description,
-        parentId: _parent.id,
-        accountNatureId: _accountNatureId!,
-      ));
+      Navigator.of(context).pop(
+        CreateAccountGroupRequest(
+          name: name,
+          code: code,
+          alias: alias,
+          description: description,
+          parentId: _parent.id,
+          accountNatureId: _accountNatureId!,
+        ),
+      );
     }
   }
 
@@ -128,7 +134,9 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
     final isEditing = widget.initialGroup != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit accounting group' : 'Add accounting group'),
+        title: Text(
+          isEditing ? 'Edit accounting group' : 'Add accounting group',
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -154,17 +162,15 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
                       ),
                       validator: (value) =>
                           (value == null || value.trim().isEmpty)
-                              ? 'Enter a group name'
-                              : null,
+                          ? 'Enter a group name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     const _FieldLabel('Code'),
                     TextFormField(
                       controller: _codeController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: 'e.g. 101',
-                      ),
+                      decoration: const InputDecoration(hintText: 'e.g. 101'),
                       validator: (value) {
                         final text = value?.trim() ?? '';
                         if (text.isEmpty) return 'Enter a group code';
@@ -198,27 +204,26 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
                     const _SectionLabel('Under'),
                     const SizedBox(height: 16),
                     Autocomplete<_ParentOption>(
-                      initialValue:
-                          TextEditingValue(text: _parent.name),
+                      initialValue: TextEditingValue(text: _parent.name),
                       displayStringForOption: (option) => option.name,
                       optionsBuilder: (TextEditingValue value) {
                         final query = value.text.trim().toLowerCase();
                         if (query.isEmpty) return _parentOptions;
                         return _parentOptions
-                            .where((option) =>
-                                option.name.toLowerCase().contains(query))
+                            .where(
+                              (option) =>
+                                  option.name.toLowerCase().contains(query),
+                            )
                             .toList();
                       },
-                      onSelected: (option) =>
-                          setState(() => _parent = option),
+                      onSelected: (option) => setState(() => _parent = option),
                       fieldViewBuilder: (context, controller, focusNode, _) {
                         return TextField(
                           controller: controller,
                           focusNode: focusNode,
                           decoration: const InputDecoration(
                             hintText: 'Search and select a parent group',
-                            suffixIcon:
-                                Icon(Icons.arrow_drop_down_rounded),
+                            suffixIcon: Icon(Icons.arrow_drop_down_rounded),
                           ),
                         );
                       },
@@ -229,12 +234,12 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
                             elevation: 4,
                             borderRadius: BorderRadius.circular(12),
                             child: ConstrainedBox(
-                              constraints:
-                                  const BoxConstraints(maxWidth: 480),
+                              constraints: const BoxConstraints(maxWidth: 480),
                               child: ListView(
                                 shrinkWrap: true,
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 4),
+                                  vertical: 4,
+                                ),
                                 children: [
                                   for (final option in options)
                                     ListTile(
@@ -259,23 +264,44 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
                     const SizedBox(height: 24),
                     const _SectionLabel('Account Nature'),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<int>(
+                    FormField<int>(
                       initialValue: _accountNatureId,
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        hintText: 'Select an account nature',
-                      ),
-                      items: [
-                        for (final nature in _natureOptions)
-                          DropdownMenuItem(
-                            value: nature.id,
-                            child: Text(nature.name),
-                          ),
-                      ],
-                      onChanged: (value) =>
-                          setState(() => _accountNatureId = value),
                       validator: (value) =>
                           value == null ? 'Select an account nature' : null,
+                      builder: (field) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (final nature in _natureOptions)
+                                ChoiceChip(
+                                  label: Text(nature.name),
+                                  selected: _accountNatureId == nature.id,
+                                  onSelected: (selected) {
+                                    setState(
+                                      () => _accountNatureId = selected
+                                          ? nature.id
+                                          : null,
+                                    );
+                                    field.didChange(_accountNatureId);
+                                  },
+                                ),
+                            ],
+                          ),
+                          if (field.hasError) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              field.errorText!,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 28),
                     Row(
@@ -314,10 +340,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }
@@ -334,9 +360,9 @@ class _FieldLabel extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

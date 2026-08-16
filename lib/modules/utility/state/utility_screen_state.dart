@@ -32,9 +32,9 @@ class UtilityScreenState extends State<UtilityScreen> {
           MaterialPageRoute<void>(builder: (_) => const CalculatorScreen()),
         );
       case 1:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const TerminalScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const TerminalScreen()));
     }
   }
 

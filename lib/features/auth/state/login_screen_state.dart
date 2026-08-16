@@ -103,8 +103,9 @@ class LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary
-                                        .withValues(alpha: 0.3),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                     blurRadius: 18,
                                     offset: const Offset(0, 8),
                                   ),
@@ -145,8 +146,8 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             validator: (value) =>
                                 (value == null || value.trim().isEmpty)
-                                    ? 'Enter your username or email'
-                                    : null,
+                                ? 'Enter your username or email'
+                                : null,
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -157,8 +158,9 @@ class LoginScreenState extends State<LoginScreen> {
                             onFieldSubmitted: (_) => _submit(),
                             decoration: InputDecoration(
                               labelText: 'Password',
-                              prefixIcon:
-                                  const Icon(Icons.lock_outline_rounded),
+                              prefixIcon: const Icon(
+                                Icons.lock_outline_rounded,
+                              ),
                               suffixIcon: IconButton(
                                 tooltip: _obscurePassword
                                     ? 'Show password'
@@ -175,8 +177,8 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             validator: (value) =>
                                 (value == null || value.isEmpty)
-                                    ? 'Enter your password'
-                                    : null,
+                                ? 'Enter your password'
+                                : null,
                           ),
                           const SizedBox(height: 24),
                           PrimaryButton(

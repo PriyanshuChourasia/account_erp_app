@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../config/theme/app_theme.dart';
-import '../models/uqc.dart';
+import '../models/unique_quantity_code.dart';
 
 /// Row card for a single UQC.
-class UqcCard extends StatelessWidget {
-  const UqcCard({super.key, required this.uqc, this.onEdit});
+class UniqueQuantityCodeCard extends StatelessWidget {
+  const UniqueQuantityCodeCard({super.key, required this.uqc, this.onEdit});
 
-  final Uqc uqc;
+  final UniqueQuantityCode uqc;
   final VoidCallback? onEdit;
 
   @override

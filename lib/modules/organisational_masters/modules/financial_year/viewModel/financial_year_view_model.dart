@@ -48,12 +48,14 @@ class FinancialYearViewModel extends ChangeNotifier {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _financialYears;
     return _financialYears
-        .where((year) =>
-            year.name.toLowerCase().contains(query) ||
-            year.id.toString().contains(query) ||
-            (year.code?.toLowerCase().contains(query) ?? false) ||
-            (year.startDate?.contains(query) ?? false) ||
-            (year.endDate?.contains(query) ?? false))
+        .where(
+          (year) =>
+              year.name.toLowerCase().contains(query) ||
+              year.id.toString().contains(query) ||
+              (year.code?.toLowerCase().contains(query) ?? false) ||
+              (year.startDate?.contains(query) ?? false) ||
+              (year.endDate?.contains(query) ?? false),
+        )
         .toList();
   }
 

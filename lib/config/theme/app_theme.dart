@@ -13,10 +13,22 @@ class AppColors {
   static const Color border = Color(0xFFE2E8F0);
 
   // Stat-card gradients.
-  static const List<Color> gradientBlue = [Color(0xFF1D4ED8), Color(0xFF3B82F6)];
-  static const List<Color> gradientGreen = [Color(0xFF059669), Color(0xFF34D399)];
-  static const List<Color> gradientAmber = [Color(0xFFD97706), Color(0xFFFBBF24)];
-  static const List<Color> gradientPurple = [Color(0xFF7C3AED), Color(0xFFA78BFA)];
+  static const List<Color> gradientBlue = [
+    Color(0xFF1D4ED8),
+    Color(0xFF3B82F6),
+  ];
+  static const List<Color> gradientGreen = [
+    Color(0xFF059669),
+    Color(0xFF34D399),
+  ];
+  static const List<Color> gradientAmber = [
+    Color(0xFFD97706),
+    Color(0xFFFBBF24),
+  ];
+  static const List<Color> gradientPurple = [
+    Color(0xFF7C3AED),
+    Color(0xFFA78BFA),
+  ];
 }
 
 /// App-wide [ThemeData]. Keep visual styling here rather than inline.
@@ -49,8 +61,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         hintStyle: const TextStyle(color: AppColors.textSecondary),
         prefixIconColor: AppColors.textSecondary,
         border: OutlineInputBorder(
@@ -80,7 +94,9 @@ class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
       ),
       cardTheme: CardThemeData(

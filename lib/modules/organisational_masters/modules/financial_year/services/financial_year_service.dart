@@ -13,16 +13,17 @@ class FinancialYearService {
       _apiService.get(OrganisationalApiConfig.financialYearAPI);
 
   Future<Map<String, dynamic>> createFinancialYear(
-          CreateFinancialYearRequest request) =>
-      _apiService.post(
-        OrganisationalApiConfig.createFinancialYearAPI,
-        data: request.toJson(),
-      );
+    CreateFinancialYearRequest request,
+  ) => _apiService.post(
+    OrganisationalApiConfig.createFinancialYearAPI,
+    data: request.toJson(),
+  );
 
   Future<Map<String, dynamic>> updateCurrentFinancialYear(
-          int id, bool current) =>
-      _apiService.get(
-        OrganisationalApiConfig.updateFinancialYearCurrentAPI,
-        queryParameters: {'id': id, 'current': current},
-      );
+    int id,
+    bool current,
+  ) => _apiService.get(
+    OrganisationalApiConfig.updateFinancialYearCurrentAPI,
+    queryParameters: {'id': id, 'current': current},
+  );
 }

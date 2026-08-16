@@ -28,11 +28,13 @@ class CountryViewModel extends ChangeNotifier {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _countries;
     return _countries
-        .where((country) =>
-            country.name.toLowerCase().contains(query) ||
-            country.id.toString().contains(query) ||
-            (country.code?.toLowerCase().contains(query) ?? false) ||
-            (country.alias?.toLowerCase().contains(query) ?? false))
+        .where(
+          (country) =>
+              country.name.toLowerCase().contains(query) ||
+              country.id.toString().contains(query) ||
+              (country.code?.toLowerCase().contains(query) ?? false) ||
+              (country.alias?.toLowerCase().contains(query) ?? false),
+        )
         .toList();
   }
 

@@ -44,11 +44,13 @@ class StateViewModel extends ChangeNotifier {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _states;
     return _states
-        .where((state) =>
-            state.name.toLowerCase().contains(query) ||
-            state.id.toString().contains(query) ||
-            (state.code?.toLowerCase().contains(query) ?? false) ||
-            countryNameOf(state).toLowerCase().contains(query))
+        .where(
+          (state) =>
+              state.name.toLowerCase().contains(query) ||
+              state.id.toString().contains(query) ||
+              (state.code?.toLowerCase().contains(query) ?? false) ||
+              countryNameOf(state).toLowerCase().contains(query),
+        )
         .toList();
   }
 

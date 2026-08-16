@@ -1,31 +1,31 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../../../core/app_exception.dart';
-import '../models/create_uqc_request.dart';
-import '../models/update_uqc_request.dart';
-import '../models/uqc.dart';
-import '../repository/uqc_repository.dart';
+import '../models/create_unique_quantity_code_request.dart';
+import '../models/update_unique_quantity_code_request.dart';
+import '../models/unique_quantity_code.dart';
+import '../repository/unique_quantity_code_repository.dart';
 
 /// Holds all UQC UI state.
 ///
 /// Screens only ever interact with this class — never with the repository.
-class UqcViewModel extends ChangeNotifier {
-  UqcViewModel(this._repository);
+class UniqueQuantityCodeViewModel extends ChangeNotifier {
+  UniqueQuantityCodeViewModel(this._repository);
 
-  final UqcRepository _repository;
+  final UniqueQuantityCodeRepository _repository;
 
   bool _isLoading = false;
   String? _error;
-  List<Uqc> _uqcs = const [];
+  List<UniqueQuantityCode> _uqcs = const [];
   String _query = '';
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   String get query => _query;
-  List<Uqc> get uqcs => _uqcs;
+  List<UniqueQuantityCode> get uqcs => _uqcs;
 
   /// UQCs filtered by the current search query.
-  List<Uqc> get filteredUqcs {
+  List<UniqueQuantityCode> get filteredUniqueQuantityCodes {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _uqcs;
     return _uqcs
@@ -38,12 +38,12 @@ class UqcViewModel extends ChangeNotifier {
         .toList();
   }
 
-  Future<void> loadUqcs() async {
+  Future<void> loadUniqueQuantityCodes() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
     try {
-      _uqcs = await _repository.fetchUqcs();
+      _uqcs = await _repository.fetchUniqueQuantityCodes();
     } on AppException catch (error) {
       _error = error.message;
     } catch (_) {
@@ -59,12 +59,14 @@ class UqcViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addUqc(CreateUqcRequest request) async {
+  Future<bool> addUniqueQuantityCode(
+    CreateUniqueQuantityCodeRequest request,
+  ) async {
     _error = null;
     notifyListeners();
     try {
-      await _repository.createUqc(request);
-      await loadUqcs();
+      await _repository.createUniqueQuantityCode(request);
+      await loadUniqueQuantityCodes();
       return true;
     } on AppException catch (error) {
       _error = error.message;
@@ -75,12 +77,14 @@ class UqcViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateUqc(UpdateUqcRequest request) async {
+  Future<bool> updateUniqueQuantityCode(
+    UpdateUniqueQuantityCodeRequest request,
+  ) async {
     _error = null;
     notifyListeners();
     try {
-      await _repository.updateUqc(request);
-      await loadUqcs();
+      await _repository.updateUniqueQuantityCode(request);
+      await loadUniqueQuantityCodes();
       return true;
     } on AppException catch (error) {
       _error = error.message;

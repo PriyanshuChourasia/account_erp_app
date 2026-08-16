@@ -9,7 +9,8 @@ import '../widgets/master_card.dart';
 
 /// State for [OrganisationalMastersScreen]. Kept out of the screen file to
 /// follow the StatefulWidget split pattern.
-class OrganisationalMastersScreenState extends State<OrganisationalMastersScreen> {
+class OrganisationalMastersScreenState
+    extends State<OrganisationalMastersScreen> {
   static const _masters = [
     (
       title: 'Country',
@@ -35,13 +36,13 @@ class OrganisationalMastersScreenState extends State<OrganisationalMastersScreen
   void _openMaster(int index) {
     switch (index) {
       case 0:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const CountryScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const CountryScreen()));
       case 1:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const StateScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const StateScreen()));
       case 2:
         Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => const FinancialYearScreen()),

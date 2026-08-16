@@ -13,16 +13,16 @@ class UserModel {
   final String? role;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: '${json['id'] ?? ''}',
-        name: json['name'] as String? ?? '',
-        email: json['email'] as String? ?? '',
-        role: json['role'] as String?,
-      );
+    id: '${json['id'] ?? ''}',
+    name: json['name'] as String? ?? '',
+    email: json['email'] as String? ?? '',
+    role: json['role'] as String?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'email': email,
-        if (role != null) 'role': role,
-      };
+    'id': id,
+    'name': name,
+    'email': email,
+    if (role != null) 'role': role,
+  };
 }

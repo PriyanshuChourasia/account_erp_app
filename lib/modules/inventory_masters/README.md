@@ -9,8 +9,11 @@ stock locations, etc.).
   - `stock_group/` — stock groups used to classify inventory items
   - `stock_category/` — stock categories used to classify inventory items
   - `unit/` — units of measurement used to quantify items
-  - `uqc/` — GST unit quantity codes for items
-  - planned: `item/`, `location/`
+  - `unique_quantity_code/` — GST unit quantity codes for items
+  - `stock_item/` — individual inventory items, classified under a stock
+    group/category and quantified in a unit (lean scaffold — no GST/HSN or
+    opening-balance fields yet)
+  - planned: `location/`
 - `screens/` — top-level screens for this module:
   - `inventory_masters_screen.dart` — index screen listing the masters as
     tappable cards

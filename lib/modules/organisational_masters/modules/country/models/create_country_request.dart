@@ -18,9 +18,9 @@ class CreateCountryRequest {
   final String? description;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        if (code != null) 'code': code,
-        if (alias != null) 'alias': alias,
-        if (description != null) 'description': description,
-      };
+    'name': name,
+    if (code != null) 'code': code,
+    if (alias != null) 'alias': alias,
+    if (description != null) 'description': description,
+  };
 }

@@ -19,18 +19,17 @@ class ItemScreenState extends State<ItemScreen> {
   }
 
   Future<void> _openAddItemDialog() async {
-    final result = await showDialog<
-        ({String name, String category, double price, int stock})>(
-      context: context,
-      builder: (_) => const ItemAddDialog(),
-    );
+    final result =
+        await showDialog<
+          ({String name, String category, double price, int stock})
+        >(context: context, builder: (_) => const ItemAddDialog());
     if (result == null || !mounted) return;
     await context.read<ItemViewModel>().addItem(
-          name: result.name,
-          category: result.category,
-          price: result.price,
-          stock: result.stock,
-        );
+      name: result.name,
+      category: result.category,
+      price: result.price,
+      stock: result.stock,
+    );
   }
 
   Future<void> _confirmDelete(ItemViewModel viewModel, String id) async {
@@ -88,19 +87,19 @@ class ItemScreenState extends State<ItemScreen> {
             child: viewModel.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : items.isEmpty
-                    ? const _EmptyState()
-                    : ListView.separated(
-                        itemCount: items.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final item = items[index];
-                          return ItemCard(
-                            item: item,
-                            onDelete: () => _confirmDelete(viewModel, item.id),
-                          );
-                        },
-                      ),
+                ? const _EmptyState()
+                : ListView.separated(
+                    itemCount: items.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return ItemCard(
+                        item: item,
+                        onDelete: () => _confirmDelete(viewModel, item.id),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
