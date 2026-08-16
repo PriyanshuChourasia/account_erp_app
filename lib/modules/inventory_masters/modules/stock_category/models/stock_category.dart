@@ -30,16 +30,16 @@ class StockCategory {
   final Color color;
 
   factory StockCategory.fromJson(Map<String, dynamic> json) => StockCategory(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: json['code'] as String?,
-        alias: json['alias'] as String?,
-        description: json['description'] as String?,
-        isActive: json['isActive'] == true,
-        children: (json['children'] as List<dynamic>?)
-            ?.map((child) => StockCategory.fromJson(child as Map<String, dynamic>))
-            .toList(),
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: json['code'] as String?,
+    alias: json['alias'] as String?,
+    description: json['description'] as String?,
+    isActive: json['isActive'] == true,
+    children: (json['children'] as List<dynamic>?)
+        ?.map((child) => StockCategory.fromJson(child as Map<String, dynamic>))
+        .toList(),
+  );
 
   static const List<StockCategory> demo = [
     StockCategory(

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
+import '../../uqc/models/uqc.dart';
+import '../../uqc/viewModel/uqc_view_model.dart';
 import '../models/create_unit_request.dart';
+import '../models/stock_unit_type.dart';
 
 /// Uppercases whatever the user types into a field.
 class _UpperCaseTextFormatter extends TextInputFormatter {
@@ -33,6 +37,19 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
   final _descriptionController = TextEditingController();
+  StockUnitType _unitType = StockUnitType.simple;
+  Uqc? _uqc;
+
+  @override
+  void initState() {
+    super.initState();
+    final uqcViewModel = context.read<UqcViewModel>();
+    if (uqcViewModel.uqcs.isEmpty && !uqcViewModel.isLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) uqcViewModel.loadUqcs();
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -44,19 +61,31 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    Navigator.of(context).pop(CreateUnitRequest(
-      name: _nameController.text.trim(),
-      code: _codeController.text.trim().isEmpty
-          ? null
-          : _codeController.text.trim().toUpperCase(),
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-    ));
+    Navigator.of(context).pop(
+      CreateUnitRequest(
+        name: _nameController.text.trim(),
+        code: _codeController.text.trim().isEmpty
+            ? null
+            : _codeController.text.trim().toUpperCase(),
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+        unitType: _unitType,
+        uqcId: _uqc?.id,
+      ),
+    );
+  }
+
+  List<Uqc> get _uqcOptions {
+    final uqcs = context.read<UqcViewModel>().uqcs;
+    return uqcs.isEmpty ? Uqc.demo : uqcs;
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final dialogWidth = screenWidth < 480 ? screenWidth * 0.9 : 420.0;
+
     return AlertDialog(
       titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
       title: Row(
@@ -77,56 +106,107 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
           const Text('Add unit'),
         ],
       ),
-      content: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const _SectionLabel('Details'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _nameController,
-                autofocus: true,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  hintText: 'e.g. Piece',
-                  prefixIcon: Icon(Icons.square_foot_rounded),
+      content: SizedBox(
+        width: dialogWidth,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const _SectionLabel('Details'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _nameController,
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    hintText: 'e.g. Piece',
+                    prefixIcon: Icon(Icons.square_foot_rounded),
+                  ),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? 'Enter a unit name'
+                      : null,
                 ),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'Enter a unit name'
-                    : null,
-              ),
-              const SizedBox(height: 14),
-              TextFormField(
-                controller: _codeController,
-                textCapitalization: TextCapitalization.characters,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9_-]')),
-                  _UpperCaseTextFormatter(),
-                ],
-                decoration: const InputDecoration(
-                  labelText: 'Code (optional)',
-                  hintText: 'e.g. PCS',
-                  prefixIcon: Icon(Icons.tag_rounded),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _codeController,
+                  textCapitalization: TextCapitalization.characters,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9_-]')),
+                    _UpperCaseTextFormatter(),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'Code (optional)',
+                    hintText: 'e.g. PCS',
+                    prefixIcon: Icon(Icons.tag_rounded),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              const _SectionLabel('Notes'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _descriptionController,
-                textCapitalization: TextCapitalization.sentences,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  alignLabelWithHint: true,
-                  prefixIcon: Icon(Icons.notes_rounded),
+                const SizedBox(height: 14),
+                DropdownButtonFormField<StockUnitType>(
+                  initialValue: _unitType,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Unit type',
+                    prefixIcon: Icon(Icons.category_outlined),
+                  ),
+                  items: [
+                    for (final type in StockUnitType.values)
+                      DropdownMenuItem(
+                        value: type,
+                        child: Text(
+                          type.name.toUpperCase(),
+                        ),
+                      ),
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _unitType = value ?? _unitType),
                 ),
-              ),
-            ],
+                const SizedBox(height: 14),
+                DropdownButtonFormField<int>(
+                  initialValue: _uqc?.id,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'UQC (optional)',
+                    hintText: 'Select a Unit Quantity Code',
+                    prefixIcon: Icon(Icons.pin_outlined),
+                  ),
+                  items: [
+                    for (final uqc in _uqcOptions)
+                      DropdownMenuItem(
+                        value: uqc.id,
+                        child: Text(
+                          uqc.code == null
+                              ? uqc.name
+                              : '${uqc.code} — ${uqc.name}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                  onChanged: (value) => setState(() {
+                    _uqc = _uqcOptions
+                        .where((uqc) => uqc.id == value)
+                        .firstOrNull;
+                  }),
+                ),
+                const SizedBox(height: 20),
+                const _SectionLabel('Notes'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _descriptionController,
+                  textCapitalization: TextCapitalization.sentences,
+                  minLines: 3,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    alignLabelWithHint: true,
+                    prefixIcon: Icon(Icons.notes_rounded),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -156,10 +236,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }

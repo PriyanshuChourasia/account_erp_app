@@ -34,9 +34,7 @@ class UnitScreenState extends State<UnitScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete unit?'),
-        content: const Text(
-          'This will remove the unit from your master.',
-        ),
+        content: const Text('This will remove the unit from your master.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -88,11 +86,14 @@ class UnitScreenState extends State<UnitScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.error.withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -106,7 +107,8 @@ class UnitScreenState extends State<UnitScreen> {
                       Expanded(
                         child: Text(
                           viewModel.error!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.error,
                               ),
                         ),
@@ -120,29 +122,28 @@ class UnitScreenState extends State<UnitScreen> {
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : units.isEmpty
-                        ? const _EmptyState()
-                        : LayoutBuilder(
-                            builder: (context, constraints) =>
-                                constraints.maxWidth >= 720
-                                    ? _UnitTable(
-                                        units: units,
-                                        onDelete: (id) =>
-                                            _confirmDelete(viewModel, id),
-                                      )
-                                    : ListView.separated(
-                                        itemCount: units.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 10),
-                                        itemBuilder: (context, index) {
-                                          final unit = units[index];
-                                          return UnitCard(
-                                            unit: unit,
-                                            onDelete: () => _confirmDelete(
-                                                viewModel, unit.id),
-                                          );
-                                        },
-                                      ),
-                          ),
+                    ? const _EmptyState()
+                    : LayoutBuilder(
+                        builder: (context, constraints) =>
+                            constraints.maxWidth >= 720
+                            ? _UnitTable(
+                                units: units,
+                                onDelete: (id) => _confirmDelete(viewModel, id),
+                              )
+                            : ListView.separated(
+                                itemCount: units.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final unit = units[index];
+                                  return UnitCard(
+                                    unit: unit,
+                                    onDelete: () =>
+                                        _confirmDelete(viewModel, unit.id),
+                                  );
+                                },
+                              ),
+                      ),
               ),
             ],
           ),

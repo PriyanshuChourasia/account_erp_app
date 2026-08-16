@@ -1,4 +1,5 @@
 import 'package:account_erp_app/modules/accounting_masters/modules/account_group/models/create_account_group_request.dart';
+import 'package:account_erp_app/modules/accounting_masters/modules/account_group/models/update_account_group_request.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,14 +21,19 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
     });
   }
 
-  Future<void> _openAddDialog() async {
-    final result = await Navigator.of(context).push<CreateAccountGroupRequest>(
+  Future<void> _openForm([AccountGroup? group]) async {
+    final result = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(
-        builder: (_) => const AccountGroupCreateForm(),
+        builder: (_) => AccountGroupCreateForm(initialGroup: group),
       ),
     );
     if (result == null || !mounted) return;
-    await context.read<AccountGroupViewModel>().addAccountGroup(result);
+    final viewModel = context.read<AccountGroupViewModel>();
+    if (result is UpdateAccountGroupRequest) {
+      await viewModel.updateAccountGroup(result);
+    } else if (result is CreateAccountGroupRequest) {
+      await viewModel.addAccountGroup(result);
+    }
   }
 
   Future<void> _confirmDelete(
@@ -82,7 +88,7 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                   ),
                   const SizedBox(width: 12),
                   FilledButton.icon(
-                    onPressed: _openAddDialog,
+                    onPressed: _openForm,
                     icon: const Icon(Icons.add_rounded, size: 18),
                     label: const Text('Add group'),
                   ),
@@ -129,6 +135,11 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                                 constraints.maxWidth >= 720
                                     ? _AccountGroupTable(
                                         groups: groups,
+                                        onEdit: (id) => _openForm(
+                                          groups
+                                              .firstWhere(
+                                                  (g) => g.id == id),
+                                        ),
                                         onDelete: (id) =>
                                             _confirmDelete(viewModel, id),
                                       )
@@ -140,6 +151,8 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                                           final group = groups[index];
                                           return AccountGroupCard(
                                             group: group,
+                                            onEdit: () =>
+                                                _openForm(group),
                                             onDelete: () => _confirmDelete(
                                                 viewModel, group.id),
                                           );
@@ -157,9 +170,14 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
 
 /// Table view of accounting groups for wide screens.
 class _AccountGroupTable extends StatelessWidget {
-  const _AccountGroupTable({required this.groups, required this.onDelete});
+  const _AccountGroupTable({
+    required this.groups,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   final List<AccountGroup> groups;
+  final ValueChanged<int> onEdit;
   final ValueChanged<int> onDelete;
 
   String _underName(AccountGroup group) {
@@ -211,14 +229,28 @@ class _AccountGroupTable extends StatelessWidget {
                   ),
                   DataCell(_StatusBadge(isActive: group.isActive)),
                   DataCell(
-                    IconButton(
-                      tooltip: 'Delete group',
-                      icon: const Icon(
-                        Icons.delete_outline_rounded,
-                        size: 20,
-                        color: AppColors.textSecondary,
-                      ),
-                      onPressed: () => onDelete(group.id),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          tooltip: 'Edit group',
+                          icon: const Icon(
+                            Icons.edit_outlined,
+                            size: 20,
+                            color: AppColors.textSecondary,
+                          ),
+                          onPressed: () => onEdit(group.id),
+                        ),
+                        IconButton(
+                          tooltip: 'Delete group',
+                          icon: const Icon(
+                            Icons.delete_outline_rounded,
+                            size: 20,
+                            color: AppColors.textSecondary,
+                          ),
+                          onPressed: () => onDelete(group.id),
+                        ),
+                      ],
                     ),
                   ),
                 ],

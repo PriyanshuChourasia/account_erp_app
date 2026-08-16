@@ -1,48 +1,49 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../../../core/app_exception.dart';
-import '../models/create_unit_request.dart';
-import '../models/unit.dart';
-import '../repository/unit_repository.dart';
+import '../models/create_uqc_request.dart';
+import '../models/update_uqc_request.dart';
+import '../models/uqc.dart';
+import '../repository/uqc_repository.dart';
 
-/// Holds all unit UI state.
+/// Holds all UQC UI state.
 ///
 /// Screens only ever interact with this class — never with the repository.
-class UnitViewModel extends ChangeNotifier {
-  UnitViewModel(this._repository);
+class UqcViewModel extends ChangeNotifier {
+  UqcViewModel(this._repository);
 
-  final UnitRepository _repository;
+  final UqcRepository _repository;
 
   bool _isLoading = false;
   String? _error;
-  List<Unit> _units = const [];
+  List<Uqc> _uqcs = const [];
   String _query = '';
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   String get query => _query;
-  List<Unit> get units => _units;
+  List<Uqc> get uqcs => _uqcs;
 
-  /// Units filtered by the current search query.
-  List<Unit> get filteredUnits {
+  /// UQCs filtered by the current search query.
+  List<Uqc> get filteredUqcs {
     final query = _query.trim().toLowerCase();
-    if (query.isEmpty) return _units;
-    return _units
+    if (query.isEmpty) return _uqcs;
+    return _uqcs
         .where(
-          (unit) =>
-              unit.name.toLowerCase().contains(query) ||
-              unit.id.toString().contains(query) ||
-              (unit.code?.toLowerCase().contains(query) ?? false),
+          (uqc) =>
+              uqc.name.toLowerCase().contains(query) ||
+              uqc.id.toString().contains(query) ||
+              (uqc.code?.toLowerCase().contains(query) ?? false),
         )
         .toList();
   }
 
-  Future<void> loadUnits() async {
+  Future<void> loadUqcs() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
     try {
-      _units = await _repository.fetchUnits();
+      _uqcs = await _repository.fetchUqcs();
     } on AppException catch (error) {
       _error = error.message;
     } catch (_) {
@@ -58,12 +59,12 @@ class UnitViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addUnit(CreateUnitRequest request) async {
+  Future<bool> addUqc(CreateUqcRequest request) async {
     _error = null;
     notifyListeners();
     try {
-      await _repository.createUnit(request);
-      await loadUnits();
+      await _repository.createUqc(request);
+      await loadUqcs();
       return true;
     } on AppException catch (error) {
       _error = error.message;
@@ -74,12 +75,12 @@ class UnitViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteUnit(int id) async {
+  Future<bool> updateUqc(UpdateUqcRequest request) async {
     _error = null;
     notifyListeners();
     try {
-      await _repository.deleteUnit(id);
-      await loadUnits();
+      await _repository.updateUqc(request);
+      await loadUqcs();
       return true;
     } on AppException catch (error) {
       _error = error.message;

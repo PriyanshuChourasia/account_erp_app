@@ -2,6 +2,7 @@ import 'package:account_erp_app/modules/accounting_masters/configs/accounting_ap
 
 import '../../../../../network/api_service.dart';
 import '../models/create_account_group_request.dart';
+import '../models/update_account_group_request.dart';
 
 /// Raw HTTP calls for accounting groups. No parsing, no state.
 class AccountGroupService {
@@ -16,6 +17,13 @@ class AccountGroupService {
           CreateAccountGroupRequest request) =>
       _apiService.post(
         AccountingApiConfig.createAccountGroupAPI,
+        data: request.toJson(),
+      );
+
+  Future<Map<String, dynamic>> updateAccountGroup(
+          int id, UpdateAccountGroupRequest request) =>
+      _apiService.put(
+        AccountingApiConfig.accountGroupEndpoint(id),
         data: request.toJson(),
       );
 

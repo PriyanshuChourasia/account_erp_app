@@ -17,6 +17,8 @@ import '../modules/inventory_masters/modules/stock_group/repository/stock_group_
 import '../modules/inventory_masters/modules/stock_group/services/stock_group_service.dart';
 import '../modules/inventory_masters/modules/unit/repository/unit_repository.dart';
 import '../modules/inventory_masters/modules/unit/services/unit_service.dart';
+import '../modules/inventory_masters/modules/uqc/repository/uqc_repository.dart';
+import '../modules/inventory_masters/modules/uqc/services/uqc_service.dart';
 import '../modules/organisational_masters/modules/country/repository/country_repository.dart';
 import '../modules/organisational_masters/modules/country/services/country_service.dart';
 import '../modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
@@ -84,6 +86,12 @@ Future<void> initServiceLocator() async {
     )
     ..registerLazySingleton<UnitRepository>(
       () => UnitRepository(globalService<UnitService>()),
+    )
+    ..registerLazySingleton<UqcService>(
+      () => UqcService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<UqcRepository>(
+      () => UqcRepository(globalService<UqcService>()),
     )
     ..registerLazySingleton<AccountNatureService>(
       () => AccountNatureService(globalService<ApiService>()),

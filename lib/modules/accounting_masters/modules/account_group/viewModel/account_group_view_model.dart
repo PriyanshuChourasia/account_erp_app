@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../../core/app_exception.dart';
 import '../models/account_group.dart';
 import '../models/create_account_group_request.dart';
+import '../models/update_account_group_request.dart';
 import '../repository/account_group_repository.dart';
 
 /// Holds all accounting group UI state.
@@ -61,6 +62,22 @@ class AccountGroupViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       await _repository.createAccountGroup(request);
+      await loadAccountGroups();
+      return true;
+    } on AppException catch (error) {
+      _error = error.message;
+      return false;
+    } catch (_) {
+      _error = 'Something went wrong. Please try again.';
+      return false;
+    }
+  }
+
+  Future<bool> updateAccountGroup(UpdateAccountGroupRequest request) async {
+    _error = null;
+    notifyListeners();
+    try {
+      await _repository.updateAccountGroup(request);
       await loadAccountGroups();
       return true;
     } on AppException catch (error) {

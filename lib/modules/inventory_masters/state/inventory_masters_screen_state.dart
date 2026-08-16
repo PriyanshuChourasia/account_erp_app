@@ -4,6 +4,7 @@ import '../../../../config/theme/app_theme.dart';
 import '../modules/stock_category/screens/stock_category_screen.dart';
 import '../modules/stock_group/screens/stock_group_screen.dart';
 import '../modules/unit/screens/unit_screen.dart';
+import '../modules/uqc/screens/uqc_screen.dart';
 import '../screens/inventory_masters_screen.dart';
 import '../widgets/master_card.dart';
 
@@ -29,6 +30,12 @@ class InventoryMastersScreenState extends State<InventoryMastersScreen> {
       icon: Icons.square_foot_rounded,
       color: Color(0xFFD97706),
     ),
+    (
+      title: 'UQC',
+      subtitle: 'GST unit quantity codes for items',
+      icon: Icons.straighten_rounded,
+      color: Color(0xFF7C3AED),
+    ),
     // Add more masters here: Item, Location, ...
   ];
 
@@ -43,9 +50,13 @@ class InventoryMastersScreenState extends State<InventoryMastersScreen> {
           MaterialPageRoute<void>(builder: (_) => const StockCategoryScreen()),
         );
       case 2:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const UnitScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const UnitScreen()));
+      case 3:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const UqcScreen()));
     }
   }
 

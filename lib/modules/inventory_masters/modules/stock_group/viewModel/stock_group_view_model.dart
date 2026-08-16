@@ -26,11 +26,15 @@ class StockGroupViewModel extends ChangeNotifier {
   List<StockGroup> get filteredStockGroups {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _stockGroups;
-    return _stockGroups.where((group) =>
-        group.name.toLowerCase().contains(query) ||
-        group.id.toString().contains(query) ||
-        (group.code?.toLowerCase().contains(query) ?? false) ||
-        (group.alias?.toLowerCase().contains(query) ?? false)).toList();
+    return _stockGroups
+        .where(
+          (group) =>
+              group.name.toLowerCase().contains(query) ||
+              group.id.toString().contains(query) ||
+              (group.code?.toLowerCase().contains(query) ?? false) ||
+              (group.alias?.toLowerCase().contains(query) ?? false),
+        )
+        .toList();
   }
 
   Future<void> loadStockGroups() async {

@@ -13,15 +13,15 @@ class StockCategoryService {
   Future<Map<String, dynamic>> fetchStockCategories() =>
       _apiService.get(InventoryApiConfig.stockCategoryListAPI);
 
-  Future<Map<String,dynamic>> fetchStockCategoryHierarchy()=> _apiService.get(InventoryApiConfig.stockCategoryTreeAPI);
+  Future<Map<String, dynamic>> fetchStockCategoryHierarchy() =>
+      _apiService.get(InventoryApiConfig.stockCategoryTreeAPI);
 
   Future<Map<String, dynamic>> createStockCategory(
     CreateStockCategoryRequest request,
-  ) =>
-      _apiService.post(
-        InventoryApiConfig.createStockCategoryAPI,
-        data: request.toJson(),
-      );
+  ) => _apiService.post(
+    InventoryApiConfig.createStockCategoryAPI,
+    data: request.toJson(),
+  );
 
   Future<Map<String, dynamic>> deleteStockCategory(int id) =>
       _apiService.delete(ApiConfig.stockCategoryEndpoint(id));

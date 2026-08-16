@@ -48,9 +48,7 @@ class _StockGroupAddDialogState extends State<StockGroupAddDialog> {
       final groups = context.read<StockGroupViewModel>().stockGroups;
       if (groups.isEmpty) return;
       setState(() {
-        _parent = groups
-            .where((group) => group.name == 'Primary')
-            .firstOrNull;
+        _parent = groups.where((group) => group.name == 'Primary').firstOrNull;
         _parent ??= groups.first;
       });
     });
@@ -168,15 +166,20 @@ class _StockGroupAddDialogState extends State<StockGroupAddDialog> {
               const _SectionLabel('Under'),
               const SizedBox(height: 8),
               Autocomplete<StockGroup>(
-                initialValue: TextEditingValue(text: _parent?.name ?? 'Primary'),
+                initialValue: TextEditingValue(
+                  text: _parent?.name ?? 'Primary',
+                ),
                 displayStringForOption: (group) => group.name,
                 optionsBuilder: (TextEditingValue value) {
                   final query = value.text.trim().toLowerCase();
                   if (query.isEmpty) return options;
                   return options
-                      .where((group) =>
-                          group.name.toLowerCase().contains(query) ||
-                          (group.code?.toLowerCase().contains(query) ?? false))
+                      .where(
+                        (group) =>
+                            group.name.toLowerCase().contains(query) ||
+                            (group.code?.toLowerCase().contains(query) ??
+                                false),
+                      )
                       .toList();
                 },
                 onSelected: (group) => setState(() => _parent = group),
@@ -289,10 +292,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }

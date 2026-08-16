@@ -30,24 +30,24 @@ class StockCategoryRepository {
         .toList();
   }
 
-
-  Future<List<StockCategoryHierarchy>> fetchStockCategoryHierarchy()async{
+  Future<List<StockCategoryHierarchy>> fetchStockCategoryHierarchy() async {
     final json = await _stockCategoryService.fetchStockCategoryHierarchy();
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
-    if(!wrapper.success){
+    if (!wrapper.success) {
       throw AppException(
         wrapper.message ?? "Could not load stock hierarchy",
-        code: wrapper.code
+        code: wrapper.code,
       );
     }
     final rawResult = wrapper.data?.result;
-    if(rawResult is! List)return const[];
-    return rawResult.whereType<Map<String,dynamic>>().map(StockCategoryHierarchy.fromJson).toList();
+    if (rawResult is! List) return const [];
+    return rawResult
+        .whereType<Map<String, dynamic>>()
+        .map(StockCategoryHierarchy.fromJson)
+        .toList();
   }
 
-  Future<void> createStockCategory(
-    CreateStockCategoryRequest request,
-  ) async {
+  Future<void> createStockCategory(CreateStockCategoryRequest request) async {
     final json = await _stockCategoryService.createStockCategory(request);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

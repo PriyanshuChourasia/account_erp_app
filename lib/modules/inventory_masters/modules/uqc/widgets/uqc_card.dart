@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../config/theme/app_theme.dart';
-import '../models/account_group.dart';
+import '../models/uqc.dart';
 
-/// Row card for a single accounting group.
-class AccountGroupCard extends StatelessWidget {
-  const AccountGroupCard({
-    super.key,
-    required this.group,
-    this.onEdit,
-    this.onDelete,
-  });
+/// Row card for a single UQC.
+class UqcCard extends StatelessWidget {
+  const UqcCard({super.key, required this.uqc, this.onEdit});
 
-  final AccountGroup group;
+  final Uqc uqc;
   final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${group.id}',
-      if (group.alias != null) 'aka ${group.alias}',
+      '${uqc.id}',
+      if (uqc.code != null) uqc.code!,
+      if (uqc.alias != null) 'aka ${uqc.alias}',
     ].join(' · ');
 
     return Card(
@@ -32,10 +27,10 @@ class AccountGroupCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: group.color.withValues(alpha: 0.12),
+                color: uqc.color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(group.icon, color: group.color, size: 22),
+              child: Icon(uqc.icon, color: uqc.color, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -43,7 +38,7 @@ class AccountGroupCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    group.name,
+                    uqc.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyLarge?.copyWith(
@@ -60,10 +55,10 @@ class AccountGroupCard extends StatelessWidget {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  if (group.description != null) ...[
+                  if (uqc.description != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      group.description!,
+                      uqc.description!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -75,49 +70,33 @@ class AccountGroupCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: group.isActive
-                        ? AppColors.gradientGreen.first.withValues(alpha: 0.12)
-                        : AppColors.textSecondary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    group.isActive ? 'Active' : 'Inactive',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: group.isActive
-                          ? AppColors.gradientGreen.first
-                          : AppColors.textSecondary,
-                    ),
-                  ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: uqc.isActive
+                    ? AppColors.gradientGreen.first.withValues(alpha: 0.12)
+                    : AppColors.textSecondary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                uqc.isActive ? 'Active' : 'Inactive',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: uqc.isActive
+                      ? AppColors.gradientGreen.first
+                      : AppColors.textSecondary,
                 ),
-              ],
+              ),
             ),
             if (onEdit != null)
               IconButton(
-                tooltip: 'Edit group',
+                tooltip: 'Edit UQC',
                 icon: const Icon(
                   Icons.edit_outlined,
                   size: 20,
                   color: AppColors.textSecondary,
                 ),
                 onPressed: onEdit,
-              ),
-            if (onDelete != null)
-              IconButton(
-                tooltip: 'Delete group',
-                icon: const Icon(
-                  Icons.delete_outline_rounded,
-                  size: 20,
-                  color: AppColors.textSecondary,
-                ),
-                onPressed: onDelete,
               ),
           ],
         ),

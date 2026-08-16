@@ -1,3 +1,5 @@
+import 'stock_unit_type.dart';
+
 /// Request payload for creating a unit.
 ///
 /// Mirrors the backend `CreateUnitRequestDTO` record. Nullable fields are
@@ -10,6 +12,7 @@ class CreateUnitRequest {
     this.description,
     this.code,
     this.unitType,
+    this.uqcId,
     this.primaryUnitId,
     this.secondaryUnitId,
     this.conversionFactor,
@@ -21,8 +24,11 @@ class CreateUnitRequest {
   final String? description;
   final String? code;
 
-  /// e.g. `simple` or `compound`.
-  final String? unitType;
+  /// Whether the unit is [StockUnitType.simple] or [StockUnitType.compound].
+  final StockUnitType? unitType;
+
+  /// UQC (Unit Quantity Code) this unit maps to, e.g. `NOS`, `KGS`.
+  final int? uqcId;
   final int? primaryUnitId;
   final int? secondaryUnitId;
 
@@ -31,14 +37,15 @@ class CreateUnitRequest {
   final int? decimalPlaces;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        if (alias != null) 'alias': alias,
-        if (description != null) 'description': description,
-        if (code != null) 'code': code,
-        if (unitType != null) 'unitType': unitType,
-        if (primaryUnitId != null) 'primaryUnitId': primaryUnitId,
-        if (secondaryUnitId != null) 'secondaryUnitId': secondaryUnitId,
-        if (conversionFactor != null) 'conversionFactor': conversionFactor,
-        if (decimalPlaces != null) 'decimalPlaces': decimalPlaces,
-      };
+    'name': name,
+    if (alias != null) 'alias': alias,
+    if (description != null) 'description': description,
+    if (code != null) 'code': code,
+    if (unitType != null) 'unitType': unitType?.wireValue,
+    if (uqcId != null) 'uqcId': uqcId,
+    if (primaryUnitId != null) 'primaryUnitId': primaryUnitId,
+    if (secondaryUnitId != null) 'secondaryUnitId': secondaryUnitId,
+    if (conversionFactor != null) 'conversionFactor': conversionFactor,
+    if (decimalPlaces != null) 'decimalPlaces': decimalPlaces,
+  };
 }

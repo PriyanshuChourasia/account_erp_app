@@ -7,11 +7,11 @@ class ApiConfig {
   ApiConfig._();
 
   // TODO: point this at the real backend.
-  static String  get baseUrl{
-      if(Platform.isAndroid){
-        return 'http://10.0.2.2:8060/api';
-      }
-      return 'http://127.0.0.1:8060/api';
+  static String get baseUrl {
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:8060/api';
+    }
+    return 'http://127.0.0.1:8060/api';
   }
 
   static const Duration connectTimeout = Duration(seconds: 15);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../config/theme/app_theme.dart';
+import 'stock_unit_type.dart';
 
 /// A unit of measurement used to quantify inventory items.
 ///
@@ -14,6 +15,7 @@ class Unit {
     this.description,
     this.code,
     this.unitType,
+    this.uqcId,
     this.operator,
     this.baseUnit1Id,
     this.baseUnit2Id,
@@ -30,8 +32,11 @@ class Unit {
   final String? description;
   final String? code;
 
-  /// e.g. `simple` or `compound`.
-  final String? unitType;
+  /// Whether the unit is [StockUnitType.simple] or [StockUnitType.compound].
+  final StockUnitType? unitType;
+
+  /// UQC (Unit Quantity Code) this unit maps to, e.g. `NOS`, `KGS`.
+  final int? uqcId;
 
   /// Arithmetic operator linking [baseUnit1Id] to [baseUnit2Id].
   final String? operator;
@@ -46,19 +51,20 @@ class Unit {
   final Color color;
 
   factory Unit.fromJson(Map<String, dynamic> json) => Unit(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        alias: json['alias'] as String?,
-        description: json['description'] as String?,
-        code: json['code'] as String?,
-        unitType: json['unitType'] as String?,
-        operator: json['operator'] as String?,
-        baseUnit1Id: (json['baseUnit1Id'] as num?)?.toInt(),
-        baseUnit2Id: (json['baseUnit2Id'] as num?)?.toInt(),
-        conversionFactor: (json['conversionFactor'] as num?)?.toDouble(),
-        decimalPlaces: (json['decimalPlaces'] as num?)?.toInt(),
-        isActive: json['isActive'] == true,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    alias: json['alias'] as String?,
+    description: json['description'] as String?,
+    code: json['code'] as String?,
+    unitType: StockUnitType.fromWire(json['unitType'] as String?),
+    uqcId: (json['uqcId'] as num?)?.toInt(),
+    operator: json['operator'] as String?,
+    baseUnit1Id: (json['baseUnit1Id'] as num?)?.toInt(),
+    baseUnit2Id: (json['baseUnit2Id'] as num?)?.toInt(),
+    conversionFactor: (json['conversionFactor'] as num?)?.toDouble(),
+    decimalPlaces: (json['decimalPlaces'] as num?)?.toInt(),
+    isActive: json['isActive'] == true,
+  );
 
   static const List<Unit> demo = [
     Unit(

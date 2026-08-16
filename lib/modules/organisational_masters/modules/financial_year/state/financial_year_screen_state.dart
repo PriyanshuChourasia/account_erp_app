@@ -194,7 +194,7 @@ class _FinancialYearTable extends StatelessWidget {
             DataColumn(label: Text('Name')),
             DataColumn(label: Text('Code')),
             DataColumn(label: Text('Period')),
-            DataColumn(label: Text('Type')),
+            DataColumn(label: Text('Status')),
             DataColumn(label: Text('')),
           ],
           rows: [

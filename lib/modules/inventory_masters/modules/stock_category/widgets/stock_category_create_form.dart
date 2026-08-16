@@ -76,19 +76,21 @@ class _StockCategoryCreateFormState extends State<StockCategoryCreateForm> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    Navigator.of(context).pop(CreateStockCategoryRequest(
-      name: _nameController.text.trim(),
-      alias: _aliasController.text.trim().isEmpty
-          ? null
-          : _aliasController.text.trim(),
-      code: _codeController.text.trim().isEmpty
-          ? null
-          : _codeController.text.trim().toUpperCase(),
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      parentId: _parent.id,
-    ));
+    Navigator.of(context).pop(
+      CreateStockCategoryRequest(
+        name: _nameController.text.trim(),
+        alias: _aliasController.text.trim().isEmpty
+            ? null
+            : _aliasController.text.trim(),
+        code: _codeController.text.trim().isEmpty
+            ? null
+            : _codeController.text.trim().toUpperCase(),
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+        parentId: _parent.id,
+      ),
+    );
   }
 
   @override
@@ -123,8 +125,8 @@ class _StockCategoryCreateFormState extends State<StockCategoryCreateForm> {
                           ),
                           validator: (value) =>
                               (value == null || value.trim().isEmpty)
-                                  ? 'Enter a category name'
-                                  : null,
+                              ? 'Enter a category name'
+                              : null,
                         ),
                         const SizedBox(height: 14),
                         if (wide)
@@ -134,8 +136,7 @@ class _StockCategoryCreateFormState extends State<StockCategoryCreateForm> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _aliasController,
-                                  textCapitalization:
-                                      TextCapitalization.words,
+                                  textCapitalization: TextCapitalization.words,
                                   decoration: const InputDecoration(
                                     labelText: 'Alias (optional)',
                                     prefixIcon: Icon(
@@ -195,32 +196,38 @@ class _StockCategoryCreateFormState extends State<StockCategoryCreateForm> {
                         const _SectionLabel('Under'),
                         const SizedBox(height: 8),
                         Autocomplete<_ParentOption>(
-                          initialValue:
-                              TextEditingValue(text: _parent.name),
+                          initialValue: TextEditingValue(text: _parent.name),
                           displayStringForOption: (option) => option.name,
                           optionsBuilder: (TextEditingValue value) {
                             final query = value.text.trim().toLowerCase();
                             if (query.isEmpty) return _parentOptions;
                             return _parentOptions
-                                .where((option) =>
-                                    option.name.toLowerCase().contains(query))
+                                .where(
+                                  (option) =>
+                                      option.name.toLowerCase().contains(query),
+                                )
                                 .toList();
                           },
                           onSelected: (option) =>
                               setState(() => _parent = option),
-                          fieldViewBuilder: (context, controller, focusNode, _) {
-                            return TextField(
-                              controller: controller,
-                              focusNode: focusNode,
-                              decoration: const InputDecoration(
-                                labelText: 'Under',
-                                hintText: 'Search and select a parent category',
-                                prefixIcon:
-                                    Icon(Icons.account_tree_outlined),
-                                suffixIcon: Icon(Icons.arrow_drop_down_rounded),
-                              ),
-                            );
-                          },
+                          fieldViewBuilder:
+                              (context, controller, focusNode, _) {
+                                return TextField(
+                                  controller: controller,
+                                  focusNode: focusNode,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Under',
+                                    hintText:
+                                        'Search and select a parent category',
+                                    prefixIcon: Icon(
+                                      Icons.account_tree_outlined,
+                                    ),
+                                    suffixIcon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                    ),
+                                  ),
+                                );
+                              },
                           optionsViewBuilder: (context, onSelected, options) {
                             return Align(
                               alignment: Alignment.topLeft,
@@ -228,12 +235,14 @@ class _StockCategoryCreateFormState extends State<StockCategoryCreateForm> {
                                 elevation: 4,
                                 borderRadius: BorderRadius.circular(12),
                                 child: ConstrainedBox(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 480),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 480,
+                                  ),
                                   child: ListView(
                                     shrinkWrap: true,
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 4),
+                                      vertical: 4,
+                                    ),
                                     children: [
                                       for (final option in options)
                                         ListTile(
@@ -273,8 +282,7 @@ class _StockCategoryCreateFormState extends State<StockCategoryCreateForm> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.of(context).pop(),
+                              onPressed: () => Navigator.of(context).pop(),
                               child: const Text('Cancel'),
                             ),
                             const SizedBox(width: 12),
@@ -308,10 +316,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }

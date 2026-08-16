@@ -22,18 +22,13 @@ class StockCategoryScreenState extends State<StockCategoryScreen> {
 
   Future<void> _openAddDialog() async {
     final result = await Navigator.of(context).push<CreateStockCategoryRequest>(
-      MaterialPageRoute(
-        builder: (_) => const StockCategoryCreateForm(),
-      ),
+      MaterialPageRoute(builder: (_) => const StockCategoryCreateForm()),
     );
     if (result == null || !mounted) return;
     await context.read<StockCategoryViewModel>().addStockCategory(result);
   }
 
-  Future<void> _confirmDelete(
-    StockCategoryViewModel viewModel,
-    int id,
-  ) async {
+  Future<void> _confirmDelete(StockCategoryViewModel viewModel, int id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -92,13 +87,14 @@ class StockCategoryScreenState extends State<StockCategoryScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .error
-                        .withValues(alpha: 0.08),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -112,7 +108,8 @@ class StockCategoryScreenState extends State<StockCategoryScreen> {
                       Expanded(
                         child: Text(
                           viewModel.error!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.error,
                               ),
                         ),
@@ -126,29 +123,28 @@ class StockCategoryScreenState extends State<StockCategoryScreen> {
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : categories.isEmpty
-                        ? const _EmptyState()
-                        : LayoutBuilder(
-                            builder: (context, constraints) =>
-                                constraints.maxWidth >= 720
-                                    ? _StockCategoryTable(
-                                        categories: categories,
-                                        onDelete: (id) =>
-                                            _confirmDelete(viewModel, id),
-                                      )
-                                    : ListView.separated(
-                                        itemCount: categories.length,
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 10),
-                                        itemBuilder: (context, index) {
-                                          final category = categories[index];
-                                          return StockCategoryCard(
-                                            category: category,
-                                            onDelete: () => _confirmDelete(
-                                                viewModel, category.id),
-                                          );
-                                        },
-                                      ),
-                          ),
+                    ? const _EmptyState()
+                    : LayoutBuilder(
+                        builder: (context, constraints) =>
+                            constraints.maxWidth >= 720
+                            ? _StockCategoryTable(
+                                categories: categories,
+                                onDelete: (id) => _confirmDelete(viewModel, id),
+                              )
+                            : ListView.separated(
+                                itemCount: categories.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final category = categories[index];
+                                  return StockCategoryCard(
+                                    category: category,
+                                    onDelete: () =>
+                                        _confirmDelete(viewModel, category.id),
+                                  );
+                                },
+                              ),
+                      ),
               ),
             ],
           ),
@@ -160,10 +156,7 @@ class StockCategoryScreenState extends State<StockCategoryScreen> {
 
 /// Table view of stock categories for wide screens.
 class _StockCategoryTable extends StatelessWidget {
-  const _StockCategoryTable({
-    required this.categories,
-    required this.onDelete,
-  });
+  const _StockCategoryTable({required this.categories, required this.onDelete});
 
   final List<StockCategory> categories;
   final ValueChanged<int> onDelete;

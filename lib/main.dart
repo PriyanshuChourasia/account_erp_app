@@ -23,6 +23,8 @@ import 'modules/inventory_masters/modules/stock_group/repository/stock_group_rep
 import 'modules/inventory_masters/modules/stock_group/viewModel/stock_group_view_model.dart';
 import 'modules/inventory_masters/modules/unit/repository/unit_repository.dart';
 import 'modules/inventory_masters/modules/unit/viewModel/unit_view_model.dart';
+import 'modules/inventory_masters/modules/uqc/repository/uqc_repository.dart';
+import 'modules/inventory_masters/modules/uqc/viewModel/uqc_view_model.dart';
 import 'modules/organisational_masters/modules/country/repository/country_repository.dart';
 import 'modules/organisational_masters/modules/country/viewModel/country_view_model.dart';
 import 'modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
@@ -66,6 +68,9 @@ class AccountErpApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<UnitViewModel>(
           create: (_) => UnitViewModel(globalService<UnitRepository>()),
+        ),
+        ChangeNotifierProvider<UqcViewModel>(
+          create: (_) => UqcViewModel(globalService<UqcRepository>()),
         ),
         ChangeNotifierProvider<CountryViewModel>(
           create: (_) => CountryViewModel(globalService<CountryRepository>()),

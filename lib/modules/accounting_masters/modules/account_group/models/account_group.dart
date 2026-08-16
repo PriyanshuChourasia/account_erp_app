@@ -10,16 +10,19 @@ class AccountGroup {
   const AccountGroup({
     required this.id,
     required this.name,
+    this.code,
     this.alias,
     this.description,
     this.isActive = true,
     this.parentId,
+    this.accountNatureId,
     this.icon = Icons.account_tree_rounded,
     this.color = AppColors.primary,
   });
 
   final int id;
   final String name;
+  final int? code;
   final String? alias;
   final String? description;
   final bool isActive;
@@ -27,6 +30,9 @@ class AccountGroup {
   /// Parent group id — accounting groups form a hierarchy (e.g. `Sundry
   /// Debtors` sits under `Current Assets`).
   final int? parentId;
+
+  /// The account nature this group belongs to.
+  final int? accountNatureId;
   final IconData icon;
   final Color color;
 
@@ -34,10 +40,12 @@ class AccountGroup {
       AccountGroup(
         id: (json['id'] as num?)?.toInt() ?? 0,
         name: json['name'] as String? ?? '',
+        code: (json['code'] as num?)?.toInt(),
         alias: json['alias'] as String?,
         description: json['description'] as String?,
         isActive: json['isActive'] == true,
         parentId: (json['parentId'] as num?)?.toInt(),
+        accountNatureId: (json['accountNatureId'] as num?)?.toInt(),
       );
 
   static const List<AccountGroup> demo = [

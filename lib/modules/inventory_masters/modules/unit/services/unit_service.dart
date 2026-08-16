@@ -10,13 +10,11 @@ class UnitService {
 
   final ApiService _apiService;
 
-  Future<Map<String, dynamic>> fetchUnits() => _apiService.get(InventoryApiConfig.createUnitAPI);
+  Future<Map<String, dynamic>> fetchUnits() =>
+      _apiService.get(InventoryApiConfig.createUnitAPI);
 
   Future<Map<String, dynamic>> createUnit(CreateUnitRequest request) =>
-      _apiService.post(
-        ApiConfig.unitCreateEndpoint,
-        data: request.toJson(),
-      );
+      _apiService.post(ApiConfig.unitCreateEndpoint, data: request.toJson());
 
   Future<Map<String, dynamic>> deleteUnit(int id) =>
       _apiService.delete(ApiConfig.unitEndpoint(id));

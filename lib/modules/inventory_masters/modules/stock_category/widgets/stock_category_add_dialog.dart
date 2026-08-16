@@ -67,19 +67,21 @@ class _StockCategoryAddDialogState extends State<StockCategoryAddDialog> {
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final isPrimaryRoot = _parent?.name == 'Primary';
-    Navigator.of(context).pop(CreateStockCategoryRequest(
-      name: _nameController.text.trim(),
-      alias: _aliasController.text.trim().isEmpty
-          ? null
-          : _aliasController.text.trim(),
-      code: _codeController.text.trim().isEmpty
-          ? null
-          : _codeController.text.trim().toUpperCase(),
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      parentId: isPrimaryRoot ? null : _parent?.id,
-    ));
+    Navigator.of(context).pop(
+      CreateStockCategoryRequest(
+        name: _nameController.text.trim(),
+        alias: _aliasController.text.trim().isEmpty
+            ? null
+            : _aliasController.text.trim(),
+        code: _codeController.text.trim().isEmpty
+            ? null
+            : _codeController.text.trim().toUpperCase(),
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+        parentId: isPrimaryRoot ? null : _parent?.id,
+      ),
+    );
   }
 
   @override
@@ -166,21 +168,23 @@ class _StockCategoryAddDialogState extends State<StockCategoryAddDialog> {
               const _SectionLabel('Under'),
               const SizedBox(height: 8),
               Autocomplete<StockCategory>(
-                initialValue:
-                    TextEditingValue(text: _parent?.name ?? 'Primary'),
+                initialValue: TextEditingValue(
+                  text: _parent?.name ?? 'Primary',
+                ),
                 displayStringForOption: (category) => category.name,
                 optionsBuilder: (TextEditingValue value) {
                   final query = value.text.trim().toLowerCase();
                   if (query.isEmpty) return options;
                   return options
-                      .where((category) =>
-                          category.name.toLowerCase().contains(query) ||
-                          (category.code?.toLowerCase().contains(query) ??
-                              false))
+                      .where(
+                        (category) =>
+                            category.name.toLowerCase().contains(query) ||
+                            (category.code?.toLowerCase().contains(query) ??
+                                false),
+                      )
                       .toList();
                 },
-                onSelected: (category) =>
-                    setState(() => _parent = category),
+                onSelected: (category) => setState(() => _parent = category),
                 fieldViewBuilder: (context, controller, focusNode, _) {
                   return TextField(
                     controller: controller,
@@ -269,10 +273,10 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-          ),
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
+      ),
     );
   }
 }

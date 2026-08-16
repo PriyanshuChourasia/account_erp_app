@@ -27,11 +27,15 @@ class StockCategoryViewModel extends ChangeNotifier {
   List<StockCategory> get filteredStockCategories {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return _stockCategories;
-    return _stockCategories.where((category) =>
-        category.name.toLowerCase().contains(query) ||
-        category.id.toString().contains(query) ||
-        (category.code?.toLowerCase().contains(query) ?? false) ||
-        (category.alias?.toLowerCase().contains(query) ?? false)).toList();
+    return _stockCategories
+        .where(
+          (category) =>
+              category.name.toLowerCase().contains(query) ||
+              category.id.toString().contains(query) ||
+              (category.code?.toLowerCase().contains(query) ?? false) ||
+              (category.alias?.toLowerCase().contains(query) ?? false),
+        )
+        .toList();
   }
 
   Future<void> loadStockCategories() async {
@@ -55,9 +59,7 @@ class StockCategoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addStockCategory(
-    CreateStockCategoryRequest request,
-  ) async {
+  Future<bool> addStockCategory(CreateStockCategoryRequest request) async {
     _error = null;
     notifyListeners();
     try {

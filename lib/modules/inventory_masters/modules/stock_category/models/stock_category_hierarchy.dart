@@ -33,21 +33,23 @@ class StockCategoryHierarchy {
         description: json['description'] as String?,
         isActive: json['isActive'] == true,
         children: (json['children'] as List<dynamic>?)
-            ?.map((child) => StockCategoryHierarchy.fromJson(
-                  child as Map<String, dynamic>,
-                ))
+            ?.map(
+              (child) => StockCategoryHierarchy.fromJson(
+                child as Map<String, dynamic>,
+              ),
+            )
             .toList(),
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        if (code != null) 'code': code,
-        if (alias != null) 'alias': alias,
-        if (parentId != null) 'parentId': parentId,
-        if (description != null) 'description': description,
-        'isActive': isActive,
-        if (children != null)
-          'children': children!.map((child) => child.toJson()).toList(),
-      };
+    'id': id,
+    'name': name,
+    if (code != null) 'code': code,
+    if (alias != null) 'alias': alias,
+    if (parentId != null) 'parentId': parentId,
+    if (description != null) 'description': description,
+    'isActive': isActive,
+    if (children != null)
+      'children': children!.map((child) => child.toJson()).toList(),
+  };
 }

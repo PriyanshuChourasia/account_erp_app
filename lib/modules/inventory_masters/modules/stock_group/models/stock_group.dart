@@ -32,15 +32,15 @@ class StockGroup {
   final Color color;
 
   factory StockGroup.fromJson(Map<String, dynamic> json) => StockGroup(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        name: json['name'] as String? ?? '',
-        code: json['code'] as String?,
-        alias: json['alias'] as String?,
-        description: json['description'] as String?,
-        isActive: json['isActive'] == true,
-        shouldAddQuantities: json['shouldAddQuantities'] == true,
-        setAlterGstDetail: json['setAlterGstDetail'] == true,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    name: json['name'] as String? ?? '',
+    code: json['code'] as String?,
+    alias: json['alias'] as String?,
+    description: json['description'] as String?,
+    isActive: json['isActive'] == true,
+    shouldAddQuantities: json['shouldAddQuantities'] == true,
+    setAlterGstDetail: json['setAlterGstDetail'] == true,
+  );
 
   static const List<StockGroup> demo = [
     StockGroup(

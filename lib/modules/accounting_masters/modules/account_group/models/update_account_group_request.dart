@@ -1,10 +1,10 @@
-/// Request payload for creating an accounting group.
+/// Request payload for updating an accounting group.
 ///
-/// Mirrors the backend `CreateAccountGroupDTO` record. Nullable fields are
-/// omitted from JSON so the backend's `@NotBlank` validation only applies to
-/// the required ones.
-class CreateAccountGroupRequest {
-  const CreateAccountGroupRequest({
+/// Mirrors the backend `UpdateAccountGroupDTO` record. [id] identifies the
+/// group being edited; nullable fields are omitted from JSON.
+class UpdateAccountGroupRequest {
+  const UpdateAccountGroupRequest({
+    required this.id,
     required this.name,
     required this.code,
     required this.accountNatureId,
@@ -13,6 +13,7 @@ class CreateAccountGroupRequest {
     this.parentId,
   });
 
+  final int id;
   final String name;
   final int code;
   final String? alias;

@@ -2,6 +2,7 @@ import '../../../../../core/app_exception.dart';
 import '../../../../../data/models/response_model_wrapper.dart';
 import '../models/account_group.dart';
 import '../models/create_account_group_request.dart';
+import '../models/update_account_group_request.dart';
 import '../services/account_group_service.dart';
 
 /// Orchestrates accounting group data: calls [AccountGroupService], unwraps
@@ -34,6 +35,18 @@ class AccountGroupRepository {
     if (!wrapper.success) {
       throw AppException(
         wrapper.message ?? 'Could not create accounting group.',
+        code: wrapper.code,
+      );
+    }
+  }
+
+  Future<void> updateAccountGroup(UpdateAccountGroupRequest request) async {
+    final json =
+        await _accountingGroupService.updateAccountGroup(request.id, request);
+    final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
+    if (!wrapper.success) {
+      throw AppException(
+        wrapper.message ?? 'Could not update accounting group.',
         code: wrapper.code,
       );
     }
