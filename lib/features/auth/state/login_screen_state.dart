@@ -183,10 +183,7 @@ class LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 28),
 
                   // ── Tab content ──
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    child: _buildTabContent(),
-                  ),
+                  _buildTabContent(),
                 ],
               ),
             ),
@@ -225,7 +222,6 @@ class LoginScreenState extends State<LoginScreen> {
           nameController: _registerNameController,
           emailController: _registerEmailController,
           contactController: _registerContactController,
-          countryCodeController: _registerCountryCodeController,
           altContactController: _registerAltContactController,
           dobController: _registerDobController,
           passwordController: _registerPasswordController,
@@ -245,7 +241,6 @@ class LoginScreenState extends State<LoginScreen> {
         return const SizedBox.shrink();
     }
   }
-
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -553,7 +548,6 @@ class _RegisterTab extends StatelessWidget {
     required this.nameController,
     required this.emailController,
     required this.contactController,
-    required this.countryCodeController,
     required this.altContactController,
     required this.dobController,
     required this.passwordController,
@@ -572,7 +566,6 @@ class _RegisterTab extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController emailController;
   final TextEditingController contactController;
-  final TextEditingController countryCodeController;
   final TextEditingController altContactController;
   final TextEditingController dobController;
   final TextEditingController passwordController;
@@ -653,15 +646,6 @@ class _RegisterTab extends StatelessWidget {
               if (!v.contains('@')) return 'Enter a valid email';
               return null;
             },
-          ),
-          const SizedBox(height: 14),
-          TextFormField(
-            controller: countryCodeController,
-            enabled: false,
-            decoration: const InputDecoration(
-              labelText: 'Country code',
-              prefixIcon: Icon(Icons.public_outlined),
-            ),
           ),
           const SizedBox(height: 14),
           TextFormField(
@@ -790,4 +774,3 @@ class _RegisterTab extends StatelessWidget {
     );
   }
 }
-

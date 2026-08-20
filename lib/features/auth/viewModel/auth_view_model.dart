@@ -38,9 +38,10 @@ class AuthViewModel extends ChangeNotifier {
       _user = await _repository.fetchCurrentUser();
       _isAuthenticated = _user != null;
     } on AppException {
-      // Keep the user signed in locally even if the profile fetch fails;
-      // the next authenticated call will surface a proper error.
-      _isAuthenticated = await _repository.hasStoredToken();
+      // A stored token that fails the profile check does not count as
+      // authenticated — only a successful profile fetch does.
+      _user = null;
+      _isAuthenticated = false;
     } finally {
       _isCheckingSession = false;
       notifyListeners();

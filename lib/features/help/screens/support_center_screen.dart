@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../config/theme/app_theme.dart';
 
-/// Standalone Support Center screen. Reachable from anywhere in the app —
-/// logged in or not — via the top-right quick-access bar or the `S`
-/// keyboard shortcut (see `core/widgets/app_shortcuts_overlay.dart`).
+/// Standalone Support Center screen.
 class SupportCenterScreen extends StatelessWidget {
   const SupportCenterScreen({super.key});
 
@@ -12,12 +10,12 @@ class SupportCenterScreen extends StatelessWidget {
     (
       icon: Icons.mail_outline_rounded,
       title: 'Email support',
-      subtitle: 'support@accounterp.app',
+      subtitle: 'priyanshuchourasia916@gmail.com',
     ),
     (
       icon: Icons.call_outlined,
       title: 'Call us',
-      subtitle: '+91 98765 43210 (Mon–Sat, 9am–6pm)',
+      subtitle: '+91 6203163193 (Mon\u2013Sat, 9am\u20136pm)',
     ),
     (
       icon: Icons.chat_bubble_outline_rounded,

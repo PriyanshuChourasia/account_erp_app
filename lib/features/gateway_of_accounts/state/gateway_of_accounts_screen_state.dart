@@ -1,14 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../config/theme/app_theme.dart';
 import '../../../routing/app_routes.dart';
+import '../../auth/viewModel/auth_view_model.dart';
 import '../screens/gateway_of_accounts_screen.dart';
 
-/// State for [GatewayOfAccountsScreen].
+/// Landing screen shown after login/registration.
+///
+/// Shows the user's companies and lets them select or create a workspace.
+/// State lives in `state/gateway_of_accounts_screen_state.dart`.
 class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
+  static const double _wideBreakpoint = 760;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isWide = MediaQuery.sizeOf(context).width >= _wideBreakpoint;
+    final auth = context.watch<AuthViewModel>();
+    final userName = auth.user?.name ?? 'User';
+
+    const left = _CompanyListEmptyState();
+    const right = _ActionsCard();
+
+    final panels = isWide
+        ? IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(flex: 2, child: left),
+                const SizedBox(width: 20),
+                Expanded(flex: 3, child: right),
+              ],
+            ),
+          )
+        : const Column(children: [left, SizedBox(height: 20), right]);
 
     return Scaffold(
       body: Container(
@@ -23,123 +49,59 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Text(
-                  'Gateway of Accounts',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 14,
                 ),
-              ),
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 480),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: AppColors.gradientBlue,
-                              ),
-                              borderRadius: BorderRadius.circular(22),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.account_balance_rounded,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          Text(
-                            'Welcome to Account ERP',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Set up your workspace to start managing\naccounts and inventory.',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textSecondary,
-                              height: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 36),
-                          _ActionCard(
-                            icon: Icons.add_business_rounded,
-                            gradient: AppColors.gradientGreen,
-                            title: 'Create a company',
-                            subtitle:
-                                'Set up a new company workspace with your chart of accounts and settings.',
-                            onTap: () {
-                              // TODO: Navigate to create-company flow.
-                            },
-                          ),
-                          const SizedBox(height: 14),
-                          _ActionCard(
-                            icon: Icons.group_add_rounded,
-                            gradient: AppColors.gradientPurple,
-                            title: 'Join a company',
-                            subtitle:
-                                'Request access to an existing company workspace using an invite code.',
-                            onTap: () {
-                              // TODO: Navigate to join-company flow.
-                            },
-                          ),
-                          const SizedBox(height: 14),
-                          _ActionCard(
-                            icon: Icons.explore_rounded,
-                            gradient: AppColors.gradientAmber,
-                            title: 'Explore demo',
-                            subtitle:
-                                'Try Account ERP with sample data — no real transactions will be recorded.',
-                            onTap: () {
-                              Navigator.of(
-                                context,
-                              ).pushReplacementNamed(AppRoutes.dashboard);
-                            },
-                          ),
-                          const SizedBox(height: 28),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(
-                                context,
-                              ).popUntil((route) => route.isFirst);
-                            },
-                            child: Text(
-                              'I\'ll set this up later',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColors.border.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                      child: Text(
+                        userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        userName,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Icon(
+                      Icons.account_circle_outlined,
+                      color: AppColors.textSecondary.withValues(alpha: 0.6),
+                      size: 22,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: isWide
+                    ? Padding(padding: const EdgeInsets.all(24), child: panels)
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: panels,
+                      ),
               ),
             ],
           ),
@@ -149,76 +111,251 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
   }
 }
 
-class _ActionCard extends StatelessWidget {
-  const _ActionCard({
-    required this.icon,
-    required this.gradient,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
+const _monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
-  final IconData icon;
-  final List<Color> gradient;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
+String _formatDate(DateTime date) =>
+    '${date.day}-${_monthNames[date.month - 1]}-${date.year}';
+
+/// Left panel: Current Period / Current Date header, then the company list
+/// (empty state until the backend is wired up).
+class _CompanyListEmptyState extends StatelessWidget {
+  const _CompanyListEmptyState();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final now = DateTime.now();
+
     return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: gradient,
-                  ),
-                  borderRadius: BorderRadius.circular(14),
+      elevation: 4,
+      shadowColor: Colors.black.withValues(alpha: 0.15),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Expanded(
+                  child: _PeriodDateItem(label: 'Current Period', value: '—'),
                 ),
-                child: Icon(icon, color: Colors.white, size: 26),
+                Expanded(
+                  child: _PeriodDateItem(
+                    label: 'Current Date',
+                    value: _formatDate(now),
+                    alignEnd: true,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: Text(
+                'List of Companies',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.apartment_outlined,
+                        color: AppColors.primary,
+                        size: 30,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Text(
-                      title,
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      'No companies yet',
+                      style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
-                      subtitle,
+                      'Create a company or join one using an invite code.',
+                      textAlign: TextAlign.center,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondary,
-                        height: 1.4,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textSecondary.withValues(alpha: 0.6),
-              ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A "label above value" item used for the Current Period / Current Date
+/// header row, Tally-style.
+class _PeriodDateItem extends StatelessWidget {
+  const _PeriodDateItem({
+    required this.label,
+    required this.value,
+    this.alignEnd = false,
+  });
+
+  final String label;
+  final String value;
+  final bool alignEnd;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final crossAxis = alignEnd
+        ? CrossAxisAlignment.end
+        : CrossAxisAlignment.start;
+
+    return Column(
+      crossAxisAlignment: crossAxis,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Right panel: a centered card of quick actions.
+class _ActionsCard extends StatelessWidget {
+  const _ActionsCard();
+
+  Future<void> _logout(BuildContext context) async {
+    await context.read<AuthViewModel>().logout();
+    if (context.mounted) {
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shadowColor: Colors.black.withValues(alpha: 0.15),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 280),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ActionButton(
+                  icon: Icons.add_business_rounded,
+                  label: 'Create Company',
+                  onTap: () {
+                    // TODO: Navigate to create-company flow.
+                  },
+                ),
+                const SizedBox(height: 12),
+                _ActionButton(
+                  icon: Icons.backup_outlined,
+                  label: 'Backup',
+                  onTap: () {
+                    // TODO: Trigger backup flow.
+                  },
+                ),
+                const SizedBox(height: 12),
+                _ActionButton(
+                  icon: Icons.restore_outlined,
+                  label: 'Restore',
+                  onTap: () {
+                    // TODO: Trigger restore flow.
+                  },
+                ),
+                const SizedBox(height: 12),
+                _ActionButton(
+                  icon: Icons.logout_rounded,
+                  label: 'Logout',
+                  isDestructive: true,
+                  onTap: () => _logout(context),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.isDestructive = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isDestructive;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isDestructive ? Colors.red.shade600 : AppColors.primary;
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: color,
+          side: BorderSide(color: color.withValues(alpha: 0.4)),
+        ),
+        icon: Icon(icon, size: 20),
+        label: Align(alignment: Alignment.centerLeft, child: Text(label)),
       ),
     );
   }

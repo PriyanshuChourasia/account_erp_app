@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../config/token_storage.dart';
 import '../../../core/app_exception.dart';
 import '../../../data/models/response_model_wrapper.dart';
@@ -29,25 +31,48 @@ class AuthRepository {
       );
     }
     await _tokenStorage.setToken(session.token);
+    // Fetch the authoritative profile (username/contactNo aren't guaranteed
+    // to be present on the login response) and persist it locally.
+    try {
+      final profile = await fetchCurrentUser();
+      if (profile != null) {
+        return LoginResponseModel(token: session.token, user: profile);
+      }
+    } on AppException {
+      // Login still succeeded even if the follow-up profile fetch failed.
+    }
     return session;
   }
 
   /// Creates a new account. Throws [AppException] when the backend rejects
-  /// the registration; on success the user signs in through the login flow.
-  /// The envelope carries no meaningful `result` payload, so no converter is
-  /// applied — only the `success` flag matters here.
+  /// the registration. If the response includes a session token (some
+  /// backends log the user in immediately on register), it's stored and the
+  /// profile is fetched and persisted just like after [login].
   Future<void> register(RegisterRequestModel request) async {
     final json = await _authService.register(request);
-    final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
+    final wrapper = ResponseModelWrapper<LoginResponseModel>.fromJson(
+      json,
+      fromJson: LoginResponseModel.fromJson,
+    );
     if (!wrapper.success) {
       throw AppException(
         wrapper.message ?? 'Registration failed. Please try again.',
         code: wrapper.code,
       );
     }
+    final token = wrapper.data?.result?.token;
+    if (token != null && token.isNotEmpty) {
+      await _tokenStorage.setToken(token);
+      try {
+        await fetchCurrentUser();
+      } on AppException {
+        // Best-effort: registration still succeeded either way.
+      }
+    }
   }
 
   /// Returns the current user, or null when no session is stored locally.
+  /// Persists the fetched profile locally on success.
   Future<UserModel?> fetchCurrentUser() async {
     if (!await _tokenStorage.hasToken()) return null;
     final json = await _authService.fetchProfile();
@@ -61,7 +86,21 @@ class AuthRepository {
         code: wrapper.code,
       );
     }
-    return wrapper.data?.result;
+    final user = wrapper.data!.result!;
+    await _tokenStorage.setUserJson(jsonEncode(user.toJson()));
+    return user;
+  }
+
+  /// Returns the last profile persisted locally, or null if none is stored
+  /// or it can't be parsed.
+  Future<UserModel?> getStoredUser() async {
+    final json = await _tokenStorage.getUserJson();
+    if (json == null) return null;
+    try {
+      return UserModel.fromJson(jsonDecode(json) as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<bool> hasStoredToken() => _tokenStorage.hasToken();
@@ -73,6 +112,7 @@ class AuthRepository {
       // Best-effort: clear the local session regardless of server response.
     } finally {
       await _tokenStorage.clearToken();
+      await _tokenStorage.clearUserJson();
     }
   }
 }

@@ -51,4 +51,5 @@ class ApiConfig {
 
   // ---- Storage keys ----
   static const String tokenKey = 'auth_token';
+  static const String userKey = 'auth_user';
 }

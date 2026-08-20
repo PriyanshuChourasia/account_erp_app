@@ -26,4 +26,18 @@ class TokenStorage {
   }
 
   Future<bool> hasToken() async => (await getToken())?.isNotEmpty ?? false;
+
+  /// Persists the signed-in user's profile as a raw JSON string. Kept
+  /// feature-agnostic here — encoding/decoding into [UserModel] is the
+  /// repository's job.
+  Future<String?> getUserJson() async =>
+      (await _prefs).getString(ApiConfig.userKey);
+
+  Future<void> setUserJson(String json) async {
+    await (await _prefs).setString(ApiConfig.userKey, json);
+  }
+
+  Future<void> clearUserJson() async {
+    await (await _prefs).remove(ApiConfig.userKey);
+  }
 }
