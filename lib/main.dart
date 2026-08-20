@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'config/theme/app_theme.dart';
 import 'config/auth_gate.dart';
+import 'core/widgets/app_shortcuts_overlay.dart';
 import 'features/auth/repository/auth_repository.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/auth/screens/register_screen.dart';
@@ -10,6 +11,9 @@ import 'features/auth/viewModel/auth_view_model.dart';
 import 'features/auth/viewModel/register_view_model.dart';
 import 'features/dashboard/screens/dashboard_screen.dart';
 import 'features/dashboard/viewModel/dashboard_view_model.dart';
+import 'features/gateway_of_accounts/screens/gateway_of_accounts_screen.dart';
+import 'features/help/screens/help_screen.dart';
+import 'features/help/screens/support_center_screen.dart';
 import 'modules/accounting_masters/modules/account_group/repository/account_group_repository.dart';
 import 'modules/accounting_masters/modules/account_group/viewModel/account_group_view_model.dart';
 import 'modules/accounting_masters/modules/account_nature/repository/account_nature_repository.dart';
@@ -44,6 +48,8 @@ Future<void> main() async {
   await initServiceLocator();
   runApp(const AccountErpApp());
 }
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AccountErpApp extends StatelessWidget {
   const AccountErpApp({super.key});
@@ -118,7 +124,12 @@ class AccountErpApp extends StatelessWidget {
         title: 'Account ERP',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
+        navigatorKey: _rootNavigatorKey,
         home: const AuthGate(),
+        builder: (context, child) => AppShortcutsOverlay(
+          navigatorKey: _rootNavigatorKey,
+          child: child ?? const SizedBox.shrink(),
+        ),
         routes: {
           AppRoutes.login: (_) => const LoginScreen(),
           AppRoutes.register: (_) => ChangeNotifierProvider(
@@ -127,6 +138,10 @@ class AccountErpApp extends StatelessWidget {
             child: const RegisterScreen(),
           ),
           AppRoutes.dashboard: (_) => const DashboardScreen(),
+          AppRoutes.gatewayOfAccounts: (_) =>
+              const GatewayOfAccountsScreen(),
+          AppRoutes.help: (_) => const HelpScreen(),
+          AppRoutes.support: (_) => const SupportCenterScreen(),
         },
       ),
     );

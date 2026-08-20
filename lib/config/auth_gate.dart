@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/viewModel/auth_view_model.dart';
-import '../features/dashboard/screens/dashboard_screen.dart';
+import '../features/gateway_of_accounts/screens/gateway_of_accounts_screen.dart';
+import '../features/splash/screens/splash_screen.dart';
 
 /// Decides the entry screen based on the auth state.
 ///
@@ -17,6 +18,10 @@ class AuthGate extends StatefulWidget {
 }
 
 class _AuthGateState extends State<AuthGate> {
+  static const _minSplashDuration = Duration(seconds: 2);
+
+  bool _minSplashElapsed = false;
+
   @override
   void initState() {
     super.initState();
@@ -24,53 +29,19 @@ class _AuthGateState extends State<AuthGate> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) context.read<AuthViewModel>().checkAuthStatus();
     });
+    Future.delayed(_minSplashDuration, () {
+      if (mounted) setState(() => _minSplashElapsed = true);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AuthViewModel>();
-    if (viewModel.isCheckingSession) return const _SplashScreen();
+    if (viewModel.isCheckingSession || !_minSplashElapsed) {
+      return const SplashScreen();
+    }
     return viewModel.isAuthenticated
-        ? DashboardScreen(
-            userName: viewModel.user?.name,
-            onLogout: viewModel.logout,
-          )
+        ? const GatewayOfAccountsScreen()
         : const LoginScreen();
-  }
-}
-
-class _SplashScreen extends StatelessWidget {
-  const _SplashScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.account_balance_rounded,
-              size: 64,
-              color: colorScheme.primary,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Account ERP',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 32),
-            const SizedBox(
-              width: 28,
-              height: 28,
-              child: CircularProgressIndicator(strokeWidth: 2.5),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

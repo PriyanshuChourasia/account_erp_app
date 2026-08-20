@@ -18,4 +18,7 @@ class AppRoutes {
   static const String inventoryMasters = '/inventory-masters';
   static const String organisationalMasters = '/organisational-masters';
   static const String utilities = '/utilities';
+  static const String help = '/help';
+  static const String support = '/support';
+  static const String gatewayOfAccounts = '/gateway-of-accounts';
 }

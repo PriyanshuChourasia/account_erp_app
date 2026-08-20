@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/app_exception.dart';
 import '../models/login_request_model.dart';
+import '../models/register_request_model.dart';
 import '../models/user_model.dart';
 import '../repository/auth_repository.dart';
 
@@ -80,5 +81,44 @@ class AuthViewModel extends ChangeNotifier {
     _isAuthenticated = false;
     _error = null;
     notifyListeners();
+  }
+
+  /// Attempts registration. Returns true on success; on failure sets [error]
+  /// and returns false so the screen can surface a message.
+  Future<bool> register({
+    required String name,
+    required String email,
+    required String password,
+    required int contactNo,
+    required String countryCode,
+    int? altContactNo,
+    String? dateOfBirth,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await _repository.register(
+        RegisterRequestModel(
+          name: name,
+          email: email,
+          password: password,
+          contactNo: contactNo,
+          countryCode: countryCode,
+          altContactNo: altContactNo,
+          dateOfBirth: dateOfBirth,
+        ),
+      );
+      return true;
+    } on AppException catch (error) {
+      _error = error.message;
+      return false;
+    } catch (_) {
+      _error = 'Something went wrong. Please try again.';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

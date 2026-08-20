@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../config/theme/app_theme.dart';
 import '../../../core/handlers/error_handler.dart';
+import '../../../routing/app_routes.dart';
 import '../screens/register_screen.dart';
 import '../viewModel/register_view_model.dart';
 import '../widgets/primary_button.dart';
@@ -13,17 +14,41 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _contactNoController = TextEditingController();
+  final _countryCodeController = TextEditingController(text: '+91');
+  final _altContactNoController = TextEditingController();
+  final _dobController = TextEditingController();
   bool _obscurePassword = true;
+  DateTime? _selectedDate;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _usernameController.dispose();
     _passwordController.dispose();
+    _contactNoController.dispose();
+    _countryCodeController.dispose();
+    _altContactNoController.dispose();
+    _dobController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime(now.year - 20, 1, 1),
+      firstDate: DateTime(1900),
+      lastDate: now,
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+        _dobController.text =
+            '${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      });
+    }
   }
 
   Future<void> _submit() async {
@@ -31,11 +56,19 @@ class RegisterScreenState extends State<RegisterScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final viewModel = context.read<RegisterViewModel>();
+    final contactNoText = _contactNoController.text.trim();
+    final altContactNoText = _altContactNoController.text.trim();
+
     final success = await viewModel.register(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
-      username: _usernameController.text.trim(),
       password: _passwordController.text,
+      contactNo: int.parse(contactNoText),
+      countryCode: _countryCodeController.text.trim(),
+      altContactNo: altContactNoText.isNotEmpty
+          ? int.parse(altContactNoText)
+          : null,
+      dateOfBirth: _dobController.text.isNotEmpty ? _dobController.text : null,
     );
 
     if (!success) {
@@ -49,8 +82,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (mounted) {
-      // Pop with the username so the login screen can prefill it.
-      Navigator.of(context).pop(_usernameController.text.trim());
+      Navigator.of(context).pop();
     }
   }
 
@@ -62,6 +94,16 @@ class RegisterScreenState extends State<RegisterScreen> {
       r'^[\w\.\-+]+@[\w\-]+(\.[\w\-]+)+$',
     ).hasMatch(value.trim());
     return isValid ? null : 'Enter a valid email address';
+  }
+
+  String? _validateContactNo(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Enter your contact number';
+    }
+    if (!RegExp(r'^\d{7,15}$').hasMatch(value.trim())) {
+      return 'Enter a valid contact number';
+    }
+    return null;
   }
 
   @override
@@ -180,21 +222,60 @@ class RegisterScreenState extends State<RegisterScreen> {
                               ),
                               const SizedBox(height: 16),
                               TextFormField(
-                                controller: _usernameController,
-                                textInputAction: TextInputAction.next,
-                                autofillHints: const [AutofillHints.username],
+                                controller: _countryCodeController,
+                                enabled: false,
                                 decoration: const InputDecoration(
-                                  labelText: 'Username',
-                                  prefixIcon: Icon(Icons.badge_outlined),
+                                  labelText: 'Country code',
+                                  prefixIcon: Icon(Icons.public_outlined),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _contactNoController,
+                                keyboardType: TextInputType.phone,
+                                textInputAction: TextInputAction.next,
+                                autofillHints: const [
+                                  AutofillHints.telephoneNumber,
+                                ],
+                                decoration: const InputDecoration(
+                                  labelText: 'Contact number',
+                                  prefixIcon: Icon(Icons.phone_outlined),
+                                ),
+                                validator: _validateContactNo,
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _altContactNoController,
+                                keyboardType: TextInputType.phone,
+                                textInputAction: TextInputAction.next,
+                                decoration: const InputDecoration(
+                                  labelText: 'Alternate contact (optional)',
+                                  prefixIcon: Icon(Icons.phone_outlined),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Choose a username';
+                                    return null;
                                   }
-                                  return value.trim().length < 3
-                                      ? 'Username must be at least 3 characters'
-                                      : null;
+                                  if (!RegExp(
+                                    r'^\d{7,15}$',
+                                  ).hasMatch(value.trim())) {
+                                    return 'Enter a valid contact number';
+                                  }
+                                  return null;
                                 },
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _dobController,
+                                readOnly: true,
+                                textInputAction: TextInputAction.next,
+                                onTap: _pickDate,
+                                decoration: const InputDecoration(
+                                  labelText: 'Date of birth (optional)',
+                                  prefixIcon: Icon(
+                                    Icons.calendar_today_rounded,
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 16),
                               TextFormField(

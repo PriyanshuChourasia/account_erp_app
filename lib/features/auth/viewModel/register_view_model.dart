@@ -24,8 +24,11 @@ class RegisterViewModel extends ChangeNotifier {
   Future<bool> register({
     required String name,
     required String email,
-    required String username,
     required String password,
+    required int contactNo,
+    required String countryCode,
+    int? altContactNo,
+    String? dateOfBirth,
   }) async {
     _isLoading = true;
     _error = null;
@@ -35,8 +38,11 @@ class RegisterViewModel extends ChangeNotifier {
         RegisterRequestModel(
           name: name,
           email: email,
-          username: username,
           password: password,
+          contactNo: contactNo,
+          countryCode: countryCode,
+          altContactNo: altContactNo,
+          dateOfBirth: dateOfBirth,
         ),
       );
       return true;
