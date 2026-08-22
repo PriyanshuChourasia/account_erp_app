@@ -18,6 +18,6 @@ class CountryService {
         data: request.toJson(),
       );
 
-  Future<Map<String, dynamic>> deleteCountry(int id) =>
+  Future<Map<String, dynamic>> deleteCountry(String id) =>
       _apiService.delete(OrganisationalApiConfig.countryEndpoint(id));
 }

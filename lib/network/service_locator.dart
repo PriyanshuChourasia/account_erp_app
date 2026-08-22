@@ -21,6 +21,10 @@ import '../modules/inventory_masters/modules/unit/repository/unit_repository.dar
 import '../modules/inventory_masters/modules/unit/services/unit_service.dart';
 import '../modules/inventory_masters/modules/unique_quantity_code/repository/unique_quantity_code_repository.dart';
 import '../modules/inventory_masters/modules/unique_quantity_code/services/unique_quantity_code_service.dart';
+import '../modules/organisational_masters/modules/address/repository/address_repository.dart';
+import '../modules/organisational_masters/modules/address/services/address_service.dart';
+import '../modules/organisational_masters/modules/company/repository/company_repository.dart';
+import '../modules/organisational_masters/modules/company/services/company_service.dart';
 import '../modules/organisational_masters/modules/country/repository/country_repository.dart';
 import '../modules/organisational_masters/modules/country/services/country_service.dart';
 import '../modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
@@ -41,12 +45,15 @@ T globalService<T extends Object>() => _getIt<T>();
 
 /// Registers every singleton in the app. Call once from `main()` before
 /// `runApp()`. Safe to call multiple times (e.g. from tests).
-Future<void> initServiceLocator() async {
+///
+/// [tokenStorage] lets tests inject a [TokenStorage] backed by a temp
+/// directory instead of the real `getApplicationSupportDirectory()`.
+Future<void> initServiceLocator({TokenStorage? tokenStorage}) async {
   if (_isInitialized) return;
   _isInitialized = true;
 
   _getIt
-    ..registerLazySingleton<TokenStorage>(TokenStorage.new)
+    ..registerLazySingleton<TokenStorage>(() => tokenStorage ?? TokenStorage())
     ..registerLazySingleton<AuthInterceptor>(AuthInterceptor.new)
     ..registerLazySingleton<ErrorInterceptor>(ErrorInterceptor.new)
     ..registerLazySingleton<DioClient>(
@@ -138,6 +145,18 @@ Future<void> initServiceLocator() async {
     )
     ..registerLazySingleton<FinancialYearRepository>(
       () => FinancialYearRepository(globalService<FinancialYearService>()),
+    )
+    ..registerLazySingleton<CompanyService>(
+      () => CompanyService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<CompanyRepository>(
+      () => CompanyRepository(globalService<CompanyService>()),
+    )
+    ..registerLazySingleton<AddressService>(
+      () => AddressService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<AddressRepository>(
+      () => AddressRepository(globalService<AddressService>()),
     );
 
   // ViewModels are NOT registered here — they are created (and owned) by the

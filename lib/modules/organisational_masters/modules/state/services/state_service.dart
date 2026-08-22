@@ -18,6 +18,6 @@ class StateService {
         data: request.toJson(),
       );
 
-  Future<Map<String, dynamic>> deleteState(int id) =>
+  Future<Map<String, dynamic>> deleteState(String id) =>
       _apiService.delete(OrganisationalApiConfig.stateEndpoint(id));
 }

@@ -36,6 +36,7 @@ class _StateAddDialogState extends State<StateAddDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
+  final _gstCodeController = TextEditingController();
   final _descriptionController = TextEditingController();
   Country? _country;
 
@@ -55,6 +56,7 @@ class _StateAddDialogState extends State<StateAddDialog> {
         code: _codeController.text.trim().isEmpty
             ? null
             : _codeController.text.trim().toUpperCase(),
+        gstCode: _gstCodeController.text.trim(),
         countryId: _country!.id,
         description: _descriptionController.text.trim().isEmpty
             ? null
@@ -124,6 +126,18 @@ class _StateAddDialogState extends State<StateAddDialog> {
                   prefixIcon: Icon(Icons.tag_rounded),
                 ),
               ),
+              TextFormField(
+                controller: _gstCodeController,
+                textCapitalization: TextCapitalization.characters,
+                decoration: const InputDecoration(
+                  labelText: 'GST code',
+                  hintText: 'e.g. 27',
+                  prefixIcon: Icon(Icons.receipt_long_rounded),
+                ),
+                validator: (value) => (value == null || value.trim().isEmpty)
+                    ? 'Enter the GST code'
+                    : null,
+              ),
               const SizedBox(height: 20),
               const _SectionLabel('Country'),
               const SizedBox(height: 8),
@@ -137,7 +151,9 @@ class _StateAddDialogState extends State<StateAddDialog> {
                       .where(
                         (country) =>
                             country.name.toLowerCase().contains(query) ||
-                            (country.code?.toLowerCase().contains(query) ??
+                            (country.iso2Code?.toLowerCase().contains(
+                                  query,
+                                ) ??
                                 false),
                       )
                       .toList();
@@ -178,8 +194,8 @@ class _StateAddDialogState extends State<StateAddDialog> {
                                   color: AppColors.textSecondary,
                                 ),
                                 title: Text(country.name),
-                                subtitle: country.code != null
-                                    ? Text(country.code!)
+                                subtitle: country.iso2Code != null
+                                    ? Text(country.iso2Code!)
                                     : null,
                                 onTap: () => onSelected(country),
                               ),

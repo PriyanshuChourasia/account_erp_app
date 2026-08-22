@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../../config/theme/app_theme.dart';
+import '../../features/auth/viewModel/auth_view_model.dart';
+import '../../modules/organisational_masters/modules/financial_year/viewModel/financial_year_view_model.dart';
+import '../../modules/organisational_masters/modules/financial_year/widgets/financial_year_badge.dart';
 import '../../routing/app_routes.dart';
 
-/// App-wide chrome: a top-right "S: Support Center" / "H: Help" quick-access
-/// bar, plus the matching `S`/`H` keyboard shortcuts. Mounted once around
-/// the whole app (see `MaterialApp.builder` in `main.dart`) so it is
-/// available on every screen — before and after authentication.
+/// App-wide chrome: a top-right "Profile" / "S: Support Center" / "H: Help"
+/// quick-access bar, plus the matching `S`/`H` keyboard shortcuts. Mounted
+/// once around the whole app (see `MaterialApp.builder` in `main.dart`) so
+/// it is available on every screen — before and after authentication. The
+/// Profile chip only shows once a user is signed in.
 class AppShortcutsOverlay extends StatefulWidget {
   const AppShortcutsOverlay({
     super.key,
@@ -82,8 +87,16 @@ class _AppShortcutsOverlayState extends State<AppShortcutsOverlay> {
     widget.navigatorKey.currentState?.pushNamed(AppRoutes.support);
   }
 
+  void _openProfile() {
+    widget.navigatorKey.currentState?.pushNamed(AppRoutes.profile);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isAuthenticated = context.watch<AuthViewModel>().isAuthenticated;
+    final selectedFinancialYear = context
+        .watch<FinancialYearViewModel>()
+        .selectedFinancialYear;
     return Stack(
       children: [
         widget.child,
@@ -92,6 +105,16 @@ class _AppShortcutsOverlayState extends State<AppShortcutsOverlay> {
           right: 32,
           child: Row(
             children: [
+              if (isAuthenticated) ...[
+                FinancialYearBadge(financialYear: selectedFinancialYear),
+                const SizedBox(width: 8),
+                _QuickAccessChip(
+                  icon: Icons.person_outline_rounded,
+                  label: 'Profile',
+                  onTap: _openProfile,
+                ),
+                const SizedBox(width: 8),
+              ],
               _QuickAccessChip(
                 shortcutLabel: 'S',
                 label: 'Support Center',
@@ -113,12 +136,17 @@ class _AppShortcutsOverlayState extends State<AppShortcutsOverlay> {
 
 class _QuickAccessChip extends StatelessWidget {
   const _QuickAccessChip({
-    required this.shortcutLabel,
+    this.shortcutLabel,
+    this.icon,
     required this.label,
     required this.onTap,
-  });
+  }) : assert(
+         shortcutLabel != null || icon != null,
+         'Provide either shortcutLabel or icon.',
+       );
 
-  final String shortcutLabel;
+  final String? shortcutLabel;
+  final IconData? icon;
   final String label;
   final VoidCallback onTap;
 
@@ -145,14 +173,16 @@ class _QuickAccessChip extends StatelessWidget {
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: Text(
-                  shortcutLabel,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+                child: icon != null
+                    ? Icon(icon, size: 11, color: Colors.white)
+                    : Text(
+                        shortcutLabel!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
               ),
               const SizedBox(width: 5),
               Text(

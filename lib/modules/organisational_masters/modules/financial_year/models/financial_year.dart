@@ -5,9 +5,9 @@ import '../../../../../config/theme/app_theme.dart';
 /// A financial (fiscal) year used to group accounting transactions.
 ///
 /// Mirrors the backend `FinancialYearDTO` record (see
-/// `CreateFinancialYearDTO`/`FinancialYearDTO`): `id`, `name`, `code`,
-/// `startDate`, `endDate`, `isCurrent`. Dates arrive from the backend as ISO
-/// `yyyy-MM-dd` strings and are kept as-is (see `utils/` for formatting
+/// `CreateFinancialYearDTO`/`FinancialYearDTO`): `id` (UUID string), `name`,
+/// `code`, `startDate`, `endDate`, `isCurrent`. Dates arrive from the backend
+/// as ISO `yyyy-MM-dd` strings and are kept as-is (see `utils/` for formatting
 /// helpers).
 class FinancialYear {
   const FinancialYear({
@@ -21,7 +21,8 @@ class FinancialYear {
     this.color = AppColors.primary,
   });
 
-  final int id;
+  /// UUID from the backend.
+  final String id;
   final String name;
 
   /// Short fiscal-year code, e.g. `FY2425`.
@@ -37,7 +38,7 @@ class FinancialYear {
   final Color color;
 
   factory FinancialYear.fromJson(Map<String, dynamic> json) => FinancialYear(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: json['id'] as String? ?? '',
     name: json['name'] as String? ?? '',
     code: json['code'] as String?,
     startDate: json['startDate'] as String?,

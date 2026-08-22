@@ -105,14 +105,10 @@ class AuthRepository {
 
   Future<bool> hasStoredToken() => _tokenStorage.hasToken();
 
+  /// Clears the locally stored session. Purely local — there is no backend
+  /// logout endpoint to call yet.
   Future<void> logout() async {
-    try {
-      await _authService.logout();
-    } on AppException {
-      // Best-effort: clear the local session regardless of server response.
-    } finally {
-      await _tokenStorage.clearToken();
-      await _tokenStorage.clearUserJson();
-    }
+    await _tokenStorage.clearToken();
+    await _tokenStorage.clearUserJson();
   }
 }

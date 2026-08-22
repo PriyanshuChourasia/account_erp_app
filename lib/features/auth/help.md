@@ -63,7 +63,7 @@ App-wide `ChangeNotifier`, provided at the root and read by `AuthGate` and both 
 - `user` (UserModel?) — currently signed-in user.
 
 **Methods:**
-- `checkAuthStatus()` — called by `AuthGate` on app start. Sets `isCheckingSession = true`, notifies. If no stored token (`repository.hasStoredToken()` is false), clears `_user`/`_isAuthenticated`. Otherwise calls `repository.fetchCurrentUser()`; on success sets `_user` and `_isAuthenticated = _user != null`. On `AppException` (e.g. profile fetch fails), it does **not** log the user out — it keeps `_isAuthenticated` true if a token is still stored (so a transient network failure doesn't force a re-login). Always sets `isCheckingSession = false` in `finally` and notifies.
+- `checkAuthStatus()` — called by `AuthGate` on app start. Sets `isCheckingSession = true`, notifies. If no stored token (`repository.hasStoredToken()` is false), clears `_user`/`_isAuthenticated`. Otherwise calls `repository.fetchCurrentUser()`; on success sets `_user` (falling back to the cached `getStoredUser()` if the call returns `null`) and `_isAuthenticated = true`. On `AppException` (profile fetch fails for any reason — invalid token, network error, backend unreachable, etc.), it calls `repository.logout()` and clears `_user`/`_isAuthenticated`, so any failure to confirm the session with the backend sends the user back to the login screen. Always sets `isCheckingSession = false` in `finally` and notifies.
 - `login({username, password})` — sets `isLoading = true`, clears `error`, notifies. Calls `repository.login(LoginRequestModel(...))`. On success, sets `_user = session.user`, `_isAuthenticated = true`, returns `true`. On `AppException`, sets `_error = error.message`, returns `false`. On any other exception, sets a generic `'Something went wrong. Please try again.'` and returns `false`. Always sets `isLoading = false` and notifies in `finally`.
 - `logout()` — awaits `repository.logout()`, then clears `_user`, `_isAuthenticated`, `_error`, and notifies.
 
@@ -91,7 +91,7 @@ Constructed with `ApiService`. Pure HTTP, no parsing:
 - `login(LoginRequestModel request)` → `POST ApiConfig.loginEndpoint` (`/auth/login`) with `request.toJson()`.
 - `register(RegisterRequestModel request)` → `POST ApiConfig.registerEndpoint` (`/auth/register`) with `request.toJson()`.
 - `logout()` → `POST ApiConfig.logoutEndpoint` (`/auth/logout`), no body.
-- `fetchProfile()` → `GET ApiConfig.profileEndpoint` (`/auth/profile`).
+- `fetchProfile()` → `POST ApiConfig.profileEndpoint` (`/auth/profile`).
 
 Note: `loginEndpoint` and `registerEndpoint` are listed in `ApiConfig.publicEndpoints`, so `AuthInterceptor` does not attach a bearer token to those two calls; `logout` and `fetchProfile` do get the token attached.
 

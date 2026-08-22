@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/app_theme.dart';
+import '../modules/company/screens/company_screen.dart';
 import '../modules/country/screens/country_screen.dart';
 import '../modules/financial_year/screens/financial_year_screen.dart';
 import '../modules/state/screens/state_screen.dart';
@@ -30,6 +31,12 @@ class OrganisationalMastersScreenState
       icon: Icons.calendar_month_rounded,
       color: Color(0xFF7C3AED),
     ),
+    (
+      title: 'Company',
+      subtitle: 'Create and manage your companies',
+      icon: Icons.business_rounded,
+      color: Color(0xFFD97706),
+    ),
     // Add more masters here: District, City, ...
   ];
 
@@ -46,6 +53,10 @@ class OrganisationalMastersScreenState
       case 2:
         Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => const FinancialYearScreen()),
+        );
+      case 3:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const CompanyScreen()),
         );
     }
   }

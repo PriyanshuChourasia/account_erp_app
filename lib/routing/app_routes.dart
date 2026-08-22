@@ -17,8 +17,11 @@ class AppRoutes {
   static const String accountingMasters = '/accounting-masters';
   static const String inventoryMasters = '/inventory-masters';
   static const String organisationalMasters = '/organisational-masters';
+  static const String companies = '/companies';
+  static const String createCompany = '/companies/create';
   static const String utilities = '/utilities';
   static const String help = '/help';
   static const String support = '/support';
+  static const String profile = '/profile';
   static const String gatewayOfAccounts = '/gateway-of-accounts';
 }

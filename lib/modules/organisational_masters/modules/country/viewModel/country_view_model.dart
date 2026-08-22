@@ -32,7 +32,7 @@ class CountryViewModel extends ChangeNotifier {
           (country) =>
               country.name.toLowerCase().contains(query) ||
               country.id.toString().contains(query) ||
-              (country.code?.toLowerCase().contains(query) ?? false) ||
+              (country.iso2Code?.toLowerCase().contains(query) ?? false) ||
               (country.alias?.toLowerCase().contains(query) ?? false),
         )
         .toList();
@@ -75,7 +75,7 @@ class CountryViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteCountry(int id) async {
+  Future<bool> deleteCountry(String id) async {
     _error = null;
     notifyListeners();
     try {

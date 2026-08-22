@@ -3,12 +3,17 @@ class OrganisationalApiConfig {
   /// countries
   static const String countryAPI = "/countries/list";
   static const String createCountryAPI = "$countryAPI/create";
-  static String countryEndpoint(int id) => "$countryAPI/$id";
+  static String countryEndpoint(String id) => "$countryAPI/$id";
 
   /// states
   static const String stateAPI = "/states";
   static const String createStateAPI = "$stateAPI/create";
-  static String stateEndpoint(int id) => "$stateAPI/$id";
+  static String stateEndpoint(String id) => "$stateAPI/$id";
+
+  /// addresses
+  static const String addressAPI = "/addresses";
+  static const String createAddressAPI = "$addressAPI/create";
+  static String addressEndpoint(String id) => "$addressAPI/$id";
 
   /// financial years
   static const String financialYearAPI = "/financial-years";
@@ -17,4 +22,9 @@ class OrganisationalApiConfig {
   /// organisation's current fiscal year.
   static const String updateFinancialYearCurrentAPI =
       "$financialYearAPI/current";
+
+  /// companies
+  static const String companyAPI = "/companies/list";
+  static const String createCompanyAPI = "$companyAPI/create";
+  static String companyEndpoint(int id) => "$companyAPI/$id";
 }

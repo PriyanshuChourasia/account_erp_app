@@ -32,7 +32,7 @@ class StateScreenState extends State<StateScreen> {
     await context.read<StateViewModel>().addState(result);
   }
 
-  Future<void> _confirmDelete(StateViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(StateViewModel viewModel, String id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -168,7 +168,7 @@ class _StateTable extends StatelessWidget {
 
   final List<StateMaster> states;
   final StateViewModel viewModel;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -180,9 +180,9 @@ class _StateTable extends StatelessWidget {
           columnSpacing: 24,
           headingRowColor: WidgetStatePropertyAll(AppColors.background),
           columns: const [
-            DataColumn(label: Text('ID')),
             DataColumn(label: Text('Name')),
             DataColumn(label: Text('Code')),
+            DataColumn(label: Text('GST code')),
             DataColumn(label: Text('Country')),
             DataColumn(label: Text('Description')),
             DataColumn(label: Text('Status')),
@@ -192,7 +192,6 @@ class _StateTable extends StatelessWidget {
             for (final state in states)
               DataRow(
                 cells: [
-                  DataCell(Text('${state.id}')),
                   DataCell(
                     Text(
                       state.name,
@@ -202,6 +201,7 @@ class _StateTable extends StatelessWidget {
                     ),
                   ),
                   DataCell(Text(state.code ?? '—')),
+                  DataCell(Text(state.gstCode ?? '—')),
                   DataCell(Text(viewModel.countryNameOf(state))),
                   DataCell(
                     Text(
@@ -210,7 +210,7 @@ class _StateTable extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  DataCell(_StatusBadge(isActive: state.isActive)),
+                  DataCell(_StatusBadge(active: state.active)),
                   DataCell(
                     IconButton(
                       tooltip: 'Delete state',
@@ -232,9 +232,9 @@ class _StateTable extends StatelessWidget {
 }
 
 class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.isActive});
+  const _StatusBadge({required this.active});
 
-  final bool isActive;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
@@ -242,16 +242,16 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: isActive
+        color: active
             ? AppColors.gradientGreen.first.withValues(alpha: 0.12)
             : AppColors.textSecondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        isActive ? 'Active' : 'Inactive',
+        active ? 'Active' : 'Inactive',
         style: theme.textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w600,
-          color: isActive
+          color: active
               ? AppColors.gradientGreen.first
               : AppColors.textSecondary,
         ),

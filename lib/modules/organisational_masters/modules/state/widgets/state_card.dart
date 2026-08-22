@@ -20,8 +20,8 @@ class StateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${state.id}',
       if (state.code != null) state.code!,
+      if (state.gstCode != null) 'GST ${state.gstCode}',
       ?countryName,
     ].join(' · ');
 
@@ -79,16 +79,16 @@ class StateCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: state.isActive
+                color: state.active
                     ? AppColors.gradientGreen.first.withValues(alpha: 0.12)
                     : AppColors.textSecondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                state.isActive ? 'Active' : 'Inactive',
+                state.active ? 'Active' : 'Inactive',
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: state.isActive
+                  color: state.active
                       ? AppColors.gradientGreen.first
                       : AppColors.textSecondary,
                 ),

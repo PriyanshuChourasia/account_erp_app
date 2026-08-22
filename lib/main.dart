@@ -14,6 +14,7 @@ import 'features/dashboard/viewModel/dashboard_view_model.dart';
 import 'features/gateway_of_accounts/screens/gateway_of_accounts_screen.dart';
 import 'features/help/screens/help_screen.dart';
 import 'features/help/screens/support_center_screen.dart';
+import 'features/profile/screens/profile_screen.dart';
 import 'modules/accounting_masters/modules/account_group/repository/account_group_repository.dart';
 import 'modules/accounting_masters/modules/account_group/viewModel/account_group_view_model.dart';
 import 'modules/accounting_masters/modules/account_nature/repository/account_nature_repository.dart';
@@ -32,6 +33,12 @@ import 'modules/inventory_masters/modules/unit/repository/unit_repository.dart';
 import 'modules/inventory_masters/modules/unit/viewModel/unit_view_model.dart';
 import 'modules/inventory_masters/modules/unique_quantity_code/repository/unique_quantity_code_repository.dart';
 import 'modules/inventory_masters/modules/unique_quantity_code/viewModel/unique_quantity_code_view_model.dart';
+import 'modules/organisational_masters/modules/address/repository/address_repository.dart';
+import 'modules/organisational_masters/modules/address/viewModel/address_view_model.dart';
+import 'modules/organisational_masters/modules/company/screens/company_add_screen.dart';
+import 'modules/organisational_masters/modules/company/screens/company_screen.dart';
+import 'modules/organisational_masters/modules/company/repository/company_repository.dart';
+import 'modules/organisational_masters/modules/company/viewModel/company_view_model.dart';
 import 'modules/organisational_masters/modules/country/repository/country_repository.dart';
 import 'modules/organisational_masters/modules/country/viewModel/country_view_model.dart';
 import 'modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
@@ -100,6 +107,12 @@ class AccountErpApp extends StatelessWidget {
           create: (_) =>
               FinancialYearViewModel(globalService<FinancialYearRepository>()),
         ),
+        ChangeNotifierProvider<CompanyViewModel>(
+          create: (_) => CompanyViewModel(globalService<CompanyRepository>()),
+        ),
+        ChangeNotifierProvider<AddressViewModel>(
+          create: (_) => AddressViewModel(globalService<AddressRepository>()),
+        ),
         ChangeNotifierProvider<AccountNatureViewModel>(
           create: (_) =>
               AccountNatureViewModel(globalService<AccountNatureRepository>()),
@@ -138,10 +151,12 @@ class AccountErpApp extends StatelessWidget {
             child: const RegisterScreen(),
           ),
           AppRoutes.dashboard: (_) => const DashboardScreen(),
-          AppRoutes.gatewayOfAccounts: (_) =>
-              const GatewayOfAccountsScreen(),
+          AppRoutes.gatewayOfAccounts: (_) => const GatewayOfAccountsScreen(),
           AppRoutes.help: (_) => const HelpScreen(),
           AppRoutes.support: (_) => const SupportCenterScreen(),
+          AppRoutes.profile: (_) => const ProfileScreen(),
+          AppRoutes.companies: (_) => const CompanyScreen(),
+          AppRoutes.createCompany: (_) => const CompanyAddScreen(),
         },
       ),
     );

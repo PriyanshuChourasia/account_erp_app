@@ -31,17 +31,37 @@ class CountryAddDialog extends StatefulWidget {
 class _CountryAddDialogState extends State<CountryAddDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _codeController = TextEditingController();
   final _aliasController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  final _iso2Controller = TextEditingController();
+  final _iso3Controller = TextEditingController();
+  final _numericController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _currencyCodeController = TextEditingController();
+  final _currencyNameController = TextEditingController();
+  final _regionController = TextEditingController();
+  final _subRegionController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _codeController.dispose();
     _aliasController.dispose();
-    _descriptionController.dispose();
+    _iso2Controller.dispose();
+    _iso3Controller.dispose();
+    _numericController.dispose();
+    _phoneController.dispose();
+    _currencyCodeController.dispose();
+    _currencyNameController.dispose();
+    _regionController.dispose();
+    _subRegionController.dispose();
     super.dispose();
+  }
+
+  String? _required(String? value, String message) =>
+      (value == null || value.trim().isEmpty) ? message : null;
+
+  String? _length(String? value, int length, String message) {
+    if (value == null || value.trim().isEmpty) return null;
+    return value.trim().length != length ? message : null;
   }
 
   void _submit() {
@@ -49,18 +69,21 @@ class _CountryAddDialogState extends State<CountryAddDialog> {
     Navigator.of(context).pop(
       CreateCountryRequest(
         name: _nameController.text.trim(),
-        code: _codeController.text.trim().isEmpty
-            ? null
-            : _codeController.text.trim().toUpperCase(),
-        alias: _aliasController.text.trim().isEmpty
-            ? null
-            : _aliasController.text.trim(),
-        description: _descriptionController.text.trim().isEmpty
-            ? null
-            : _descriptionController.text.trim(),
+        alias: _blankToNull(_aliasController.text),
+        iso2Code: _iso2Controller.text.trim().toUpperCase(),
+        iso3Code: _iso3Controller.text.trim().toUpperCase(),
+        numericCode: _numericController.text.trim(),
+        phoneCode: _phoneController.text.trim(),
+        currencyCode: _currencyCodeController.text.trim().toUpperCase(),
+        currencyName: _currencyNameController.text.trim(),
+        region: _blankToNull(_regionController.text),
+        subRegion: _blankToNull(_subRegionController.text),
       ),
     );
   }
+
+  static String? _blankToNull(String value) =>
+      value.trim().isEmpty ? null : value.trim();
 
   @override
   Widget build(BuildContext context) {
@@ -102,55 +125,171 @@ class _CountryAddDialogState extends State<CountryAddDialog> {
                   hintText: 'e.g. India',
                   prefixIcon: Icon(Icons.public_rounded),
                 ),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'Enter a country name'
-                    : null,
+                validator: (value) =>
+                    _required(value, 'Enter a country name'),
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _aliasController,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  labelText: 'Alias (optional)',
+                  hintText: 'e.g. Bharat',
+                  prefixIcon: Icon(Icons.alternate_email_rounded),
+                ),
               ),
               const SizedBox(height: 14),
               Row(
                 children: [
                   Expanded(
                     child: TextFormField(
-                      controller: _codeController,
+                      controller: _iso2Controller,
                       textCapitalization: TextCapitalization.characters,
+                      maxLength: 2,
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[A-Za-z0-9_-]'),
-                        ),
+                        FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z]')),
                         _UpperCaseTextFormatter(),
                       ],
                       decoration: const InputDecoration(
-                        labelText: 'ISO code',
-                        hintText: 'e.g. IN',
+                        labelText: 'ISO2 code',
+                        hintText: 'IN',
+                        counterText: '',
                         prefixIcon: Icon(Icons.tag_rounded),
+                      ),
+                      validator: (value) => _required(value, 'ISO2 required') ??
+                          _length(value, 2, 'Must be exactly 2 characters'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _iso3Controller,
+                      textCapitalization: TextCapitalization.characters,
+                      maxLength: 3,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z]')),
+                        _UpperCaseTextFormatter(),
+                      ],
+                      decoration: const InputDecoration(
+                        labelText: 'ISO3 code',
+                        hintText: 'IND',
+                        counterText: '',
+                        prefixIcon: Icon(Icons.tag_rounded),
+                      ),
+                      validator: (value) => _required(value, 'ISO3 required') ??
+                          _length(value, 3, 'Exactly 3 characters'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _numericController,
+                      keyboardType: TextInputType.number,
+                      maxLength: 3,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      decoration: const InputDecoration(
+                        labelText: 'Numeric code',
+                        hintText: '356',
+                        counterText: '',
+                        prefixIcon: Icon(Icons.pin_rounded),
+                      ),
+                      validator: (value) =>
+                          _required(value, 'Numeric code required') ??
+                          _length(value, 3, 'Exactly 3 characters'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone code',
+                        hintText: '+91',
+                        prefixIcon: Icon(Icons.call_rounded),
+                      ),
+                      validator: (value) =>
+                          _required(value, 'Phone code required'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const _SectionLabel('Currency'),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _currencyCodeController,
+                      textCapitalization: TextCapitalization.characters,
+                      maxLength: 3,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z]')),
+                        _UpperCaseTextFormatter(),
+                      ],
+                      decoration: const InputDecoration(
+                        labelText: 'Currency code',
+                        hintText: 'INR',
+                        counterText: '',
+                        prefixIcon: Icon(Icons.currency_exchange_rounded),
+                      ),
+                      validator: (value) =>
+                          _required(value, 'Currency code required') ??
+                          _length(value, 3, 'Exactly 3 characters'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _currencyNameController,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: const InputDecoration(
+                        labelText: 'Currency name',
+                        hintText: 'Indian Rupee',
+                        prefixIcon: Icon(Icons.payments_rounded),
+                      ),
+                      validator: (value) =>
+                          _required(value, 'Currency name required'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const _SectionLabel('Region (optional)'),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _regionController,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: const InputDecoration(
+                        labelText: 'Region',
+                        hintText: 'e.g. Asia',
+                        prefixIcon: Icon(Icons.language_rounded),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: TextFormField(
-                      controller: _aliasController,
+                      controller: _subRegionController,
                       textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
-                        labelText: 'Alias (optional)',
-                        prefixIcon: Icon(Icons.alternate_email_rounded),
+                        labelText: 'Sub-region',
+                        hintText: 'e.g. Southern Asia',
+                        prefixIcon: Icon(Icons.travel_explore_rounded),
                       ),
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 20),
-              const _SectionLabel('Notes'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _descriptionController,
-                textCapitalization: TextCapitalization.sentences,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  alignLabelWithHint: true,
-                  prefixIcon: Icon(Icons.notes_rounded),
-                ),
               ),
             ],
           ),

@@ -19,7 +19,7 @@ class FinancialYearCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${financialYear.id}',
+      financialYear.id,
       if (financialYear.code != null) financialYear.code!,
       if (financialYear.startDate != null)
         '${formatFinancialDateString(financialYear.startDate)} → '

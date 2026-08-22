@@ -14,8 +14,8 @@ class CountryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${country.id}',
-      if (country.code != null) country.code!,
+      if (country.iso2Code != null) country.iso2Code!,
+      if (country.iso3Code != null) country.iso3Code!,
       if (country.alias != null) 'aka ${country.alias}',
     ].join(' · ');
 
@@ -55,10 +55,15 @@ class CountryCard extends StatelessWidget {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  if (country.description != null) ...[
+                  if (country.currencyCode != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      country.description!,
+                      [
+                        if (country.phoneCode != null) country.phoneCode!,
+                        country.currencyCode!,
+                        if (country.currencyName != null)
+                          country.currencyName!,
+                      ].join(' · '),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -73,16 +78,16 @@ class CountryCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: country.isActive
+                color: country.active
                     ? AppColors.gradientGreen.first.withValues(alpha: 0.12)
                     : AppColors.textSecondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                country.isActive ? 'Active' : 'Inactive',
+                country.active ? 'Active' : 'Inactive',
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: country.isActive
+                  color: country.active
                       ? AppColors.gradientGreen.first
                       : AppColors.textSecondary,
                 ),

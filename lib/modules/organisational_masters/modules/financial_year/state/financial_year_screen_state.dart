@@ -30,7 +30,7 @@ class FinancialYearScreenState extends State<FinancialYearScreen> {
     await context.read<FinancialYearViewModel>().addFinancialYear(result);
   }
 
-  Future<void> _setCurrent(FinancialYearViewModel viewModel, int id) async {
+  Future<void> _setCurrent(FinancialYearViewModel viewModel, String id) async {
     FinancialYear? year;
     for (final candidate in viewModel.financialYears) {
       if (candidate.id == id) {
@@ -186,7 +186,7 @@ class _FinancialYearTable extends StatelessWidget {
   static const _statusColumnWidth = 96.0;
 
   final List<FinancialYear> financialYears;
-  final ValueChanged<int> onSetCurrent;
+  final ValueChanged<String> onSetCurrent;
 
   @override
   Widget build(BuildContext context) {

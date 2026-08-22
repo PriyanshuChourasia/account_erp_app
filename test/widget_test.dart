@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:account_erp_app/config/token_storage.dart';
 import 'package:account_erp_app/main.dart';
 import 'package:account_erp_app/network/service_locator.dart';
 
 void main() {
   setUpAll(() async {
-    SharedPreferences.setMockInitialValues({});
-    await initServiceLocator();
+    await initServiceLocator(tokenStorage: TokenStorage.inMemory());
   });
 
   testWidgets('shows the three auth tabs when no session is stored',

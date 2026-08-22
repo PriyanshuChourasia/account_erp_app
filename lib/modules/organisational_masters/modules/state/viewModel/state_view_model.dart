@@ -100,7 +100,7 @@ class StateViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteState(int id) async {
+  Future<bool> deleteState(String id) async {
     _error = null;
     notifyListeners();
     try {

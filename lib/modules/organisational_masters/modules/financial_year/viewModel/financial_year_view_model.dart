@@ -17,7 +17,7 @@ class FinancialYearViewModel extends ChangeNotifier {
   String? _error;
   List<FinancialYear> _financialYears = const [];
   String _query = '';
-  int? _selectedYearId;
+  String? _selectedYearId;
 
   bool get isLoading => _isLoading;
   String? get error => _error;

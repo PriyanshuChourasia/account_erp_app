@@ -26,22 +26,31 @@ class AuthViewModel extends ChangeNotifier {
   UserModel? get user => _user;
 
   /// Restores the session on app start (called by [AuthGate]).
+  ///
+  /// No stored token → straight to the login page. A stored token is
+  /// validated against the profile endpoint: only success keeps the user
+  /// logged in — any failure fetching the profile (invalid token, network
+  /// error, backend unreachable, etc.) clears the stored session and sends
+  /// the user back to the login page.
   Future<void> checkAuthStatus() async {
     _isCheckingSession = true;
     notifyListeners();
     try {
       if (!await _repository.hasStoredToken()) {
+        await _repository.logout();
         _user = null;
         _isAuthenticated = false;
         return;
       }
-      _user = await _repository.fetchCurrentUser();
-      _isAuthenticated = _user != null;
-    } on AppException {
-      // A stored token that fails the profile check does not count as
-      // authenticated — only a successful profile fetch does.
-      _user = null;
-      _isAuthenticated = false;
+      try {
+        final refreshed = await _repository.fetchCurrentUser();
+        _user = refreshed ?? await _repository.getStoredUser();
+        _isAuthenticated = true;
+      } on AppException {
+        await _repository.logout();
+        _user = null;
+        _isAuthenticated = false;
+      }
     } finally {
       _isCheckingSession = false;
       notifyListeners();

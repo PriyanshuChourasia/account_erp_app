@@ -39,7 +39,7 @@ class CountryRepository {
     }
   }
 
-  Future<void> deleteCountry(int id) async {
+  Future<void> deleteCountry(String id) async {
     final json = await _countryService.deleteCountry(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

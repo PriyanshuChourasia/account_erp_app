@@ -11,6 +11,8 @@ class AppColors {
   static const Color textPrimary = Color(0xFF0F172A);
   static const Color textSecondary = Color(0xFF64748B);
   static const Color border = Color(0xFFE2E8F0);
+  static const Color cardBackground = Color(0xFFF1FAF3);
+  static const Color cardBorder = Color(0xFFBFE6C8);
 
   // Stat-card gradients.
   static const List<Color> gradientBlue = [

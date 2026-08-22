@@ -20,7 +20,7 @@ class FinancialYearService {
   );
 
   Future<Map<String, dynamic>> updateCurrentFinancialYear(
-    int id,
+    String id,
     bool current,
   ) => _apiService.get(
     OrganisationalApiConfig.updateFinancialYearCurrentAPI,

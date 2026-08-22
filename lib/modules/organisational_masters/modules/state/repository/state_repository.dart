@@ -39,7 +39,7 @@ class StateRepository {
     }
   }
 
-  Future<void> deleteState(int id) async {
+  Future<void> deleteState(String id) async {
     final json = await _stateService.deleteState(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

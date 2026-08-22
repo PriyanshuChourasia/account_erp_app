@@ -29,7 +29,7 @@ class CountryScreenState extends State<CountryScreen> {
     await context.read<CountryViewModel>().addCountry(result);
   }
 
-  Future<void> _confirmDelete(CountryViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(CountryViewModel viewModel, String id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -158,7 +158,7 @@ class _CountryTable extends StatelessWidget {
   const _CountryTable({required this.countries, required this.onDelete});
 
   final List<Country> countries;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -170,11 +170,12 @@ class _CountryTable extends StatelessWidget {
           columnSpacing: 24,
           headingRowColor: WidgetStatePropertyAll(AppColors.background),
           columns: const [
-            DataColumn(label: Text('ID')),
             DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Code')),
-            DataColumn(label: Text('Alias')),
-            DataColumn(label: Text('Description')),
+            DataColumn(label: Text('ISO2')),
+            DataColumn(label: Text('ISO3')),
+            DataColumn(label: Text('Phone')),
+            DataColumn(label: Text('Currency')),
+            DataColumn(label: Text('Region')),
             DataColumn(label: Text('Status')),
             DataColumn(label: Text('')),
           ],
@@ -182,7 +183,6 @@ class _CountryTable extends StatelessWidget {
             for (final country in countries)
               DataRow(
                 cells: [
-                  DataCell(Text('${country.id}')),
                   DataCell(
                     Text(
                       country.name,
@@ -191,16 +191,23 @@ class _CountryTable extends StatelessWidget {
                       ),
                     ),
                   ),
-                  DataCell(Text(country.code ?? '—')),
-                  DataCell(Text(country.alias ?? '—')),
+                  DataCell(Text(country.iso2Code ?? '—')),
+                  DataCell(Text(country.iso3Code ?? '—')),
+                  DataCell(Text(country.phoneCode ?? '—')),
                   DataCell(
                     Text(
-                      country.description ?? '—',
+                      [
+                        if (country.currencyCode != null)
+                          country.currencyCode!,
+                        if (country.currencyName != null)
+                          country.currencyName!,
+                      ].join(' · '),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  DataCell(_StatusBadge(isActive: country.isActive)),
+                  DataCell(Text(country.region ?? '—')),
+                  DataCell(_StatusBadge(active: country.active)),
                   DataCell(
                     IconButton(
                       tooltip: 'Delete country',
@@ -222,9 +229,9 @@ class _CountryTable extends StatelessWidget {
 }
 
 class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.isActive});
+  const _StatusBadge({required this.active});
 
-  final bool isActive;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
@@ -232,16 +239,16 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: isActive
+        color: active
             ? AppColors.gradientGreen.first.withValues(alpha: 0.12)
             : AppColors.textSecondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        isActive ? 'Active' : 'Inactive',
+        active ? 'Active' : 'Inactive',
         style: theme.textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w600,
-          color: isActive
+          color: active
               ? AppColors.gradientGreen.first
               : AppColors.textSecondary,
         ),

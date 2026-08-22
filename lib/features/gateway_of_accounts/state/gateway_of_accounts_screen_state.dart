@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../config/theme/app_theme.dart';
+import '../../../modules/organisational_masters/modules/company/models/create_company_request.dart';
+import '../../../modules/organisational_masters/modules/company/viewModel/company_view_model.dart';
 import '../../../routing/app_routes.dart';
 import '../../auth/viewModel/auth_view_model.dart';
 import '../screens/gateway_of_accounts_screen.dart';
@@ -87,11 +89,6 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Icon(
-                      Icons.account_circle_outlined,
-                      color: AppColors.textSecondary.withValues(alpha: 0.6),
-                      size: 22,
-                    ),
                   ],
                 ),
               ),
@@ -151,7 +148,11 @@ class _CompanyListEmptyState extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Expanded(
-                  child: _PeriodDateItem(label: 'Current Period', value: '—'),
+                  child: _PeriodDateItem(
+                    label: 'Current Period',
+                    value: '—',
+                    icon: Icons.calendar_today_outlined,
+                  ),
                 ),
                 Expanded(
                   child: _PeriodDateItem(
@@ -229,11 +230,13 @@ class _PeriodDateItem extends StatelessWidget {
     required this.label,
     required this.value,
     this.alignEnd = false,
+    this.icon,
   });
 
   final String label;
   final String value;
   final bool alignEnd;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -241,6 +244,13 @@ class _PeriodDateItem extends StatelessWidget {
     final crossAxis = alignEnd
         ? CrossAxisAlignment.end
         : CrossAxisAlignment.start;
+    final valueText = Text(
+      value,
+      style: theme.textTheme.bodyMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+      ),
+    );
 
     return Column(
       crossAxisAlignment: crossAxis,
@@ -252,13 +262,16 @@ class _PeriodDateItem extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
-          value,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
+        icon == null
+            ? valueText
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 16, color: AppColors.primary),
+                  const SizedBox(width: 6),
+                  valueText,
+                ],
+              ),
       ],
     );
   }
@@ -277,6 +290,29 @@ class _ActionsCard extends StatelessWidget {
     }
   }
 
+  /// Opens the create-company screen directly, without navigating to the
+  /// companies list screen (which would otherwise fetch the company list).
+  Future<void> _createCompany(BuildContext context) async {
+    // Untyped: routes built from the `routes:` table are `Route<dynamic>`,
+    // so a typed `pushNamed<T>` fails its internal cast at runtime.
+    final result =
+        await Navigator.of(context).pushNamed(AppRoutes.createCompany)
+            as CreateCompanyRequest?;
+    if (result == null || !context.mounted) return;
+    final viewModel = context.read<CompanyViewModel>();
+    final success = await viewModel.addCompany(result);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? 'Company "${result.name}" created.'
+              : (viewModel.error ?? 'Something went wrong. Please try again.'),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -287,40 +323,46 @@ class _ActionsCard extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 280),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _ActionButton(
-                  icon: Icons.add_business_rounded,
-                  label: 'Create Company',
-                  onTap: () {
-                    // TODO: Navigate to create-company flow.
-                  },
-                ),
-                const SizedBox(height: 12),
-                _ActionButton(
-                  icon: Icons.backup_outlined,
-                  label: 'Backup',
-                  onTap: () {
-                    // TODO: Trigger backup flow.
-                  },
-                ),
-                const SizedBox(height: 12),
-                _ActionButton(
-                  icon: Icons.restore_outlined,
-                  label: 'Restore',
-                  onTap: () {
-                    // TODO: Trigger restore flow.
-                  },
-                ),
-                const SizedBox(height: 12),
-                _ActionButton(
-                  icon: Icons.logout_rounded,
-                  label: 'Logout',
-                  isDestructive: true,
-                  onTap: () => _logout(context),
-                ),
-              ],
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.cardBorder),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _ActionLink(
+                    icon: Icons.add_business_rounded,
+                    label: 'Create Company',
+                    onTap: () => _createCompany(context),
+                  ),
+                  const Divider(height: 1),
+                  _ActionLink(
+                    icon: Icons.backup_outlined,
+                    label: 'Backup',
+                    onTap: () {
+                      // TODO: Trigger backup flow.
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _ActionLink(
+                    icon: Icons.restore_outlined,
+                    label: 'Restore',
+                    onTap: () {
+                      // TODO: Trigger restore flow.
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _ActionLink(
+                    icon: Icons.logout_rounded,
+                    label: 'Logout',
+                    isDestructive: true,
+                    onTap: () => _logout(context),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -329,8 +371,12 @@ class _ActionsCard extends StatelessWidget {
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
+/// A link-styled row (icon + underlined text, no box/border) used for each
+/// quick action (Create Company, Backup, Restore, Logout) inside
+/// [_ActionsCard], which itself carries the border and light-green
+/// background for the whole group.
+class _ActionLink extends StatelessWidget {
+  const _ActionLink({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -345,17 +391,27 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isDestructive ? Colors.red.shade600 : AppColors.primary;
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: OutlinedButton.icon(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: color,
-          side: BorderSide(color: color.withValues(alpha: 0.4)),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                decoration: TextDecoration.underline,
+                decorationColor: color,
+              ),
+            ),
+          ],
         ),
-        icon: Icon(icon, size: 20),
-        label: Align(alignment: Alignment.centerLeft, child: Text(label)),
       ),
     );
   }

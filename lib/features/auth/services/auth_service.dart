@@ -19,5 +19,5 @@ class AuthService {
       _apiService.post(ApiConfig.logoutEndpoint);
 
   Future<Map<String, dynamic>> fetchProfile() =>
-      _apiService.get(ApiConfig.profileEndpoint);
+      _apiService.post(ApiConfig.profileEndpoint);
 }

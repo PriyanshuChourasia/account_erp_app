@@ -39,7 +39,7 @@ class FinancialYearRepository {
     }
   }
 
-  Future<void> updateCurrentFinancialYear(int id, bool current) async {
+  Future<void> updateCurrentFinancialYear(String id, bool current) async {
     final json = await _service.updateCurrentFinancialYear(id, current);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {
