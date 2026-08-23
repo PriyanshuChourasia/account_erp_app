@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../config/theme/app_theme.dart';
 import '../../../modules/organisational_masters/modules/company/models/create_company_request.dart';
 import '../../../modules/organisational_masters/modules/company/viewModel/company_view_model.dart';
+import '../../../modules/organisational_masters/modules/country/screens/country_screen.dart';
+import '../../../modules/organisational_masters/modules/financial_year/screens/financial_year_screen.dart';
+import '../../../modules/organisational_masters/modules/state/screens/state_screen.dart';
 import '../../../routing/app_routes.dart';
 import '../../auth/viewModel/auth_view_model.dart';
 import '../screens/gateway_of_accounts_screen.dart';
@@ -23,7 +26,24 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
     final userName = auth.user?.name ?? 'User';
 
     const left = _CompanyListEmptyState();
-    const right = _ActionsCard();
+    final right = isWide
+        ? const IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(flex: 3, child: _ActionsCard()),
+                SizedBox(width: 16),
+                Expanded(flex: 2, child: _MastersLadderCard()),
+              ],
+            ),
+          )
+        : const Column(
+            children: [
+              _ActionsCard(),
+              SizedBox(height: 16),
+              _MastersLadderCard(),
+            ],
+          );
 
     final panels = isWide
         ? IntrinsicHeight(
@@ -36,7 +56,7 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
               ],
             ),
           )
-        : const Column(children: [left, SizedBox(height: 20), right]);
+        : Column(children: [left, const SizedBox(height: 20), right]);
 
     return Scaffold(
       body: Container(
@@ -126,6 +146,29 @@ const _monthNames = [
 String _formatDate(DateTime date) =>
     '${date.day}-${_monthNames[date.month - 1]}-${date.year}';
 
+/// Opens the create-company screen directly, without navigating to the
+/// companies list screen (which would otherwise fetch the company list).
+Future<void> _createCompany(BuildContext context) async {
+  // Untyped: routes built from the `routes:` table are `Route<dynamic>`, so
+  // a typed `pushNamed<T>` fails its internal cast at runtime.
+  final result =
+      await Navigator.of(context).pushNamed(AppRoutes.createCompany)
+          as CreateCompanyRequest?;
+  if (result == null || !context.mounted) return;
+  final viewModel = context.read<CompanyViewModel>();
+  final success = await viewModel.addCompany(result);
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        success
+            ? 'Company "${result.name}" created.'
+            : (viewModel.error ?? 'Something went wrong. Please try again.'),
+      ),
+    ),
+  );
+}
+
 /// Left panel: Current Period / Current Date header, then the company list
 /// (empty state until the backend is wired up).
 class _CompanyListEmptyState extends StatelessWidget {
@@ -212,6 +255,12 @@ class _CompanyListEmptyState extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    FilledButton.icon(
+                      onPressed: () => _createCompany(context),
+                      icon: const Icon(Icons.add_business_rounded, size: 18),
+                      label: const Text('Create Company'),
+                    ),
                   ],
                 ),
               ),
@@ -290,29 +339,6 @@ class _ActionsCard extends StatelessWidget {
     }
   }
 
-  /// Opens the create-company screen directly, without navigating to the
-  /// companies list screen (which would otherwise fetch the company list).
-  Future<void> _createCompany(BuildContext context) async {
-    // Untyped: routes built from the `routes:` table are `Route<dynamic>`,
-    // so a typed `pushNamed<T>` fails its internal cast at runtime.
-    final result =
-        await Navigator.of(context).pushNamed(AppRoutes.createCompany)
-            as CreateCompanyRequest?;
-    if (result == null || !context.mounted) return;
-    final viewModel = context.read<CompanyViewModel>();
-    final success = await viewModel.addCompany(result);
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? 'Company "${result.name}" created.'
-              : (viewModel.error ?? 'Something went wrong. Please try again.'),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -363,6 +389,123 @@ class _ActionsCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Right sub-panel: a plain list of organisational masters (Financial Year,
+/// Country, State, Currency Info).
+class _MastersLadderCard extends StatelessWidget {
+  const _MastersLadderCard();
+
+  static const _items = [
+    (icon: Icons.calendar_month_rounded, label: 'Financial Year'),
+    (icon: Icons.public_rounded, label: 'Country'),
+    (icon: Icons.map_rounded, label: 'State'),
+    (icon: Icons.currency_exchange_rounded, label: 'Currency Info'),
+  ];
+
+  void _open(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const FinancialYearScreen()),
+        );
+      case 1:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const CountryScreen()));
+      case 2:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const StateScreen()));
+      default:
+        // Currency master doesn't exist yet.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Currency master is coming soon.')),
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shadowColor: Colors.black.withValues(alpha: 0.15),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final (index, item) in _items.indexed)
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: index == _items.length - 1 ? 0 : 10,
+                ),
+                child: _MasterListItem(
+                  icon: item.icon,
+                  label: item.label,
+                  onTap: () => _open(context, index),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One row of the [_MastersLadderCard] list.
+class _MasterListItem extends StatelessWidget {
+  const _MasterListItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 10,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.15),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 16, color: AppColors.primary),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

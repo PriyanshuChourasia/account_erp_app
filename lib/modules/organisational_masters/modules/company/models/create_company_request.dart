@@ -2,10 +2,10 @@ import '../../address/models/create_address_request.dart';
 
 /// Request payload for creating a company.
 ///
-/// Mirrors the backend `CreateCompanyDTO` record: `name` and `mobileNo` are
-/// mandatory; `financialYearId` (UUID string) / `bookCommencingFrom`
-/// (ISO `yyyy-MM-dd`) are enforced by this form; everything else is optional
-/// and omitted from JSON when null.
+/// Mirrors the backend `CreateCompanyDTO` record: `name`, `mobileNo` and
+/// `email` are mandatory; `financialYearId` (UUID string) /
+/// `bookCommencingFrom` (ISO `yyyy-MM-dd`) are enforced by this form;
+/// everything else is optional and omitted from JSON when null.
 class CreateCompanyRequest {
   const CreateCompanyRequest({
     required this.name,
@@ -14,7 +14,7 @@ class CreateCompanyRequest {
     this.telephoneNo,
     required this.mobileNo,
     this.faxNo,
-    this.email,
+    required this.email,
     this.website,
     required this.mailingName,
     this.baseCurrencyId,
@@ -38,7 +38,9 @@ class CreateCompanyRequest {
   /// Primary contact number.
   final String mobileNo;
   final String? faxNo;
-  final String? email;
+
+  /// Primary contact email.
+  final String email;
 
   /// e.g. `https://acme.example.com`.
   final String? website;
@@ -66,7 +68,7 @@ class CreateCompanyRequest {
     if (telephoneNo != null) 'telephoneNo': telephoneNo,
     'mobileNo': mobileNo,
     if (faxNo != null) 'faxNo': faxNo,
-    if (email != null) 'email': email,
+    'email': email,
     if (website != null) 'website': website,
     'mailingName': mailingName,
     if (baseCurrencyId != null) 'baseCurrencyId': baseCurrencyId,

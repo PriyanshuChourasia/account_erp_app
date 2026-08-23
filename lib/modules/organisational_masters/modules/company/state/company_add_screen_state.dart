@@ -134,9 +134,7 @@ class CompanyAddScreenState extends State<CompanyAddScreen> {
         faxNo: _faxController.text.trim().isEmpty
             ? null
             : _faxController.text.trim(),
-        email: _emailController.text.trim().isEmpty
-            ? null
-            : _emailController.text.trim(),
+        email: _emailController.text.trim(),
         website: _websiteController.text.trim().isEmpty
             ? null
             : _websiteController.text.trim(),
@@ -183,7 +181,10 @@ class CompanyAddScreenState extends State<CompanyAddScreen> {
       cityController: _cityController,
       pinCodeController: _pinCodeController,
       mobileController: _mobileController,
+      telephoneController: _telephoneController,
+      faxController: _faxController,
       emailController: _emailController,
+      websiteController: _websiteController,
       addressType: _addressType,
       onAddressTypeChanged: (value) =>
           setState(() => _addressType = value ?? _addressType),
@@ -251,6 +252,19 @@ class CompanyAddScreenState extends State<CompanyAddScreen> {
                         children: [left, const SizedBox(height: 16), right],
                       ),
                 const SizedBox(height: 20),
+                const Center(child: _SectionLabel('Base Currency Information')),
+                const SizedBox(height: 8),
+                _LabeledField(
+                  label: 'Base currency',
+                  child: Text(
+                    'Default (\u20B9 Indian Rupee)',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 FilledButton.icon(
                   onPressed: _submit,
                   icon: const Icon(Icons.check_rounded, size: 16),
@@ -302,7 +316,10 @@ class _LeftPanel extends StatelessWidget {
     required this.cityController,
     required this.pinCodeController,
     required this.mobileController,
+    required this.telephoneController,
+    required this.faxController,
     required this.emailController,
+    required this.websiteController,
     required this.addressType,
     required this.onAddressTypeChanged,
     required this.countries,
@@ -319,7 +336,10 @@ class _LeftPanel extends StatelessWidget {
   final TextEditingController cityController;
   final TextEditingController pinCodeController;
   final TextEditingController mobileController;
+  final TextEditingController telephoneController;
+  final TextEditingController faxController;
   final TextEditingController emailController;
+  final TextEditingController websiteController;
   final String addressType;
   final ValueChanged<String?> onAddressTypeChanged;
   final List<Country> countries;
@@ -347,6 +367,7 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 10),
         _LabeledField(
           label: 'Name',
+          isRequired: true,
           child: TextFormField(
             controller: nameController,
             autofocus: true,
@@ -362,6 +383,7 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 8),
         _LabeledField(
           label: 'Mailing name',
+          isRequired: true,
           child: TextFormField(
             controller: mailingNameController,
             textCapitalization: TextCapitalization.words,
@@ -387,6 +409,7 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 10),
         _LabeledField(
           label: 'Address',
+          isRequired: true,
           child: TextFormField(
             controller: line1Controller,
             textCapitalization: TextCapitalization.words,
@@ -410,6 +433,7 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 10),
         _LabeledField(
           label: 'Country',
+          isRequired: true,
           child: DropdownButtonFormField<Country>(
             initialValue: country,
             decoration: const InputDecoration(),
@@ -424,6 +448,7 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 10),
         _LabeledField(
           label: 'State',
+          isRequired: true,
           child: DropdownButtonFormField<StateMaster>(
             initialValue: state,
             decoration: const InputDecoration(),
@@ -438,6 +463,7 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 10),
         _LabeledField(
           label: 'Pin code',
+          isRequired: true,
           child: TextFormField(
             controller: pinCodeController,
             keyboardType: TextInputType.number,
@@ -461,8 +487,30 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 8),
         _LabeledField(
           label: 'Mobile number',
+          isRequired: true,
           child: TextFormField(
             controller: mobileController,
+            keyboardType: TextInputType.phone,
+            decoration: const InputDecoration(hintText: 'e.g. 9876543210'),
+            validator: (value) => (value == null || value.trim().isEmpty)
+                ? 'Enter a mobile number'
+                : null,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _LabeledField(
+          label: 'Telephone no.',
+          child: TextFormField(
+            controller: telephoneController,
+            keyboardType: TextInputType.phone,
+            decoration: const InputDecoration(hintText: 'Optional'),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _LabeledField(
+          label: 'Fax no.',
+          child: TextFormField(
+            controller: faxController,
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(hintText: 'Optional'),
           ),
@@ -470,9 +518,27 @@ class _LeftPanel extends StatelessWidget {
         const SizedBox(height: 10),
         _LabeledField(
           label: 'Email',
+          isRequired: true,
           child: TextFormField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(hintText: 'e.g. accounts@acme.com'),
+            validator: (value) {
+              final trimmed = value?.trim() ?? '';
+              if (trimmed.isEmpty) return 'Enter an email address';
+              if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(trimmed)) {
+                return 'Enter a valid email address';
+              }
+              return null;
+            },
+          ),
+        ),
+        const SizedBox(height: 10),
+        _LabeledField(
+          label: 'Website',
+          child: TextFormField(
+            controller: websiteController,
+            keyboardType: TextInputType.url,
             decoration: const InputDecoration(hintText: 'Optional'),
           ),
         ),
@@ -508,6 +574,7 @@ class _RightPanel extends StatelessWidget {
         const SizedBox(height: 8),
         _LabeledField(
           label: 'Financial year',
+          isRequired: true,
           child: DropdownButtonFormField<FinancialYear>(
             initialValue: financialYear,
             decoration: const InputDecoration(),
@@ -523,6 +590,7 @@ class _RightPanel extends StatelessWidget {
         const SizedBox(height: 10),
         _LabeledField(
           label: 'Books begin from',
+          isRequired: true,
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
             onTap: onPickBookBeginFrom,
@@ -553,29 +621,48 @@ class _RightPanel extends StatelessWidget {
 /// A form row laid out as `label: input` — a fixed-width label on the left,
 /// the field taking the remaining width on the right.
 class _LabeledField extends StatelessWidget {
-  const _LabeledField({required this.label, required this.child});
+  const _LabeledField({
+    required this.label,
+    required this.child,
+    this.isRequired = false,
+  });
 
   final String label;
   final Widget child;
+  final bool isRequired;
 
   static const double _labelWidth = 148;
 
   @override
   Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+      color: AppColors.textSecondary,
+      fontWeight: FontWeight.w600,
+    );
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           width: _labelWidth,
-          child: Text(
-            '$label:',
+          child: Text.rich(
+            TextSpan(
+              text: '$label:',
+              style: labelStyle,
+              children: isRequired
+                  ? const [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ]
+                  : null,
+            ),
             maxLines: 1,
             softWrap: false,
             overflow: TextOverflow.visible,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
           ),
         ),
         Expanded(child: child),

@@ -48,6 +48,13 @@ const Map<String, dynamic> sidebarMenu = {
     'icon': Icons.handyman_outlined,
     'selected_icon': Icons.handyman_rounded,
   },
+  'Developer Masters': {
+    'name': 'Developer Masters',
+    'is_visible': true,
+    'route': AppRoutes.developerMasters,
+    'icon': Icons.code_outlined,
+    'selected_icon': Icons.code_rounded,
+  },
   'Invoices': {
     'name': 'Invoices',
     'is_visible': true,

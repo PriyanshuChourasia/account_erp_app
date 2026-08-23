@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../config/theme/app_theme.dart';
 import '../../../modules/accounting_masters/screens/accounting_masters_screen.dart';
+import '../../../modules/developer_masters/screens/developer_masters_screen.dart';
 import '../../../modules/inventory_masters/screens/inventory_masters_screen.dart';
 import '../../../modules/items/screens/item_screen.dart';
 import '../../../modules/organisational_masters/screens/organisational_masters_screen.dart';
@@ -75,6 +76,8 @@ class DashboardScreenState extends State<DashboardScreen> {
         return const OrganisationalMastersScreen();
       case 5:
         return const UtilityScreen();
+      case 6:
+        return const DeveloperMastersScreen();
       default:
         if (_selectedIndex == 0) return _buildDashboard();
         return _PlaceholderView(label: _selectedLabel);
