@@ -5,6 +5,8 @@ import '../features/auth/repository/auth_repository.dart';
 import '../features/auth/services/auth_service.dart';
 import '../modules/accounting_masters/modules/account_group/repository/account_group_repository.dart';
 import '../modules/accounting_masters/modules/account_group/services/account_group_service.dart';
+import '../modules/accounting_masters/modules/account_ledger/repository/account_ledger_repository.dart';
+import '../modules/accounting_masters/modules/account_ledger/services/account_ledger_service.dart';
 import '../modules/accounting_masters/modules/account_nature/repository/account_nature_repository.dart';
 import '../modules/accounting_masters/modules/account_nature/services/account_nature_service.dart';
 import '../modules/accounting_masters/modules/voucher_type/repository/voucher_type_repository.dart';
@@ -121,6 +123,12 @@ Future<void> initServiceLocator({TokenStorage? tokenStorage}) async {
     )
     ..registerLazySingleton<AccountGroupRepository>(
       () => AccountGroupRepository(globalService<AccountGroupService>()),
+    )
+    ..registerLazySingleton<AccountLedgerService>(
+      () => AccountLedgerService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<AccountLedgerRepository>(
+      () => AccountLedgerRepository(globalService<AccountLedgerService>()),
     )
     ..registerLazySingleton<VoucherTypeService>(
       () => VoucherTypeService(globalService<ApiService>()),

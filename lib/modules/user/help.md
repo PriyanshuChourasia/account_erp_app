@@ -4,7 +4,7 @@
 This module is a placeholder — no code exists yet beyond a README describing the intended layout. There is nothing to document in terms of screens, actions, or events at this time.
 
 ## Intended Purpose
-The README (`lib/modules/user/README.md`) does not describe a specific functional purpose beyond the folder name itself — it only states that this is a placeholder module folder and points to the standard self-contained module layout to follow once implemented. Based on the name and this repo's existing module conventions (compare `lib/features/auth`, which handles login/register/session for the current user), `user` most likely represents a master-data domain for managing user accounts/records within the ERP (as distinct from the authentication flow that establishes a session), but this is inferred from naming alone, not stated in the README.
+The README (`lib/modules/user/README.md`) does not describe a specific functional purpose beyond the folder name itself — it only states that this is a placeholder module folder and points to the standard self-contained module layout to follow once implemented. Based on the name and this repo's existing module conventions (compare `lib/features/auth`, which handles login/session for the current user), `user` most likely represents a master-data domain for managing user accounts/records within the ERP (as distinct from the authentication flow that establishes a session), but this is inferred from naming alone, not stated in the README.
 
 ## Planned Layout
 Per the README, this module should follow the architecture guide's self-contained module layout when implemented:

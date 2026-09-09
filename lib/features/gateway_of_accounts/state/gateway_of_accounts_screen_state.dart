@@ -4,6 +4,11 @@ import 'package:provider/provider.dart';
 import '../../../config/theme/app_theme.dart';
 import '../../../modules/organisational_masters/modules/company/models/create_company_request.dart';
 import '../../../modules/organisational_masters/modules/company/viewModel/company_view_model.dart';
+import '../../../modules/inventory_masters/modules/stock_item/screens/stock_item_screen.dart';
+import '../../../modules/utility/modules/database_opr/screens/database_opr_screen.dart';
+import '../../../modules/accounting_masters/modules/account_group/screens/account_group_screen.dart';
+import '../../../modules/accounting_masters/modules/account_ledger/screens/account_ledger_screen.dart';
+import '../../../modules/accounting_masters/modules/account_nature/screens/account_nature_screen.dart';
 import '../../../modules/organisational_masters/modules/country/screens/country_screen.dart';
 import '../../../modules/organisational_masters/modules/financial_year/screens/financial_year_screen.dart';
 import '../../../modules/organisational_masters/modules/state/screens/state_screen.dart';
@@ -407,6 +412,11 @@ class _MastersLadderCard extends StatelessWidget {
     (icon: Icons.public_rounded, label: 'Country'),
     (icon: Icons.map_rounded, label: 'State'),
     (icon: Icons.currency_exchange_rounded, label: 'Currency Info'),
+    (icon: Icons.inventory_2_rounded, label: 'Stock Item'),
+    (icon: Icons.account_tree_rounded, label: 'Account Group'),
+    (icon: Icons.category_rounded, label: 'Account Nature'),
+    (icon: Icons.menu_book_rounded, label: 'Account Ledger'),
+    (icon: Icons.storage_rounded, label: 'Database Operations'),
   ];
 
   void _open(BuildContext context, int index) {
@@ -423,8 +433,27 @@ class _MastersLadderCard extends StatelessWidget {
         Navigator.of(
           context,
         ).push(MaterialPageRoute<void>(builder: (_) => const StateScreen()));
+      case 4:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const StockItemScreen()));
+      case 5:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const AccountGroupScreen()));
+      case 6:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const AccountNatureScreen()));
+      case 7:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const AccountLedgerScreen()));
+      case 8:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const DatabaseOprScreen()));
       default:
-        // Currency master doesn't exist yet.
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Currency master is coming soon.')),
         );
@@ -441,6 +470,17 @@ class _MastersLadderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 14),
+              child: Text(
+                'Module Masters',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
             for (final (index, item) in _items.indexed)
               Padding(
                 padding: EdgeInsets.only(

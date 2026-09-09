@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../config/theme/app_theme.dart';
 
-/// Branded gradient header shown at the top of auth screens (login,
-/// register). Curves into the content below it.
+/// Branded gradient header shown on the login screen. Curves into the
+/// content below it.
 class AuthHeader extends StatelessWidget {
   const AuthHeader({
     super.key,

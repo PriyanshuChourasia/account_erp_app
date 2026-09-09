@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../config/theme/app_theme.dart';
 import '../modules/calculator/screens/calculator_screen.dart';
+import '../modules/database_opr/screens/database_opr_screen.dart';
 import '../modules/terminal/screens/terminal_screen.dart';
 import '../screens/utility_screen.dart';
 import '../widgets/utility_card.dart';
@@ -22,7 +23,12 @@ class UtilityScreenState extends State<UtilityScreen> {
       icon: Icons.terminal_rounded,
       color: Color(0xFF0D9488),
     ),
-    // Add more utilities here: Unit Converter, Stopwatch, ...
+    (
+      title: 'Database Operations',
+      subtitle: 'Backup, restore, migrate and optimize your database',
+      icon: Icons.storage_rounded,
+      color: Color(0xFF9333EA),
+    ),
   ];
 
   void _openUtility(int index) {
@@ -35,6 +41,10 @@ class UtilityScreenState extends State<UtilityScreen> {
         Navigator.of(
           context,
         ).push(MaterialPageRoute<void>(builder: (_) => const TerminalScreen()));
+      case 2:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const DatabaseOprScreen()));
     }
   }
 

@@ -6,9 +6,7 @@ import 'config/auth_gate.dart';
 import 'core/widgets/app_shortcuts_overlay.dart';
 import 'features/auth/repository/auth_repository.dart';
 import 'features/auth/screens/login_screen.dart';
-import 'features/auth/screens/register_screen.dart';
 import 'features/auth/viewModel/auth_view_model.dart';
-import 'features/auth/viewModel/register_view_model.dart';
 import 'features/dashboard/screens/dashboard_screen.dart';
 import 'features/dashboard/viewModel/dashboard_view_model.dart';
 import 'features/gateway_of_accounts/screens/gateway_of_accounts_screen.dart';
@@ -17,6 +15,8 @@ import 'features/help/screens/support_center_screen.dart';
 import 'features/profile/screens/profile_screen.dart';
 import 'modules/accounting_masters/modules/account_group/repository/account_group_repository.dart';
 import 'modules/accounting_masters/modules/account_group/viewModel/account_group_view_model.dart';
+import 'modules/accounting_masters/modules/account_ledger/repository/account_ledger_repository.dart';
+import 'modules/accounting_masters/modules/account_ledger/viewModel/account_ledger_view_model.dart';
 import 'modules/accounting_masters/modules/account_nature/repository/account_nature_repository.dart';
 import 'modules/accounting_masters/modules/account_nature/viewModel/account_nature_view_model.dart';
 import 'modules/accounting_masters/modules/voucher_type/repository/voucher_type_repository.dart';
@@ -121,6 +121,12 @@ class AccountErpApp extends StatelessWidget {
           create: (_) =>
               AccountGroupViewModel(globalService<AccountGroupRepository>()),
         ),
+        ChangeNotifierProvider<AccountLedgerViewModel>(
+          create: (_) => AccountLedgerViewModel(
+            globalService<AccountLedgerRepository>(),
+            globalService<AccountGroupRepository>(),
+          ),
+        ),
         ChangeNotifierProvider<VoucherTypeViewModel>(
           create: (_) =>
               VoucherTypeViewModel(globalService<VoucherTypeRepository>()),
@@ -145,11 +151,6 @@ class AccountErpApp extends StatelessWidget {
         ),
         routes: {
           AppRoutes.login: (_) => const LoginScreen(),
-          AppRoutes.register: (_) => ChangeNotifierProvider(
-            // Local provider: only the register screen needs this ViewModel.
-            create: (_) => RegisterViewModel(globalService<AuthRepository>()),
-            child: const RegisterScreen(),
-          ),
           AppRoutes.dashboard: (_) => const DashboardScreen(),
           AppRoutes.gatewayOfAccounts: (_) => const GatewayOfAccountsScreen(),
           AppRoutes.help: (_) => const HelpScreen(),

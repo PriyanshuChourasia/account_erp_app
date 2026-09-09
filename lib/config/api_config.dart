@@ -19,7 +19,6 @@ class ApiConfig {
 
   // ---- Auth endpoints ----
   static const String loginEndpoint = '/auth/authenticate';
-  static const String registerEndpoint = '/auth/register';
   static const String logoutEndpoint = '/auth/logout';
   static const String profileEndpoint = '/auth/profile';
 
@@ -47,7 +46,7 @@ class ApiConfig {
   static String unitEndpoint(int id) => '/units/$id';
 
   // Endpoints that do not require an Authorization header.
-  static const Set<String> publicEndpoints = {loginEndpoint, registerEndpoint};
+  static const Set<String> publicEndpoints = {loginEndpoint};
 
   // ---- Storage keys ----
   static const String tokenKey = 'auth_token';

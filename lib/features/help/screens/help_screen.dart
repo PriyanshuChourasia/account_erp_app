@@ -12,9 +12,7 @@ class HelpScreen extends StatelessWidget {
     (
       icon: Icons.rocket_launch_outlined,
       title: 'Getting started',
-      body:
-          'Sign in with your username and password. New here? Use "Create '
-          'one" on the login screen to register an account.',
+      body: 'Sign in with your username and password.',
     ),
     (
       icon: Icons.dashboard_customize_outlined,

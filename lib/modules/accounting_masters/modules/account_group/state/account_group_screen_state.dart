@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
+import '../../account_nature/models/account_nature.dart';
+import '../../account_nature/viewModel/account_nature_view_model.dart';
 import '../models/account_group.dart';
 import '../screens/account_group_screen.dart';
 import '../viewModel/account_group_view_model.dart';
@@ -13,11 +15,20 @@ import '../widgets/account_group_create_form.dart';
 /// State for [AccountGroupScreen]. Kept out of the screen file to follow the
 /// StatefulWidget split pattern.
 class AccountGroupScreenState extends State<AccountGroupScreen> {
+  bool _subledger = false;
+  bool _nettReporting = false;
+  String? _allocationMethod;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) context.read<AccountGroupViewModel>().loadAccountGroups();
+      if (!mounted) return;
+      context.read<AccountGroupViewModel>().loadAccountGroups();
+      final natureViewModel = context.read<AccountNatureViewModel>();
+      if (natureViewModel.accountNatures.isEmpty && !natureViewModel.isLoading) {
+        natureViewModel.loadAccountNatures();
+      }
     });
   }
 
@@ -62,6 +73,7 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AccountGroupViewModel>();
+    final natures = context.watch<AccountNatureViewModel>().accountNatures;
     final groups = viewModel.filteredAccountGroups;
 
     return Scaffold(
@@ -69,65 +81,541 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      onChanged: viewModel.setQuery,
-                      decoration: const InputDecoration(
-                        hintText: 'Search by name, alias or ID...',
-                        prefixIcon: Icon(Icons.search_rounded),
-                      ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.25),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  FilledButton.icon(
-                    onPressed: _openForm,
-                    icon: const Icon(Icons.add_rounded, size: 18),
-                    label: const Text('Add group'),
-                  ),
-                ],
-              ),
-              if (viewModel.error != null) ...[
-                const SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.error.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 18,
-                        color: Theme.of(context).colorScheme.error,
+                      Text(
+                        'Group Creation',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          viewModel.error!,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.error,
+                      const SizedBox(height: 20),
+                      Wrap(
+                        spacing: 20,
+                        runSpacing: 16,
+                        children: [
+                          SizedBox(
+                            width: 300,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Name:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      hintText: 'Enter name',
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 8,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Alias:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      hintText: 'Enter alias',
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 8,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 300,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Under:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Builder(builder: (context) {
+                                    final source =
+                                        viewModel.accountingGroups.isEmpty
+                                        ? AccountGroup.demo
+                                        : viewModel.accountingGroups;
+                                    final options = <(String, int?)>[
+                                      ('Primary', null),
+                                      for (final group in source)
+                                        (group.name, group.id),
+                                    ];
+                                    return Autocomplete<(String, int?)>(
+                                      displayStringForOption: (option) =>
+                                          option.$1,
+                                      optionsBuilder: (TextEditingValue value) {
+                                        final query = value.text
+                                            .trim()
+                                            .toLowerCase();
+                                        if (query.isEmpty) return options;
+                                        return options
+                                            .where(
+                                              (option) => option.$1
+                                                  .toLowerCase()
+                                                  .contains(query),
+                                            )
+                                            .toList();
+                                      },
+                                      onSelected: (option) {},
+                                      fieldViewBuilder: (
+                                        context,
+                                        controller,
+                                        focusNode,
+                                        _,
+                                      ) {
+                                        return TextField(
+                                          controller: controller,
+                                          focusNode: focusNode,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText: 'Search and select',
+                                            suffixIcon: const Icon(
+                                              Icons.arrow_drop_down_rounded,
+                                            ),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                  vertical: 8,
+                                                ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      optionsViewBuilder: (
+                                        context,
+                                        onSelected,
+                                        options,
+                                      ) {
+                                        return Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Material(
+                                            elevation: 4,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 480,
+                                              ),
+                                              child: ListView(
+                                                shrinkWrap: true,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 4,
+                                                    ),
+                                                children: [
+                                                  for (final option in options)
+                                                    ListTile(
+                                                      dense: true,
+                                                      leading: Icon(
+                                                        option.$2 == null
+                                                            ? Icons.home_rounded
+                                                            : Icons.account_tree_rounded,
+                                                        size: 20,
+                                                        color: AppColors
+                                                            .textSecondary,
+                                                      ),
+                                                      title: Text(option.$1),
+                                                      onTap: () =>
+                                                          onSelected(option),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: AppColors.primary.withValues(alpha: 0.25),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Nature of Group:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 2,
+                            child: Builder(builder: (context) {
+                              final natureSource = natures.isEmpty
+                                  ? AccountNature.demo
+                                  : natures;
+                              final natureOptions = <(String, int)>[
+                                for (final nature in natureSource)
+                                  (nature.name, nature.id),
+                              ];
+                              return Autocomplete<(String, int)>(
+                                displayStringForOption: (option) => option.$1,
+                                optionsBuilder: (TextEditingValue value) {
+                                  final query = value.text.trim().toLowerCase();
+                                  if (query.isEmpty) return natureOptions;
+                                  return natureOptions
+                                      .where(
+                                        (option) => option.$1
+                                            .toLowerCase()
+                                            .contains(query),
+                                      )
+                                      .toList();
+                                },
+                                onSelected: (option) {},
+                                fieldViewBuilder: (
+                                  context,
+                                  controller,
+                                  focusNode,
+                                  _,
+                                ) {
+                                  return TextField(
+                                    controller: controller,
+                                    focusNode: focusNode,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      hintText: 'Search and select',
+                                      suffixIcon: const Icon(
+                                        Icons.arrow_drop_down_rounded,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 8,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                optionsViewBuilder: (
+                                  context,
+                                  onSelected,
+                                  options,
+                                ) {
+                                  return Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Material(
+                                      elevation: 4,
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 480,
+                                        ),
+                                        child: ListView(
+                                          shrinkWrap: true,
+                                          padding:
+                                              const EdgeInsets.symmetric(
+                                                vertical: 4,
+                                              ),
+                                          children: [
+                                            for (final option in options)
+                                              ListTile(
+                                                dense: true,
+                                                leading: Icon(
+                                                  Icons.category_rounded,
+                                                  size: 20,
+                                                  color: AppColors
+                                                      .textSecondary,
+                                                ),
+                                                title: Text(option.$1),
+                                                onTap: () =>
+                                                    onSelected(option),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                               );
+                              },
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Group Behaves like a sub-ledger:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _YesNoChoice(
+                                  label: 'Yes',
+                                  selected: _subledger,
+                                  onTap: () =>
+                                      setState(() => _subledger = true),
+                                ),
+                                const SizedBox(width: 12),
+                                _YesNoChoice(
+                                  label: 'No',
+                                  selected: !_subledger,
+                                  onTap: () =>
+                                      setState(() => _subledger = false),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Nett Debit/Credit Balances for Reporting:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _YesNoChoice(
+                                  label: 'Yes',
+                                  selected: _nettReporting,
+                                  onTap: () =>
+                                      setState(() => _nettReporting = true),
+                                ),
+                                const SizedBox(width: 12),
+                                _YesNoChoice(
+                                  label: 'No',
+                                  selected: !_nettReporting,
+                                  onTap: () =>
+                                      setState(() => _nettReporting = false),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Method to allocate when used in purchase invoice:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(
+                              width: 240,
+                              child: DropdownButtonFormField<String?>(
+                                initialValue: _allocationMethod,
+                                isDense: true,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText: 'Select method',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: null,
+                                    child: Text('Not Applicable'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'FIFO',
+                                    child: Text('First In First Out (FIFO)'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'LIFO',
+                                    child: Text('Last In First Out (LIFO)'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'Weighted Average',
+                                    child: Text('Weighted Average'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'Specific Identification',
+                                    child: Text('Specific Identification'),
+                                  ),
+                                ],
+                                onChanged: (value) =>
+                                    setState(() => _allocationMethod = value),
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      if (viewModel.error != null) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.error.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline_rounded,
+                              size: 18,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                viewModel.error!,
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
+                  ],
                 ),
-              ],
-              const SizedBox(height: 16),
+              ),
+            ),
+            const SizedBox(width: 20),
               Expanded(
+                flex: 3,
                 child: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : groups.isEmpty
@@ -140,7 +628,8 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                                 onEdit: (id) => _openForm(
                                   groups.firstWhere((g) => g.id == id),
                                 ),
-                                onDelete: (id) => _confirmDelete(viewModel, id),
+                                onDelete: (id) =>
+                                    _confirmDelete(viewModel, id),
                               )
                             : ListView.separated(
                                 itemCount: groups.length,
@@ -320,6 +809,66 @@ class _EmptyState extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A selectable Yes/No choice button used for boolean fields.
+class _YesNoChoice extends StatelessWidget {
+  const _YesNoChoice({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: selected
+                ? AppColors.primary
+                : AppColors.textSecondary.withValues(alpha: 0.3),
+          ),
+          color: selected
+              ? AppColors.primary.withValues(alpha: 0.12)
+              : Colors.transparent,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              selected
+                  ? Icons.radio_button_checked_rounded
+                  : Icons.radio_button_off_rounded,
+              size: 18,
+              color: selected
+                  ? AppColors.primary
+                  : AppColors.textSecondary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: selected
+                    ? AppColors.primary
+                    : AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
