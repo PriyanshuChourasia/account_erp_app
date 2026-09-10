@@ -32,15 +32,13 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
 
     const left = _CompanyListEmptyState();
     final right = isWide
-        ? const IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(flex: 3, child: _ActionsCard()),
-                SizedBox(width: 16),
-                Expanded(flex: 2, child: _MastersLadderCard()),
-              ],
-            ),
+        ? const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 3, child: _ActionsCard()),
+              SizedBox(width: 16),
+              Expanded(flex: 2, child: _MastersLadderCard()),
+            ],
           )
         : const Column(
             children: [
@@ -51,15 +49,13 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
           );
 
     final panels = isWide
-        ? IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(flex: 2, child: left),
-                const SizedBox(width: 20),
-                Expanded(flex: 3, child: right),
-              ],
-            ),
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 2, child: left),
+              const SizedBox(width: 20),
+              Expanded(flex: 3, child: right),
+            ],
           )
         : Column(children: [left, const SizedBox(height: 20), right]);
 
@@ -189,45 +185,50 @@ class _CompanyListEmptyState extends StatelessWidget {
       shadowColor: Colors.black.withValues(alpha: 0.15),
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Expanded(
-                  child: _PeriodDateItem(
-                    label: 'Current Period',
-                    value: '—',
-                    icon: Icons.calendar_today_outlined,
+        // Wrapped in its own scroll view so the content scrolls internally
+        // instead of overflowing when the card is given little height (a
+        // short window in the wide, side-by-side layout).
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Expanded(
+                    child: _PeriodDateItem(
+                      label: 'Current Period',
+                      value: '—',
+                      icon: Icons.calendar_today_outlined,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _PeriodDateItem(
-                    label: 'Current Date',
-                    value: _formatDate(now),
-                    alignEnd: true,
+                  Expanded(
+                    child: _PeriodDateItem(
+                      label: 'Current Date',
+                      value: _formatDate(now),
+                      alignEnd: true,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Divider(height: 1),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: Text(
-                'List of Companies',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Divider(height: 1),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  'List of Companies',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Center(
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -269,8 +270,8 @@ class _CompanyListEmptyState extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -467,32 +468,41 @@ class _MastersLadderCard extends StatelessWidget {
       shadowColor: Colors.black.withValues(alpha: 0.15),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 14),
-              child: Text(
-                'Module Masters',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  color: AppColors.textPrimary,
+        // Wrapped in its own scroll view so a tall item list scrolls
+        // internally instead of overflowing when the card is given little
+        // height (a short window in the wide, side-by-side layout).
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 14),
+                child: Text(
+                  'Module Masters',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
-            ),
-            for (final (index, item) in _items.indexed)
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: index == _items.length - 1 ? 0 : 10,
-                ),
-                child: _MasterListItem(
-                  icon: item.icon,
-                  label: item.label,
-                  onTap: () => _open(context, index),
-                ),
+              ListView.separated(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _items.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final item = _items[index];
+                  return _MasterListItem(
+                    icon: item.icon,
+                    label: item.label,
+                    onTap: () => _open(context, index),
+                  );
+                },
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -533,16 +543,18 @@ class _MasterListItem extends StatelessWidget {
               ),
             ),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon, size: 16, color: AppColors.primary),
                 const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                    color: AppColors.textPrimary,
+                Flexible(
+                  child: Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
               ],
@@ -583,14 +595,17 @@ class _ActionLink extends StatelessWidget {
           children: [
             Icon(icon, size: 18, color: color),
             const SizedBox(width: 10),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                decoration: TextDecoration.underline,
-                decorationColor: color,
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                  decorationColor: color,
+                ),
               ),
             ),
           ],

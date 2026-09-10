@@ -85,7 +85,7 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                flex: 3,
+                flex: 4,
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -111,7 +111,7 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                         runSpacing: 16,
                         children: [
                           SizedBox(
-                            width: 300,
+                            width: 420,
                             child: Row(
                               children: [
                                 Text(
@@ -548,24 +548,110 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                                     child: Text('Not Applicable'),
                                   ),
                                   DropdownMenuItem(
-                                    value: 'FIFO',
-                                    child: Text('First In First Out (FIFO)'),
+                                    value: 'VALUE',
+                                    child: Text('Value'),
                                   ),
                                   DropdownMenuItem(
-                                    value: 'LIFO',
-                                    child: Text('Last In First Out (LIFO)'),
+                                    value: 'WEIGHT',
+                                    child: Text('Weight'),
                                   ),
                                   DropdownMenuItem(
-                                    value: 'Weighted Average',
-                                    child: Text('Weighted Average'),
+                                    value: 'QUANTITY',
+                                    child: Text('Quantity'),
                                   ),
                                   DropdownMenuItem(
-                                    value: 'Specific Identification',
-                                    child: Text('Specific Identification'),
+                                    value: 'PERCENTAGE',
+                                    child: Text('Percentage'),
                                   ),
                                 ],
                                 onChanged: (value) =>
                                     setState(() => _allocationMethod = value),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      const _SectionLabel('Statutory Details'),
+                      const SizedBox(height: 16),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'HSN/SAC Details:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(
+                              width: 240,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText: 'Enter HSN/SAC code',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Classification:',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(
+                              width: 240,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText: 'Enter classification',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -869,6 +955,24 @@ class _YesNoChoice extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        color: AppColors.primary,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.4,
       ),
     );
   }
