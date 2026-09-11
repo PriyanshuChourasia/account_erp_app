@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/app_theme.dart';
+import '../modules/bank/screens/bank_screen.dart';
+import '../modules/bank_branch/screens/bank_branch_screen.dart';
+import '../modules/bank_type/screens/bank_type_screen.dart';
 import '../modules/calculator/screens/calculator_screen.dart';
 import '../modules/database_opr/screens/database_opr_screen.dart';
 import '../modules/terminal/screens/terminal_screen.dart';
@@ -11,6 +14,24 @@ import '../widgets/utility_card.dart';
 /// StatefulWidget split pattern.
 class UtilityScreenState extends State<UtilityScreen> {
   static const _utilities = [
+    (
+      title: 'Bank Types',
+      subtitle: 'Classify banks into nationalised, private and more',
+      icon: Icons.category_outlined,
+      color: Color(0xFF1D4ED8),
+    ),
+    (
+      title: 'Banks',
+      subtitle: 'Manage banks classified under bank types',
+      icon: Icons.account_balance_rounded,
+      color: Color(0xFF059669),
+    ),
+    (
+      title: 'Bank Branches',
+      subtitle: 'Manage branches under each bank with IFSC codes',
+      icon: Icons.store_mall_directory_rounded,
+      color: Color(0xFF7C3AED),
+    ),
     (
       title: 'Calculator',
       subtitle: 'Perform quick arithmetic calculations',
@@ -35,13 +56,25 @@ class UtilityScreenState extends State<UtilityScreen> {
     switch (index) {
       case 0:
         Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const CalculatorScreen()),
+          MaterialPageRoute<void>(builder: (_) => const BankTypeScreen()),
         );
       case 1:
         Navigator.of(
           context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const TerminalScreen()));
+        ).push(MaterialPageRoute<void>(builder: (_) => const BankScreen()));
       case 2:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const BankBranchScreen()),
+        );
+      case 3:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const CalculatorScreen()),
+        );
+      case 4:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const TerminalScreen()));
+      case 5:
         Navigator.of(
           context,
         ).push(MaterialPageRoute<void>(builder: (_) => const DatabaseOprScreen()));

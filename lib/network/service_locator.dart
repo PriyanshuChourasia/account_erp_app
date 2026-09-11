@@ -33,6 +33,12 @@ import '../modules/organisational_masters/modules/financial_year/repository/fina
 import '../modules/organisational_masters/modules/financial_year/services/financial_year_service.dart';
 import '../modules/organisational_masters/modules/state/repository/state_repository.dart';
 import '../modules/organisational_masters/modules/state/services/state_service.dart';
+import '../modules/utility/modules/bank/repository/bank_repository.dart';
+import '../modules/utility/modules/bank/services/bank_service.dart';
+import '../modules/utility/modules/bank_branch/repository/bank_branch_repository.dart';
+import '../modules/utility/modules/bank_branch/services/bank_branch_service.dart';
+import '../modules/utility/modules/bank_type/repository/bank_type_repository.dart';
+import '../modules/utility/modules/bank_type/services/bank_type_service.dart';
 import 'api_service.dart';
 import 'dio_client.dart';
 import 'interceptors/auth_interceptor.dart';
@@ -165,6 +171,24 @@ Future<void> initServiceLocator({TokenStorage? tokenStorage}) async {
     )
     ..registerLazySingleton<AddressRepository>(
       () => AddressRepository(globalService<AddressService>()),
+    )
+    ..registerLazySingleton<BankTypeService>(
+      () => BankTypeService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<BankTypeRepository>(
+      () => BankTypeRepository(globalService<BankTypeService>()),
+    )
+    ..registerLazySingleton<BankService>(
+      () => BankService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<BankRepository>(
+      () => BankRepository(globalService<BankService>()),
+    )
+    ..registerLazySingleton<BankBranchService>(
+      () => BankBranchService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<BankBranchRepository>(
+      () => BankBranchRepository(globalService<BankBranchService>()),
     );
 
   // ViewModels are NOT registered here — they are created (and owned) by the

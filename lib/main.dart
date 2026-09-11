@@ -47,6 +47,12 @@ import 'modules/organisational_masters/modules/state/repository/state_repository
 import 'modules/organisational_masters/modules/state/viewModel/state_view_model.dart';
 import 'modules/utility/modules/calculator/viewModel/calculator_view_model.dart';
 import 'modules/utility/modules/terminal/viewModel/terminal_view_model.dart';
+import 'modules/utility/modules/bank/repository/bank_repository.dart';
+import 'modules/utility/modules/bank/viewModel/bank_view_model.dart';
+import 'modules/utility/modules/bank_branch/repository/bank_branch_repository.dart';
+import 'modules/utility/modules/bank_branch/viewModel/bank_branch_view_model.dart';
+import 'modules/utility/modules/bank_type/repository/bank_type_repository.dart';
+import 'modules/utility/modules/bank_type/viewModel/bank_type_view_model.dart';
 import 'network/service_locator.dart';
 import 'routing/app_routes.dart';
 
@@ -136,6 +142,22 @@ class AccountErpApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<TerminalViewModel>(
           create: (_) => TerminalViewModel(),
+        ),
+        ChangeNotifierProvider<BankTypeViewModel>(
+          create: (_) =>
+              BankTypeViewModel(globalService<BankTypeRepository>()),
+        ),
+        ChangeNotifierProvider<BankViewModel>(
+          create: (_) => BankViewModel(
+            globalService<BankRepository>(),
+            globalService<BankTypeRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider<BankBranchViewModel>(
+          create: (_) => BankBranchViewModel(
+            globalService<BankBranchRepository>(),
+            globalService<BankRepository>(),
+          ),
         ),
         // Register additional global ViewModels here.
       ],
