@@ -22,11 +22,13 @@ class AccountLedgerViewModel extends ChangeNotifier {
   String? _error;
   List<AccountLedger> _accountLedgers = const [];
   List<AccountGroup> _accountGroups = const [];
-  String _query = '';
+  String _nameQuery = '';
+  String _aliasQuery = '';
 
   bool get isLoading => _isLoading;
   String? get error => _error;
-  String get query => _query;
+  String get nameQuery => _nameQuery;
+  String get aliasQuery => _aliasQuery;
   List<AccountLedger> get accountLedgers => _accountLedgers;
   List<AccountGroup> get accountGroups => _accountGroups;
 
@@ -39,19 +41,19 @@ class AccountLedgerViewModel extends ChangeNotifier {
     return group?.name ?? ledger.groupName ?? '—';
   }
 
-  /// Account ledgers filtered by the current search query.
+  /// Account ledgers filtered by the current name and alias queries.
   List<AccountLedger> get filteredAccountLedgers {
-    final query = _query.trim().toLowerCase();
-    if (query.isEmpty) return _accountLedgers;
-    return _accountLedgers
-        .where(
-          (ledger) =>
-              ledger.name.toLowerCase().contains(query) ||
-              ledger.id.toString().contains(query) ||
-              (ledger.alias?.toLowerCase().contains(query) ?? false) ||
-              groupNameOf(ledger).toLowerCase().contains(query),
-        )
-        .toList();
+    final nameQuery = _nameQuery.trim().toLowerCase();
+    final aliasQuery = _aliasQuery.trim().toLowerCase();
+    return _accountLedgers.where((ledger) {
+      final matchesName =
+          nameQuery.isEmpty ||
+          ledger.name.toLowerCase().contains(nameQuery);
+      final matchesAlias =
+          aliasQuery.isEmpty ||
+          (ledger.alias?.toLowerCase().contains(aliasQuery) ?? false);
+      return matchesName && matchesAlias;
+    }).toList();
   }
 
   Future<void> loadAccountLedgers() async {
@@ -79,8 +81,13 @@ class AccountLedgerViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setQuery(String value) {
-    _query = value;
+  void setNameQuery(String value) {
+    _nameQuery = value;
+    notifyListeners();
+  }
+
+  void setAliasQuery(String value) {
+    _aliasQuery = value;
     notifyListeners();
   }
 
