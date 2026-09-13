@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../config/theme/app_theme.dart';
+import '../modules/api_operation/screens/api_operation_screen.dart';
 import '../screens/database_opr_screen.dart';
 
 /// State for [DatabaseOprScreen]. Kept out of the screen file to follow the
@@ -35,10 +36,10 @@ class DatabaseOprScreenState extends State<DatabaseOprScreen> {
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.8,
-                  children: const [
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 2.6,
+                  children: [
                     _OprCard(
                       title: 'Backup',
                       subtitle: 'Create a database backup',
@@ -63,6 +64,13 @@ class DatabaseOprScreenState extends State<DatabaseOprScreen> {
                       icon: Icons.speed_rounded,
                       color: Color(0xFF2563EB),
                     ),
+                    _OprCard(
+                      title: 'API Operations',
+                      subtitle: 'Inspect and test backend API',
+                      icon: Icons.api_rounded,
+                      color: Color(0xFF0EA5E9),
+                      onTap: _openApiOperation,
+                    ),
                   ],
                 ),
               ),
@@ -70,6 +78,12 @@ class DatabaseOprScreenState extends State<DatabaseOprScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _openApiOperation() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const ApiOperationScreen()),
     );
   }
 }
@@ -80,23 +94,26 @@ class _OprCard extends StatelessWidget {
     required this.subtitle,
     required this.icon,
     required this.color,
+    this.onTap,
   });
 
   final String title;
   final String subtitle;
   final IconData icon;
   final Color color;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Card(
       child: InkWell(
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$title — coming soon')),
-          );
-        },
+        onTap: onTap ??
+            () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$title — coming soon')),
+              );
+            },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(16),

@@ -21,6 +21,10 @@ import 'modules/accounting_masters/modules/account_nature/repository/account_nat
 import 'modules/accounting_masters/modules/account_nature/viewModel/account_nature_view_model.dart';
 import 'modules/accounting_masters/modules/voucher_type/repository/voucher_type_repository.dart';
 import 'modules/accounting_masters/modules/voucher_type/viewModel/voucher_type_view_model.dart';
+import 'modules/developer_masters/modules/application_module/repository/application_module_repository.dart';
+import 'modules/developer_masters/modules/application_module/viewModel/application_module_view_model.dart';
+import 'modules/developer_masters/modules/application_feature/repository/application_feature_repository.dart';
+import 'modules/developer_masters/modules/application_feature/viewModel/application_feature_view_model.dart';
 import 'modules/items/repository/item_repository.dart';
 import 'modules/items/viewModel/item_view_model.dart';
 import 'modules/inventory_masters/modules/stock_category/repository/stock_category_repository.dart';
@@ -136,6 +140,16 @@ class AccountErpApp extends StatelessWidget {
         ChangeNotifierProvider<VoucherTypeViewModel>(
           create: (_) =>
               VoucherTypeViewModel(globalService<VoucherTypeRepository>()),
+        ),
+        ChangeNotifierProvider<ApplicationModuleViewModel>(
+          create: (_) => ApplicationModuleViewModel(
+            globalService<ApplicationModuleRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider<ApplicationFeatureViewModel>(
+          create: (_) => ApplicationFeatureViewModel(
+            globalService<ApplicationFeatureRepository>(),
+          ),
         ),
         ChangeNotifierProvider<CalculatorViewModel>(
           create: (_) => CalculatorViewModel(),

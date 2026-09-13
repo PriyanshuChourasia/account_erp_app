@@ -13,5 +13,6 @@ environments — to be defined as sub-modules are added).
 - `widgets/` — widgets shared by the masters.
 - `utils/` — helpers local to the developer domain.
 
-No sub-modules exist yet — this is currently a scaffold, following the same
+Sub-modules: `application_module/` (registry of the ERP's own modules) and
+`application_feature/` (features belonging to a module), following the same
 pattern as `organisational_masters/` and `accounting_masters/`.

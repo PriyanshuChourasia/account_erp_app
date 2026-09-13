@@ -11,6 +11,10 @@ import '../modules/accounting_masters/modules/account_nature/repository/account_
 import '../modules/accounting_masters/modules/account_nature/services/account_nature_service.dart';
 import '../modules/accounting_masters/modules/voucher_type/repository/voucher_type_repository.dart';
 import '../modules/accounting_masters/modules/voucher_type/services/voucher_type_service.dart';
+import '../modules/developer_masters/modules/application_module/repository/application_module_repository.dart';
+import '../modules/developer_masters/modules/application_module/services/application_module_service.dart';
+import '../modules/developer_masters/modules/application_feature/repository/application_feature_repository.dart';
+import '../modules/developer_masters/modules/application_feature/services/application_feature_service.dart';
 import '../modules/items/repository/item_repository.dart';
 import '../modules/items/services/item_service.dart';
 import '../modules/inventory_masters/modules/stock_category/repository/stock_category_repository.dart';
@@ -141,6 +145,22 @@ Future<void> initServiceLocator({TokenStorage? tokenStorage}) async {
     )
     ..registerLazySingleton<VoucherTypeRepository>(
       () => VoucherTypeRepository(globalService<VoucherTypeService>()),
+    )
+    ..registerLazySingleton<ApplicationModuleService>(
+      () => ApplicationModuleService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<ApplicationModuleRepository>(
+      () => ApplicationModuleRepository(
+        globalService<ApplicationModuleService>(),
+      ),
+    )
+    ..registerLazySingleton<ApplicationFeatureService>(
+      () => ApplicationFeatureService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<ApplicationFeatureRepository>(
+      () => ApplicationFeatureRepository(
+        globalService<ApplicationFeatureService>(),
+      ),
     )
     ..registerLazySingleton<CountryService>(
       () => CountryService(globalService<ApiService>()),

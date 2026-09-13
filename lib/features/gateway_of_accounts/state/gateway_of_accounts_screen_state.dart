@@ -9,6 +9,8 @@ import '../../../modules/utility/modules/database_opr/screens/database_opr_scree
 import '../../../modules/accounting_masters/modules/account_group/screens/account_group_screen.dart';
 import '../../../modules/accounting_masters/modules/account_ledger/screens/account_ledger_screen.dart';
 import '../../../modules/accounting_masters/modules/account_nature/screens/account_nature_screen.dart';
+import '../../../modules/developer_masters/modules/application_feature/screens/application_feature_screen.dart';
+import '../../../modules/developer_masters/modules/application_module/screens/application_module_screen.dart';
 import '../../../modules/organisational_masters/modules/country/screens/country_screen.dart';
 import '../../../modules/organisational_masters/modules/financial_year/screens/financial_year_screen.dart';
 import '../../../modules/organisational_masters/modules/state/screens/state_screen.dart';
@@ -418,6 +420,8 @@ class _MastersLadderCard extends StatelessWidget {
     (icon: Icons.category_rounded, label: 'Account Nature'),
     (icon: Icons.menu_book_rounded, label: 'Account Ledger'),
     (icon: Icons.storage_rounded, label: 'Database Operations'),
+    (icon: Icons.apps_rounded, label: 'Application Modules'),
+    (icon: Icons.web_asset_rounded, label: 'Application Features'),
   ];
 
   void _open(BuildContext context, int index) {
@@ -454,6 +458,18 @@ class _MastersLadderCard extends StatelessWidget {
         Navigator.of(
           context,
         ).push(MaterialPageRoute<void>(builder: (_) => const DatabaseOprScreen()));
+      case 9:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const ApplicationModuleScreen(),
+          ),
+        );
+      case 10:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const ApplicationFeatureScreen(),
+          ),
+        );
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Currency master is coming soon.')),
