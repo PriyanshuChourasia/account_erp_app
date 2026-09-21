@@ -1,12 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
 import '../models/application_feature.dart';
 import '../models/create_application_feature_request.dart';
+import '../screens/application_feature_add_screen.dart';
 import '../screens/application_feature_screen.dart';
 import '../viewModel/application_feature_view_model.dart';
-import '../widgets/application_feature_add_dialog.dart';
 import '../widgets/application_feature_card.dart';
 
 /// State for [ApplicationFeatureScreen]. Kept out of the screen file to
@@ -23,10 +28,12 @@ class ApplicationFeatureScreenState extends State<ApplicationFeatureScreen> {
   }
 
   Future<void> _openAddDialog() async {
-    final result = await showDialog<CreateApplicationFeatureRequest>(
-      context: context,
-      builder: (_) => const ApplicationFeatureAddDialog(),
-    );
+    final result = await Navigator.of(context)
+        .push<CreateApplicationFeatureRequest>(
+          MaterialPageRoute<CreateApplicationFeatureRequest>(
+            builder: (_) => const ApplicationFeatureAddScreen(),
+          ),
+        );
     if (result == null || !mounted) return;
     await context.read<ApplicationFeatureViewModel>().addApplicationFeature(
       result,
@@ -59,6 +66,57 @@ class ApplicationFeatureScreenState extends State<ApplicationFeatureScreen> {
     if (confirmed == true) await viewModel.deleteApplicationFeature(id);
   }
 
+  Future<void> _exportJson(List<ApplicationFeature> features) async {
+    if (features.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No features to export.')));
+      return;
+    }
+    final json = const JsonEncoder.withIndent(
+      '  ',
+    ).convert(features.map((feature) => feature.toJson()).toList());
+    File? file;
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final fileName =
+          'application_features_${DateTime.now().millisecondsSinceEpoch}.json';
+      file = File('${dir.path}/$fileName');
+      await file.writeAsString(json);
+    } catch (_) {
+      file = null;
+    }
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Features exported'),
+        content: Text(
+          file != null
+              ? 'Saved ${features.length} feature(s) to:\n${file.path}'
+              : 'Could not save to a file, but the JSON is ready to copy.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: json));
+              if (dialogContext.mounted) {
+                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                  const SnackBar(content: Text('JSON copied to clipboard')),
+                );
+              }
+            },
+            child: const Text('Copy JSON'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ApplicationFeatureViewModel>();
@@ -82,6 +140,12 @@ class ApplicationFeatureScreenState extends State<ApplicationFeatureScreen> {
                         prefixIcon: Icon(Icons.search_rounded),
                       ),
                     ),
+                  ),
+                  const SizedBox(width: 12),
+                  OutlinedButton.icon(
+                    onPressed: () => _exportJson(features),
+                    icon: const Icon(Icons.file_download_rounded, size: 18),
+                    label: const Text('Export JSON'),
                   ),
                   const SizedBox(width: 12),
                   FilledButton.icon(
@@ -137,8 +201,7 @@ class ApplicationFeatureScreenState extends State<ApplicationFeatureScreen> {
                             constraints.maxWidth >= 720
                             ? _FeatureTable(
                                 features: features,
-                                onDelete: (id) =>
-                                    _confirmDelete(viewModel, id),
+                                onDelete: (id) => _confirmDelete(viewModel, id),
                               )
                             : ListView.separated(
                                 itemCount: features.length,
@@ -330,10 +393,7 @@ class _FeatureTableRow extends StatelessWidget {
             child: Align(
               alignment: Alignment.center,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.background,
                   borderRadius: BorderRadius.circular(6),
@@ -415,7 +475,9 @@ class _StatusBadge extends StatelessWidget {
         active ? 'Active' : 'Inactive',
         style: theme.textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w600,
-          color: active ? AppColors.gradientGreen.first : AppColors.textSecondary,
+          color: active
+              ? AppColors.gradientGreen.first
+              : AppColors.textSecondary,
         ),
       ),
     );

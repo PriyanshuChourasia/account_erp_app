@@ -33,46 +33,41 @@ class DatabaseOprScreenState extends State<DatabaseOprScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 2.6,
-                  children: [
-                    _OprCard(
-                      title: 'Backup',
-                      subtitle: 'Create a database backup',
-                      icon: Icons.backup_rounded,
-                      color: Color(0xFF059669),
-                    ),
-                    _OprCard(
-                      title: 'Restore',
-                      subtitle: 'Restore from a backup file',
-                      icon: Icons.restore_rounded,
-                      color: Color(0xFFD97706),
-                    ),
-                    _OprCard(
-                      title: 'Migrate',
-                      subtitle: 'Run database migrations',
-                      icon: Icons.sync_alt_rounded,
-                      color: Color(0xFF7C3AED),
-                    ),
-                    _OprCard(
-                      title: 'Optimize',
-                      subtitle: 'Optimize database tables',
-                      icon: Icons.speed_rounded,
-                      color: Color(0xFF2563EB),
-                    ),
-                    _OprCard(
-                      title: 'API Operations',
-                      subtitle: 'Inspect and test backend API',
-                      icon: Icons.api_rounded,
-                      color: Color(0xFF0EA5E9),
-                      onTap: _openApiOperation,
-                    ),
-                  ],
-                ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _OprButton(
+                    label: 'Backup',
+                    icon: Icons.backup_rounded,
+                    color: Color(0xFF059669),
+                    onTap: () => _comingSoon('Backup'),
+                  ),
+                  _OprButton(
+                    label: 'Restore',
+                    icon: Icons.restore_rounded,
+                    color: Color(0xFFD97706),
+                    onTap: () => _comingSoon('Restore'),
+                  ),
+                  _OprButton(
+                    label: 'Migrate',
+                    icon: Icons.sync_alt_rounded,
+                    color: Color(0xFF7C3AED),
+                    onTap: () => _comingSoon('Migrate'),
+                  ),
+                  _OprButton(
+                    label: 'Optimize',
+                    icon: Icons.speed_rounded,
+                    color: Color(0xFF2563EB),
+                    onTap: () => _comingSoon('Optimize'),
+                  ),
+                  _OprButton(
+                    label: 'API Ops',
+                    icon: Icons.api_rounded,
+                    color: Color(0xFF0EA5E9),
+                    onTap: _openApiOperation,
+                  ),
+                ],
               ),
             ],
           ),
@@ -86,77 +81,48 @@ class DatabaseOprScreenState extends State<DatabaseOprScreen> {
       MaterialPageRoute<void>(builder: (_) => const ApiOperationScreen()),
     );
   }
+
+  void _comingSoon(String title) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$title — coming soon')),
+    );
+  }
 }
 
-class _OprCard extends StatelessWidget {
-  const _OprCard({
-    required this.title,
-    required this.subtitle,
+class _OprButton extends StatelessWidget {
+  const _OprButton({
+    required this.label,
     required this.icon,
     required this.color,
-    this.onTap,
+    required this.onTap,
   });
 
-  final String title;
-  final String subtitle;
+  final String label;
   final IconData icon;
   final Color color;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
+    return Material(
+      color: color,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: InkWell(
-        onTap: onTap ??
-            () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$title — coming soon')),
-              );
-            },
-        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(icon, color: color, size: 28),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
+              Icon(icon, color: Colors.white, size: 15),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textSecondary.withValues(alpha: 0.5),
               ),
             ],
           ),

@@ -63,8 +63,20 @@ class ApplicationFeature {
         active: json['active'] as bool? ?? true,
       );
 
-  static ApiMethod _apiMethodFromWire(String? value) => ApiMethod.values
-      .firstWhere(
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    if (moduleId != null) 'moduleId': moduleId,
+    'name': name,
+    if (code != null) 'code': code,
+    'apiMethod': apiMethod.name.toUpperCase(),
+    'apiDeviceType': apiDeviceType.name.toUpperCase(),
+    'endPoint': endPoint,
+    if (description != null) 'description': description,
+    'active': active,
+  };
+
+  static ApiMethod _apiMethodFromWire(String? value) =>
+      ApiMethod.values.firstWhere(
         (method) => method.name.toUpperCase() == value?.toUpperCase(),
         orElse: () => ApiMethod.get,
       );

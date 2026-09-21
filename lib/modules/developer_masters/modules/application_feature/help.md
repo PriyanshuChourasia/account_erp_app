@@ -13,7 +13,8 @@ Full layered implementation, mirroring `accounting_masters/modules/account_natur
 - `viewModel/application_feature_view_model.dart` — `ApplicationFeatureViewModel` (`ChangeNotifier`).
 - `screens/application_feature_screen.dart` — `ApplicationFeatureScreen` (StatefulWidget shell).
 - `state/application_feature_screen_state.dart` — `ApplicationFeatureScreenState` (search, list/table, add, delete).
+- `screens/application_feature_add_screen.dart` — `ApplicationFeatureAddScreen` (StatefulWidget shell for the create form).
+- `state/application_feature_add_screen_state.dart` — `ApplicationFeatureAddScreenState` (create form split into two grids: Details | Notes).
 - `widgets/application_feature_card.dart` — `ApplicationFeatureCard` (mobile list row).
-- `widgets/application_feature_add_dialog.dart` — `ApplicationFeatureAddDialog` (create form with method/device-type dropdowns and an active toggle).
 
 Create-only (no update yet) — matches `account_nature`, not the fuller `account_group` CRUD. `id` is a backend-assigned UUID (`String` in Dart), not an int.
