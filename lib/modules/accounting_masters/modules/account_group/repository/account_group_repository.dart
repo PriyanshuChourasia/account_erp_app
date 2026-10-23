@@ -54,7 +54,7 @@ class AccountGroupRepository {
     }
   }
 
-  Future<void> deleteAccountGroup(int id) async {
+  Future<void> deleteAccountGroup(String id) async {
     final json = await _accountingGroupService.deleteAccountGroup(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

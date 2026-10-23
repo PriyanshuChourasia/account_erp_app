@@ -19,10 +19,7 @@ class AccountLedgerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final subtitle = [
-      '${ledger.id}',
-      if (groupName != null) groupName!,
-    ].join(' · ');
+    final subtitle = [ledger.id, ?groupName].join(' · ');
 
     return Card(
       child: Padding(

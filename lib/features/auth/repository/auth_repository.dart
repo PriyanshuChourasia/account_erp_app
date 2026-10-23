@@ -5,6 +5,7 @@ import '../../../core/app_exception.dart';
 import '../../../data/models/response_model_wrapper.dart';
 import '../models/login_request_model.dart';
 import '../models/login_response_model.dart';
+import '../models/register_request_model.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 
@@ -41,6 +42,30 @@ class AuthRepository {
       // Login still succeeded even if the follow-up profile fetch failed.
     }
     return session;
+  }
+
+  /// Registers a new user. The backend responds with an access token, so
+  /// the user is signed in straight away: the token is stored and the
+  /// profile fetched, exactly as after [login].
+  Future<void> register(RegisterRequestModel request) async {
+    final json = await _authService.register(request);
+    final wrapper = ResponseModelWrapper<LoginResponseModel>.fromJson(
+      json,
+      fromJson: LoginResponseModel.fromJson,
+    );
+    final session = wrapper.data?.result;
+    if (!wrapper.success || session == null || session.token.isEmpty) {
+      throw AppException(
+        wrapper.message ?? 'Registration failed. Please try again.',
+        code: wrapper.code,
+      );
+    }
+    await _tokenStorage.setToken(session.token);
+    try {
+      await fetchCurrentUser();
+    } on AppException {
+      // Registration still succeeded even if the profile fetch failed.
+    }
   }
 
   /// Returns the current user, or null when no session is stored locally.

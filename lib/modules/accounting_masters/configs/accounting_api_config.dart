@@ -3,17 +3,17 @@ class AccountingApiConfig {
   /// account groups
   static const String accountGroupAPI = "/account_groups";
   static const String createAccountGroupAPI = "$accountGroupAPI/create";
-  static String accountGroupEndpoint(int id) => "$accountGroupAPI/$id";
+  static String accountGroupEndpoint(String id) => "$accountGroupAPI/$id";
 
   /// account natures
   static const String accountNatureAPI = "/account_natures";
   static const String createAccountNatureAPI = "$accountNatureAPI/create";
-  static String accountNatureEndpoint(int id) => "$accountNatureAPI/$id";
+  static String accountNatureEndpoint(String id) => "$accountNatureAPI/$id";
 
   /// account ledgers
   static const String accountLedgerAPI = "/account_ledgers";
   static const String createAccountLedgerAPI = "$accountLedgerAPI/create";
-  static String accountLedgerEndpoint(int id) => "$accountLedgerAPI/$id";
+  static String accountLedgerEndpoint(String id) => "$accountLedgerAPI/$id";
 
   /// voucher types
   static const String voucherTypeAPI = "/voucher_types";

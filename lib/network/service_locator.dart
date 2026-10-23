@@ -33,6 +33,10 @@ import '../modules/organisational_masters/modules/company/repository/company_rep
 import '../modules/organisational_masters/modules/company/services/company_service.dart';
 import '../modules/organisational_masters/modules/country/repository/country_repository.dart';
 import '../modules/organisational_masters/modules/country/services/country_service.dart';
+import '../modules/organisational_masters/modules/department/repository/department_repository.dart';
+import '../modules/organisational_masters/modules/department/services/department_service.dart';
+import '../modules/organisational_masters/modules/designation/repository/designation_repository.dart';
+import '../modules/organisational_masters/modules/designation/services/designation_service.dart';
 import '../modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
 import '../modules/organisational_masters/modules/financial_year/services/financial_year_service.dart';
 import '../modules/organisational_masters/modules/state/repository/state_repository.dart';
@@ -209,6 +213,18 @@ Future<void> initServiceLocator({TokenStorage? tokenStorage}) async {
     )
     ..registerLazySingleton<BankBranchRepository>(
       () => BankBranchRepository(globalService<BankBranchService>()),
+    )
+    ..registerLazySingleton<DepartmentService>(
+      () => DepartmentService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<DepartmentRepository>(
+      () => DepartmentRepository(globalService<DepartmentService>()),
+    )
+    ..registerLazySingleton<DesignationService>(
+      () => DesignationService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<DesignationRepository>(
+      () => DesignationRepository(globalService<DesignationService>()),
     );
 
   // ViewModels are NOT registered here — they are created (and owned) by the

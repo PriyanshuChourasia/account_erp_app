@@ -21,73 +21,73 @@ class AccountLedger {
     this.color = AppColors.primary,
   });
 
-  final int id;
+  final String id;
   final String name;
   final String? alias;
   final String? description;
 
   /// Parent account group id — ledgers are classified under account groups.
-  final int? groupId;
+  final String? groupId;
   final String? groupName;
   final bool isActive;
   final IconData icon;
   final Color color;
 
   factory AccountLedger.fromJson(Map<String, dynamic> json) => AccountLedger(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: json['id']?.toString() ?? '',
     name: json['name'] as String? ?? '',
     alias: json['alias'] as String?,
     description: json['description'] as String?,
-    groupId: (json['groupId'] as num?)?.toInt(),
+    groupId: json['groupId']?.toString(),
     groupName: json['groupName'] as String?,
     isActive: json['isActive'] == true,
   );
 
   static const List<AccountLedger> demo = [
     AccountLedger(
-      id: 1,
+      id: '1',
       name: 'Cash in Hand',
       alias: 'Cash',
       description: 'Physical cash held by the business',
-      groupId: 2,
+      groupId: '2',
       groupName: 'Current Assets',
       icon: Icons.payments_rounded,
       color: Color(0xFF059669),
     ),
     AccountLedger(
-      id: 2,
+      id: '2',
       name: 'Sundry Debtors',
       alias: 'Receivables',
       description: 'Customers who owe money',
-      groupId: 2,
+      groupId: '2',
       groupName: 'Current Assets',
       icon: Icons.people_alt_rounded,
       color: Color(0xFF1D4ED8),
     ),
     AccountLedger(
-      id: 3,
+      id: '3',
       name: 'Sundry Creditors',
       alias: 'Payables',
       description: 'Suppliers the business owes money to',
-      groupId: 4,
+      groupId: '4',
       groupName: 'Current Liabilities',
       icon: Icons.storefront_rounded,
       color: Color(0xFF0D9488),
     ),
     AccountLedger(
-      id: 4,
+      id: '4',
       name: 'Sales',
       description: 'Revenue from selling goods or services',
-      groupId: 6,
+      groupId: '6',
       groupName: 'Direct Income',
       icon: Icons.shopping_bag_rounded,
       color: Color(0xFF7C3AED),
     ),
     AccountLedger(
-      id: 5,
+      id: '5',
       name: 'Salary Expense',
       description: 'Employee compensation',
-      groupId: 8,
+      groupId: '8',
       groupName: 'Indirect Expense',
       icon: Icons.payments_outlined,
       color: Color(0xFFDC2626),

@@ -17,7 +17,7 @@ class AccountNature {
     this.color = AppColors.primary,
   });
 
-  final int id;
+  final String id;
   final String name;
   final int? code;
   final String? description;
@@ -25,7 +25,7 @@ class AccountNature {
   final Color color;
 
   factory AccountNature.fromJson(Map<String, dynamic> json) => AccountNature(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: json['id']?.toString() ?? '',
     name: json['name'] as String? ?? '',
     code: (json['code'] as num?)?.toInt(),
     description: json['description'] as String?,
@@ -33,7 +33,7 @@ class AccountNature {
 
   static const List<AccountNature> demo = [
     AccountNature(
-      id: 1,
+      id: '1',
       name: 'Asset',
       code: 1,
       description: 'Resources owned by the business',
@@ -41,7 +41,7 @@ class AccountNature {
       color: Color(0xFF059669),
     ),
     AccountNature(
-      id: 2,
+      id: '2',
       name: 'Liability',
       code: 2,
       description: 'Obligations owed to others',
@@ -49,7 +49,7 @@ class AccountNature {
       color: Color(0xFFD97706),
     ),
     AccountNature(
-      id: 3,
+      id: '3',
       name: 'Income',
       code: 3,
       description: 'Revenue earned by the business',
@@ -57,7 +57,7 @@ class AccountNature {
       color: Color(0xFF1D4ED8),
     ),
     AccountNature(
-      id: 4,
+      id: '4',
       name: 'Expense',
       code: 4,
       description: 'Costs incurred by the business',
@@ -65,7 +65,7 @@ class AccountNature {
       color: Color(0xFFDC2626),
     ),
     AccountNature(
-      id: 5,
+      id: '5',
       name: 'Equity',
       code: 5,
       description: 'Owners stake in the business',

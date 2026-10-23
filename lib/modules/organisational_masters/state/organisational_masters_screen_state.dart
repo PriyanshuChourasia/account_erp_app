@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../config/theme/app_theme.dart';
 import '../modules/company/screens/company_screen.dart';
 import '../modules/country/screens/country_screen.dart';
+import '../modules/department/screens/department_screen.dart';
+import '../modules/designation/screens/designation_screen.dart';
 import '../modules/financial_year/screens/financial_year_screen.dart';
 import '../modules/state/screens/state_screen.dart';
 import '../screens/organisational_masters_screen.dart';
@@ -12,30 +14,42 @@ import '../widgets/master_card.dart';
 /// follow the StatefulWidget split pattern.
 class OrganisationalMastersScreenState
     extends State<OrganisationalMastersScreen> {
-  static const _masters = [
+  static final _masters = [
     (
       title: 'Country',
       subtitle: 'Maintain the list of countries',
       icon: Icons.public_rounded,
-      color: Color(0xFF0D9488),
+      color: const Color(0xFF0D9488),
     ),
     (
       title: 'State',
       subtitle: 'Maintain states and regions under each country',
       icon: Icons.map_rounded,
-      color: Color(0xFF1D4ED8),
+      color: const Color(0xFF1D4ED8),
     ),
     (
       title: 'Financial Year',
       subtitle: 'Maintain fiscal years for accounting transactions',
       icon: Icons.calendar_month_rounded,
-      color: Color(0xFF7C3AED),
+      color: const Color(0xFF7C3AED),
     ),
     (
       title: 'Company',
       subtitle: 'Create and manage your companies',
       icon: Icons.business_rounded,
-      color: Color(0xFFD97706),
+      color: const Color(0xFFD97706),
+    ),
+    (
+      title: 'Department',
+      subtitle: 'Maintain the list of departments',
+      icon: Icons.school_outlined,
+      color: const Color(0xFF059669),
+    ),
+    (
+      title: 'Designation',
+      subtitle: 'Maintain the list of designations',
+      icon: Icons.work_outlined,
+      color: const Color(0xFF7C3AED),
     ),
     // Add more masters here: District, City, ...
   ];
@@ -57,6 +71,14 @@ class OrganisationalMastersScreenState
       case 3:
         Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => const CompanyScreen()),
+        );
+      case 4:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const DepartmentScreen()),
+        );
+      case 5:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const DesignationScreen()),
         );
     }
   }

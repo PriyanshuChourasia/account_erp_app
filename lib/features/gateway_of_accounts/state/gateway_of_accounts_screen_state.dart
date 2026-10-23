@@ -12,6 +12,8 @@ import '../../../modules/accounting_masters/modules/account_nature/screens/accou
 import '../../../modules/developer_masters/modules/application_feature/screens/application_feature_screen.dart';
 import '../../../modules/developer_masters/modules/application_module/screens/application_module_screen.dart';
 import '../../../modules/organisational_masters/modules/country/screens/country_screen.dart';
+import '../../../modules/organisational_masters/modules/department/screens/department_screen.dart';
+import '../../../modules/organisational_masters/modules/designation/screens/designation_screen.dart';
 import '../../../modules/organisational_masters/modules/financial_year/screens/financial_year_screen.dart';
 import '../../../modules/organisational_masters/modules/state/screens/state_screen.dart';
 import '../../../routing/app_routes.dart';
@@ -23,43 +25,17 @@ import '../screens/gateway_of_accounts_screen.dart';
 /// Shows the user's companies and lets them select or create a workspace.
 /// State lives in `state/gateway_of_accounts_screen_state.dart`.
 class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
-  static const double _wideBreakpoint = 760;
+  /// Below this width the panels stack into a single scrollable column.
+  static const double _mediumBreakpoint = 700;
+
+  /// At or above this width all three panels sit side by side.
+  static const double _wideBreakpoint = 1100;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isWide = MediaQuery.sizeOf(context).width >= _wideBreakpoint;
     final auth = context.watch<AuthViewModel>();
     final userName = auth.user?.name ?? 'User';
-
-    const left = _CompanyListEmptyState();
-    final right = isWide
-        ? const Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 3, child: _ActionsCard()),
-              SizedBox(width: 16),
-              Expanded(flex: 2, child: _MastersLadderCard()),
-            ],
-          )
-        : const Column(
-            children: [
-              _ActionsCard(),
-              SizedBox(height: 16),
-              _MastersLadderCard(),
-            ],
-          );
-
-    final panels = isWide
-        ? Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 2, child: left),
-              const SizedBox(width: 20),
-              Expanded(flex: 3, child: right),
-            ],
-          )
-        : Column(children: [left, const SizedBox(height: 20), right]);
 
     return Scaffold(
       body: Container(
@@ -71,61 +47,140 @@ class GatewayOfAccountsScreenState extends State<GatewayOfAccountsScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: AppColors.border.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ),
-                child: Row(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              final isCompact = width < _mediumBreakpoint;
+              final isWide = width >= _wideBreakpoint;
+              final horizontalPadding = isCompact ? 16.0 : 24.0;
+              final verticalPadding = isCompact ? 16.0 : 24.0;
+              final gap = isCompact ? 16.0 : 20.0;
+
+              // Panels only scroll internally in the side-by-side layouts,
+              // where their height is bounded. In the compact stacked layout
+              // the whole page scrolls instead, avoiding nested scroll views.
+              final companyPanel = _CompanyListEmptyState(
+                scrollable: !isCompact,
+              );
+              final actionsPanel = _ActionsCard(scrollable: !isCompact);
+              final mastersPanel = _MastersLadderCard(scrollable: !isCompact);
+
+              final Widget content;
+              if (isWide) {
+                content = Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                      child: Text(
-                        userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                    Expanded(flex: 4, child: companyPanel),
+                    SizedBox(width: gap),
+                    Expanded(flex: 3, child: actionsPanel),
+                    SizedBox(width: gap),
+                    Expanded(flex: 3, child: mastersPanel),
+                  ],
+                );
+              } else if (!isCompact) {
+                content = Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(flex: 4, child: companyPanel),
+                    SizedBox(width: gap),
                     Expanded(
-                      child: Text(
-                        userName,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                      flex: 5,
+                      child: Column(
+                        children: [
+                          Expanded(flex: 2, child: actionsPanel),
+                          SizedBox(height: gap),
+                          Expanded(flex: 3, child: mastersPanel),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              ),
-              Expanded(
-                child: isWide
-                    ? Padding(padding: const EdgeInsets.all(24), child: panels)
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
-                        child: panels,
-                      ),
-              ),
-            ],
+                );
+              } else {
+                content = Column(
+                  children: [
+                    companyPanel,
+                    SizedBox(height: gap),
+                    actionsPanel,
+                    SizedBox(height: gap),
+                    mastersPanel,
+                  ],
+                );
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeader(theme, userName, horizontalPadding),
+                  // Content spans the full width and height of the window;
+                  // only the compact layout scrolls as a whole page.
+                  Expanded(
+                    child: isCompact
+                        ? SingleChildScrollView(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding,
+                              vertical: verticalPadding,
+                            ),
+                            child: content,
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding,
+                              vertical: verticalPadding,
+                            ),
+                            child: content,
+                          ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(
+    ThemeData theme,
+    String userName,
+    double horizontalPadding,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: 14,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: AppColors.border.withValues(alpha: 0.6)),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+            child: Text(
+              userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              userName,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -175,106 +230,108 @@ Future<void> _createCompany(BuildContext context) async {
 /// Left panel: Current Period / Current Date header, then the company list
 /// (empty state until the backend is wired up).
 class _CompanyListEmptyState extends StatelessWidget {
-  const _CompanyListEmptyState();
+  const _CompanyListEmptyState({this.scrollable = true});
+
+  /// When false the card sizes to its content and the page scrolls instead.
+  final bool scrollable;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final now = DateTime.now();
 
+    final content = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Expanded(
+              child: _PeriodDateItem(
+                label: 'Current Period',
+                value: '—',
+                icon: Icons.calendar_today_outlined,
+              ),
+            ),
+            Expanded(
+              child: _PeriodDateItem(
+                label: 'Current Date',
+                value: _formatDate(now),
+                alignEnd: true,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const Divider(height: 1),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: Text(
+            'List of Companies',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.apartment_outlined,
+                  color: AppColors.primary,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No companies yet',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Create a company or join one using an invite code.',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: () => _createCompany(context),
+                icon: const Icon(Icons.add_business_rounded, size: 18),
+                label: const Text('Create Company'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+
     return Card(
       elevation: 4,
       shadowColor: Colors.black.withValues(alpha: 0.15),
       child: Padding(
         padding: const EdgeInsets.all(24),
-        // Wrapped in its own scroll view so the content scrolls internally
-        // instead of overflowing when the card is given little height (a
-        // short window in the wide, side-by-side layout).
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Expanded(
-                    child: _PeriodDateItem(
-                      label: 'Current Period',
-                      value: '—',
-                      icon: Icons.calendar_today_outlined,
-                    ),
-                  ),
-                  Expanded(
-                    child: _PeriodDateItem(
-                      label: 'Current Date',
-                      value: _formatDate(now),
-                      alignEnd: true,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Divider(height: 1),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  'List of Companies',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.08),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.apartment_outlined,
-                        color: AppColors.primary,
-                        size: 30,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No companies yet',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Create a company or join one using an invite code.',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    FilledButton.icon(
-                      onPressed: () => _createCompany(context),
-                      icon: const Icon(Icons.add_business_rounded, size: 18),
-                      label: const Text('Create Company'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        // In the side-by-side layouts the card scrolls internally instead of
+        // overflowing when it is given little height (a short window).
+        child: scrollable ? SingleChildScrollView(child: content) : content,
       ),
     );
   }
@@ -336,7 +393,10 @@ class _PeriodDateItem extends StatelessWidget {
 
 /// Right panel: a centered card of quick actions.
 class _ActionsCard extends StatelessWidget {
-  const _ActionsCard();
+  const _ActionsCard({this.scrollable = true});
+
+  /// When false the card sizes to its content and the page scrolls instead.
+  final bool scrollable;
 
   Future<void> _logout(BuildContext context) async {
     await context.read<AuthViewModel>().logout();
@@ -349,56 +409,58 @@ class _ActionsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final actions = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 320),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.cardBorder),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _ActionLink(
+              icon: Icons.add_business_rounded,
+              label: 'Create Company',
+              onTap: () => _createCompany(context),
+            ),
+            const Divider(height: 1),
+            _ActionLink(
+              icon: Icons.backup_outlined,
+              label: 'Backup',
+              onTap: () {
+                // TODO: Trigger backup flow.
+              },
+            ),
+            const Divider(height: 1),
+            _ActionLink(
+              icon: Icons.restore_outlined,
+              label: 'Restore',
+              onTap: () {
+                // TODO: Trigger restore flow.
+              },
+            ),
+            const Divider(height: 1),
+            _ActionLink(
+              icon: Icons.logout_rounded,
+              label: 'Logout',
+              isDestructive: true,
+              onTap: () => _logout(context),
+            ),
+          ],
+        ),
+      ),
+    );
+
     return Card(
       elevation: 4,
       shadowColor: Colors.black.withValues(alpha: 0.15),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 280),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.cardBorder),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _ActionLink(
-                    icon: Icons.add_business_rounded,
-                    label: 'Create Company',
-                    onTap: () => _createCompany(context),
-                  ),
-                  const Divider(height: 1),
-                  _ActionLink(
-                    icon: Icons.backup_outlined,
-                    label: 'Backup',
-                    onTap: () {
-                      // TODO: Trigger backup flow.
-                    },
-                  ),
-                  const Divider(height: 1),
-                  _ActionLink(
-                    icon: Icons.restore_outlined,
-                    label: 'Restore',
-                    onTap: () {
-                      // TODO: Trigger restore flow.
-                    },
-                  ),
-                  const Divider(height: 1),
-                  _ActionLink(
-                    icon: Icons.logout_rounded,
-                    label: 'Logout',
-                    isDestructive: true,
-                    onTap: () => _logout(context),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          child: scrollable ? SingleChildScrollView(child: actions) : actions,
         ),
       ),
     );
@@ -408,12 +470,17 @@ class _ActionsCard extends StatelessWidget {
 /// Right sub-panel: a plain list of organisational masters (Financial Year,
 /// Country, State, Currency Info).
 class _MastersLadderCard extends StatelessWidget {
-  const _MastersLadderCard();
+  const _MastersLadderCard({this.scrollable = true});
+
+  /// When false the card sizes to its content and the page scrolls instead.
+  final bool scrollable;
 
   static const _items = [
     (icon: Icons.calendar_month_rounded, label: 'Financial Year'),
     (icon: Icons.public_rounded, label: 'Country'),
     (icon: Icons.map_rounded, label: 'State'),
+    (icon: Icons.business_rounded, label: 'Department'),
+    (icon: Icons.work_rounded, label: 'Designation'),
     (icon: Icons.currency_exchange_rounded, label: 'Currency Info'),
     (icon: Icons.inventory_2_rounded, label: 'Stock Item'),
     (icon: Icons.account_tree_rounded, label: 'Account Group'),
@@ -438,33 +505,41 @@ class _MastersLadderCard extends StatelessWidget {
         Navigator.of(
           context,
         ).push(MaterialPageRoute<void>(builder: (_) => const StateScreen()));
+      case 3:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const DepartmentScreen()),
+        );
       case 4:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const StockItemScreen()));
-      case 5:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const AccountGroupScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const DesignationScreen()),
+        );
       case 6:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const AccountNatureScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const StockItemScreen()),
+        );
       case 7:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const AccountLedgerScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const AccountGroupScreen()),
+        );
       case 8:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const DatabaseOprScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const AccountNatureScreen()),
+        );
       case 9:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const AccountLedgerScreen()),
+        );
+      case 10:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const DatabaseOprScreen()),
+        );
+      case 11:
         Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => const ApplicationModuleScreen(),
           ),
         );
-      case 10:
+      case 12:
         Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => const ApplicationFeatureScreen(),
@@ -479,47 +554,46 @@ class _MastersLadderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 14),
+          child: Text(
+            'Module Masters',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 15,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+        ListView.separated(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _items.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 10),
+          itemBuilder: (context, index) {
+            final item = _items[index];
+            return _MasterListItem(
+              icon: item.icon,
+              label: item.label,
+              onTap: () => _open(context, index),
+            );
+          },
+        ),
+      ],
+    );
+
     return Card(
       elevation: 4,
       shadowColor: Colors.black.withValues(alpha: 0.15),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-        // Wrapped in its own scroll view so a tall item list scrolls
-        // internally instead of overflowing when the card is given little
-        // height (a short window in the wide, side-by-side layout).
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 14),
-                child: Text(
-                  'Module Masters',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              ListView.separated(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _items.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final item = _items[index];
-                  return _MasterListItem(
-                    icon: item.icon,
-                    label: item.label,
-                    onTap: () => _open(context, index),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+        // In the side-by-side layouts a tall item list scrolls internally
+        // instead of overflowing when the card is given little height.
+        child: scrollable ? SingleChildScrollView(child: content) : content,
       ),
     );
   }
@@ -547,10 +621,7 @@ class _MasterListItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 10,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),

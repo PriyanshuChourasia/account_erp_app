@@ -39,7 +39,7 @@ class AccountNatureRepository {
     }
   }
 
-  Future<void> deleteAccountNature(int id) async {
+  Future<void> deleteAccountNature(String id) async {
     final json = await _accountNatureService.deleteAccountNature(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

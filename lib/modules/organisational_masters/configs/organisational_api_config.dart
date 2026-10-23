@@ -27,4 +27,14 @@ class OrganisationalApiConfig {
   static const String companyAPI = "/companies/list";
   static const String createCompanyAPI = "$companyAPI/create";
   static String companyEndpoint(int id) => "$companyAPI/$id";
+
+  /// departments
+  static const String departmentAPI = "/departments";
+  static const String createDepartmentAPI = "$departmentAPI/create";
+  static String departmentEndpoint(String id) => "$departmentAPI/$id";
+
+  /// designations
+  static const String designationAPI = "/designations";
+  static const String createDesignationAPI = "$designationAPI/create";
+  static String designationEndpoint(String id) => "$designationAPI/$id";
 }

@@ -14,7 +14,7 @@ class AccountNatureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${nature.id}',
+      nature.id,
       if (nature.code != null) 'code ${nature.code}',
     ].join(' · ');
 

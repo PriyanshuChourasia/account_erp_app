@@ -29,7 +29,10 @@ class AccountNatureScreenState extends State<AccountNatureScreen> {
     await context.read<AccountNatureViewModel>().addAccountNature(result);
   }
 
-  Future<void> _confirmDelete(AccountNatureViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(
+    AccountNatureViewModel viewModel,
+    String id,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -162,9 +165,6 @@ class AccountNatureScreenState extends State<AccountNatureScreen> {
 class _NatureTable extends StatelessWidget {
   const _NatureTable({required this.natures});
 
-  static const _slNoColumnWidth = 56.0;
-  static const _codeColumnWidth = 96.0;
-
   final List<AccountNature> natures;
 
   @override
@@ -178,10 +178,7 @@ class _NatureTable extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          const _NatureTableHeader(
-            slNoColumnWidth: _slNoColumnWidth,
-            codeColumnWidth: _codeColumnWidth,
-          ),
+          const _NatureTableHeader(),
           const Divider(height: 1, color: AppColors.border),
           Expanded(
             child: ListView.separated(
@@ -192,8 +189,6 @@ class _NatureTable extends StatelessWidget {
                 slNo: index + 1,
                 nature: natures[index],
                 zebra: index.isOdd,
-                slNoColumnWidth: _slNoColumnWidth,
-                codeColumnWidth: _codeColumnWidth,
               ),
             ),
           ),
@@ -204,13 +199,7 @@ class _NatureTable extends StatelessWidget {
 }
 
 class _NatureTableHeader extends StatelessWidget {
-  const _NatureTableHeader({
-    required this.slNoColumnWidth,
-    required this.codeColumnWidth,
-  });
-
-  final double slNoColumnWidth;
-  final double codeColumnWidth;
+  const _NatureTableHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -223,16 +212,12 @@ class _NatureTableHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
       child: Row(
         children: [
-          SizedBox(
-            width: slNoColumnWidth,
-            child: Text('SL NO', style: labelStyle),
-          ),
-          Expanded(flex: 3, child: Text('NAME', style: labelStyle)),
-          SizedBox(
-            width: codeColumnWidth,
+          Expanded(child: Text('SL NO', style: labelStyle)),
+          Expanded(child: Text('NAME', style: labelStyle)),
+          Expanded(
             child: Text('CODE', style: labelStyle, textAlign: TextAlign.center),
           ),
-          Expanded(flex: 4, child: Text('DESCRIPTION', style: labelStyle)),
+          Expanded(child: Text('DESCRIPTION', style: labelStyle)),
         ],
       ),
     );
@@ -244,15 +229,11 @@ class _NatureTableRow extends StatelessWidget {
     required this.slNo,
     required this.nature,
     required this.zebra,
-    required this.slNoColumnWidth,
-    required this.codeColumnWidth,
   });
 
   final int slNo;
   final AccountNature nature;
   final bool zebra;
-  final double slNoColumnWidth;
-  final double codeColumnWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -262,8 +243,7 @@ class _NatureTableRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Row(
         children: [
-          SizedBox(
-            width: slNoColumnWidth,
+          Expanded(
             child: Text(
               '$slNo',
               style: theme.textTheme.bodySmall?.copyWith(
@@ -272,7 +252,6 @@ class _NatureTableRow extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 3,
             child: Text(
               nature.name,
               maxLines: 1,
@@ -283,8 +262,7 @@ class _NatureTableRow extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            width: codeColumnWidth,
+          Expanded(
             child: Align(
               alignment: Alignment.center,
               child: nature.code == null
@@ -314,7 +292,6 @@ class _NatureTableRow extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 4,
             child: Text(
               nature.description ?? '—',
               maxLines: 1,

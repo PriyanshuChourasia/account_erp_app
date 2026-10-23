@@ -34,7 +34,7 @@ There is no `UpdateAccountNatureRequest` model and no update method anywhere in 
 - **Error banner** — shown when `viewModel.error != null`; red-tinted `Container` with error icon and message.
 - **Loading state** — `CircularProgressIndicator` centered while `viewModel.isLoading`.
 - **Empty state** (`_EmptyState`) — icon + "No account natures found" + "Try a different search or add a new nature."
-- **Wide-screen table** (`_NatureTable`) — a bordered, rounded container with a pinned header (SL NO, NAME, CODE, DESCRIPTION columns) and a scrollable `ListView.separated` of `_NatureTableRow`s, with zebra striping on odd rows. This table is **read-only** — no edit/delete actions on the rows; the code comment explicitly notes "deleting only happens from the card view."
+- **Wide-screen table** (`_NatureTable`) — a bordered, rounded container with a pinned header (SL NO, NAME, CODE, DESCRIPTION columns, all equal width via `Expanded`) and a scrollable `ListView.separated` of `_NatureTableRow`s, with zebra striping on odd rows. This table is **read-only** — no edit/delete actions on the rows; the code comment explicitly notes "deleting only happens from the card view."
 - **Narrow-screen list** (`ListView.separated` of `AccountNatureCard`) — each card has a **Delete** icon button, calling `_confirmDelete(viewModel, nature.id)`. No edit action anywhere (consistent with no update support).
 - **Delete confirmation dialog** — `AlertDialog` titled "Delete nature?" with body "This will remove the account nature from your master." and Cancel/Delete actions; on confirm, calls `viewModel.deleteAccountNature(id)`.
 

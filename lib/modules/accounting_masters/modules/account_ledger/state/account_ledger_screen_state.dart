@@ -12,7 +12,7 @@ import '../widgets/account_ledger_card.dart';
 /// StatefulWidget split pattern.
 class AccountLedgerScreenState extends State<AccountLedgerScreen> {
   String _groupQuery = '';
-  int? _selectedGroupId;
+  String? _selectedGroupId;
 
   @override
   void initState() {
@@ -25,7 +25,10 @@ class AccountLedgerScreenState extends State<AccountLedgerScreen> {
     });
   }
 
-  Future<void> _confirmDelete(AccountLedgerViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(
+    AccountLedgerViewModel viewModel,
+    String id,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -63,10 +66,7 @@ class AccountLedgerScreenState extends State<AccountLedgerScreen> {
     final viewModel = context.watch<AccountLedgerViewModel>();
     final ledgers = viewModel.filteredAccountLedgers;
     final activeLedgers = ledgers
-        .where(
-          (ledger) =>
-              ledger.isActive && _matchesGroup(viewModel, ledger),
-        )
+        .where((ledger) => ledger.isActive && _matchesGroup(viewModel, ledger))
         .toList();
     final inactiveLedgers = ledgers
         .where((ledger) => !ledger.isActive)
@@ -80,10 +80,7 @@ class AccountLedgerScreenState extends State<AccountLedgerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _KeyValueField(
-                label: 'Name',
-                onChanged: viewModel.setNameQuery,
-              ),
+              _KeyValueField(label: 'Name', onChanged: viewModel.setNameQuery),
               const SizedBox(height: 12),
               _KeyValueField(
                 label: 'Alias',
@@ -102,16 +99,14 @@ class AccountLedgerScreenState extends State<AccountLedgerScreen> {
                               showTitle: false,
                               ledgers: activeLedgers,
                               groupName: viewModel.groupNameOf,
-                              onDelete: (id) =>
-                                  _confirmDelete(viewModel, id),
+                              onDelete: (id) => _confirmDelete(viewModel, id),
                               underFilter: _UnderFilter(
                                 groups: viewModel.accountGroups,
                                 selectedGroupId: _selectedGroupId,
                                 onSearchChanged: (value) =>
                                     setState(() => _groupQuery = value),
-                                onGroupChanged: (value) => setState(
-                                  () => _selectedGroupId = value,
-                                ),
+                                onGroupChanged: (value) =>
+                                    setState(() => _selectedGroupId = value),
                               ),
                             ),
                           ),
@@ -121,8 +116,7 @@ class AccountLedgerScreenState extends State<AccountLedgerScreen> {
                               title: 'Inactive',
                               ledgers: inactiveLedgers,
                               groupName: viewModel.groupNameOf,
-                              onDelete: (id) =>
-                                  _confirmDelete(viewModel, id),
+                              onDelete: (id) => _confirmDelete(viewModel, id),
                             ),
                           ),
                         ],
@@ -150,7 +144,7 @@ class _LedgerGrid extends StatelessWidget {
   final String title;
   final List<AccountLedger> ledgers;
   final String Function(AccountLedger) groupName;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onDelete;
   final Widget? underFilter;
   final bool showTitle;
 
@@ -231,9 +225,9 @@ class _UnderFilter extends StatelessWidget {
   });
 
   final List<AccountGroup> groups;
-  final int? selectedGroupId;
+  final String? selectedGroupId;
   final ValueChanged<String> onSearchChanged;
-  final ValueChanged<int?> onGroupChanged;
+  final ValueChanged<String?> onGroupChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -265,16 +259,16 @@ class _UnderFilter extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         DropdownButtonHideUnderline(
-          child: DropdownButton<int?>(
+          child: DropdownButton<String?>(
             value: selectedGroupId,
             hint: const Text('All groups'),
             items: [
-              const DropdownMenuItem<int?>(
+              const DropdownMenuItem<String?>(
                 value: null,
                 child: Text('All groups'),
               ),
               for (final group in groups)
-                DropdownMenuItem<int?>(
+                DropdownMenuItem<String?>(
                   value: group.id,
                   child: Text(group.name),
                 ),
@@ -314,7 +308,10 @@ class _KeyValueField extends StatelessWidget {
             onChanged: onChanged,
             decoration: const InputDecoration(
               isDense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
             ),
           ),
         ),

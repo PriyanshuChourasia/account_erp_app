@@ -45,6 +45,14 @@ import 'modules/organisational_masters/modules/company/repository/company_reposi
 import 'modules/organisational_masters/modules/company/viewModel/company_view_model.dart';
 import 'modules/organisational_masters/modules/country/repository/country_repository.dart';
 import 'modules/organisational_masters/modules/country/viewModel/country_view_model.dart';
+import 'modules/organisational_masters/modules/department/repository/department_repository.dart';
+import 'modules/organisational_masters/modules/department/screens/department_add_screen.dart';
+import 'modules/organisational_masters/modules/department/screens/department_screen.dart';
+import 'modules/organisational_masters/modules/department/viewModel/department_view_model.dart';
+import 'modules/organisational_masters/modules/designation/repository/designation_repository.dart';
+import 'modules/organisational_masters/modules/designation/screens/designation_add_screen.dart';
+import 'modules/organisational_masters/modules/designation/screens/designation_screen.dart';
+import 'modules/organisational_masters/modules/designation/viewModel/designation_view_model.dart';
 import 'modules/organisational_masters/modules/financial_year/repository/financial_year_repository.dart';
 import 'modules/organisational_masters/modules/financial_year/viewModel/financial_year_view_model.dart';
 import 'modules/organisational_masters/modules/state/repository/state_repository.dart';
@@ -173,6 +181,14 @@ class AccountErpApp extends StatelessWidget {
             globalService<BankRepository>(),
           ),
         ),
+        ChangeNotifierProvider<DepartmentViewModel>(
+          create: (_) =>
+              DepartmentViewModel(globalService<DepartmentRepository>()),
+        ),
+        ChangeNotifierProvider<DesignationViewModel>(
+          create: (_) =>
+              DesignationViewModel(globalService<DesignationRepository>()),
+        ),
         // Register additional global ViewModels here.
       ],
       child: MaterialApp(
@@ -194,6 +210,10 @@ class AccountErpApp extends StatelessWidget {
           AppRoutes.profile: (_) => const ProfileScreen(),
           AppRoutes.companies: (_) => const CompanyScreen(),
           AppRoutes.createCompany: (_) => const CompanyAddScreen(),
+          AppRoutes.departments: (_) => const DepartmentScreen(),
+          AppRoutes.createDepartment: (_) => const DepartmentAddScreen(),
+          AppRoutes.designations: (_) => const DesignationScreen(),
+          AppRoutes.createDesignation: (_) => const DesignationAddScreen(),
         },
       ),
     );

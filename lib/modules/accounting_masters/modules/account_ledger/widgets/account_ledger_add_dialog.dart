@@ -21,7 +21,7 @@ class _AccountLedgerAddDialogState extends State<AccountLedgerAddDialog> {
   final _aliasController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  int? _groupId;
+  String? _groupId;
 
   @override
   void dispose() {
@@ -51,8 +51,7 @@ class _AccountLedgerAddDialogState extends State<AccountLedgerAddDialog> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final dialogWidth = screenWidth < 480 ? screenWidth * 0.9 : 440.0;
-    final groups =
-        context.read<AccountGroupViewModel>().accountingGroups;
+    final groups = context.read<AccountGroupViewModel>().accountingGroups;
 
     return AlertDialog(
       titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
@@ -111,14 +110,14 @@ class _AccountLedgerAddDialogState extends State<AccountLedgerAddDialog> {
                 const SizedBox(height: 20),
                 const _SectionLabel('Under'),
                 const SizedBox(height: 8),
-                DropdownButtonFormField<int?>(
+                DropdownButtonFormField<String?>(
                   decoration: const InputDecoration(
                     hintText: 'Select account group',
                     prefixIcon: Icon(Icons.account_tree_rounded),
                   ),
                   items: [
                     for (final group in groups)
-                      DropdownMenuItem<int?>(
+                      DropdownMenuItem<String?>(
                         value: group.id,
                         child: Text(group.name),
                       ),

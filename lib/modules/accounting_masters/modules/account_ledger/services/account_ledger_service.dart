@@ -19,6 +19,6 @@ class AccountLedgerService {
     data: request.toJson(),
   );
 
-  Future<Map<String, dynamic>> deleteAccountLedger(int id) =>
+  Future<Map<String, dynamic>> deleteAccountLedger(String id) =>
       _apiService.delete(AccountingApiConfig.accountLedgerEndpoint(id));
 }

@@ -13,17 +13,17 @@ class UpdateAccountGroupRequest {
     this.parentId,
   });
 
-  final int id;
+  final String id;
   final String name;
   final int code;
   final String? alias;
   final String? description;
 
   /// Parent group id — accounting groups form a hierarchy.
-  final int? parentId;
+  final String? parentId;
 
   /// The account nature this group belongs to.
-  final int accountNatureId;
+  final String accountNatureId;
 
   Map<String, dynamic> toJson() => {
     'name': name,

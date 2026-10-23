@@ -19,6 +19,10 @@ class AppRoutes {
   static const String developerMasters = '/developer-masters';
   static const String companies = '/companies';
   static const String createCompany = '/companies/create';
+  static const String departments = '/departments';
+  static const String createDepartment = '/departments/create';
+  static const String designations = '/designations';
+  static const String createDesignation = '/designations/create';
   static const String utilities = '/utilities';
   static const String help = '/help';
   static const String support = '/support';

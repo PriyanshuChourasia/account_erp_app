@@ -11,12 +11,14 @@ class ErrorHandler {
 
   /// Shows a SnackBar for an arbitrary thrown [error].
   ///
-  /// [AppException]s render their own message; anything else falls back to a
-  /// generic message.
+  /// [AppException]s and plain strings render their own message; anything
+  /// else falls back to a generic message.
   static void showError(BuildContext context, Object error) {
-    final message = error is AppException
-        ? error.message
-        : 'Something went wrong. Please try again.';
+    final message = switch (error) {
+      AppException(:final message) => message,
+      String message when message.isNotEmpty => message,
+      _ => 'Something went wrong. Please try again.',
+    };
     _show(context, message, isError: true);
   }
 

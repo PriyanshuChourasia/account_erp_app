@@ -47,8 +47,7 @@ class AccountLedgerViewModel extends ChangeNotifier {
     final aliasQuery = _aliasQuery.trim().toLowerCase();
     return _accountLedgers.where((ledger) {
       final matchesName =
-          nameQuery.isEmpty ||
-          ledger.name.toLowerCase().contains(nameQuery);
+          nameQuery.isEmpty || ledger.name.toLowerCase().contains(nameQuery);
       final matchesAlias =
           aliasQuery.isEmpty ||
           (ledger.alias?.toLowerCase().contains(aliasQuery) ?? false);
@@ -107,7 +106,7 @@ class AccountLedgerViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteAccountLedger(int id) async {
+  Future<bool> deleteAccountLedger(String id) async {
     _error = null;
     notifyListeners();
     try {

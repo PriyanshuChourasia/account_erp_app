@@ -9,8 +9,7 @@ class LoginResponseModel {
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
       LoginResponseModel(
-        token:
-            json['accessToken'] as String? ?? json['token'] as String? ?? '',
+        token: json['accessToken'] as String? ?? json['token'] as String? ?? '',
         user: UserModel.fromJson(
           (json['user'] as Map<String, dynamic>?) ?? const {},
         ),

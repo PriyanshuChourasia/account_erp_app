@@ -39,7 +39,7 @@ class AccountLedgerRepository {
     }
   }
 
-  Future<void> deleteAccountLedger(int id) async {
+  Future<void> deleteAccountLedger(String id) async {
     final json = await _accountLedgerService.deleteAccountLedger(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

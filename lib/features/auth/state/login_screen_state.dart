@@ -3,12 +3,16 @@ import 'package:provider/provider.dart';
 
 import '../../../config/theme/app_theme.dart';
 import '../../../core/handlers/error_handler.dart';
+import '../../../network/service_locator.dart';
+import '../repository/auth_repository.dart';
 import '../../../routing/app_routes.dart';
 import '../screens/login_screen.dart';
 import '../viewModel/auth_view_model.dart';
+import '../viewModel/register_view_model.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/features_panel.dart';
 import '../widgets/primary_button.dart';
+import '../widgets/register_dialog.dart';
 
 /// State for [LoginScreen]. Kept out of the screen file to follow the
 /// StatefulWidget split pattern.
@@ -49,6 +53,27 @@ class LoginScreenState extends State<LoginScreen> {
         viewModel.error ?? 'Login failed. Please try again.',
       );
     }
+  }
+
+  /// Opens the sign-up modal. Its [RegisterViewModel] is scoped to the
+  /// dialog, so it is disposed as soon as the dialog closes.
+  Future<void> _openRegisterDialog() async {
+    FocusScope.of(context).unfocus();
+    final registered = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => ChangeNotifierProvider<RegisterViewModel>(
+        create: (_) => RegisterViewModel(globalService<AuthRepository>()),
+        child: const RegisterDialog(),
+      ),
+    );
+    if (registered != true || !mounted) return;
+
+    // The session token is stored by now; let AuthViewModel pick it up.
+    await context.read<AuthViewModel>().checkAuthStatus();
+    if (!mounted) return;
+    ErrorHandler.showMessage(context, 'Account created successfully.');
+    Navigator.of(context).pushReplacementNamed(AppRoutes.gatewayOfAccounts);
   }
 
   // ── Build ──────────────────────────────────────────────────────────────
@@ -104,6 +129,7 @@ class LoginScreenState extends State<LoginScreen> {
                 obscurePassword: _obscurePassword,
                 viewModel: context.watch<AuthViewModel>(),
                 onSubmit: _submitSignIn,
+                onRegister: _openRegisterDialog,
                 onTogglePassword: () =>
                     setState(() => _obscurePassword = !_obscurePassword),
               ),
@@ -127,6 +153,7 @@ class _SignInForm extends StatelessWidget {
     required this.obscurePassword,
     required this.viewModel,
     required this.onSubmit,
+    required this.onRegister,
     required this.onTogglePassword,
   });
 
@@ -136,6 +163,7 @@ class _SignInForm extends StatelessWidget {
   final bool obscurePassword;
   final dynamic viewModel;
   final VoidCallback onSubmit;
+  final VoidCallback onRegister;
   final VoidCallback onTogglePassword;
 
   @override
@@ -216,6 +244,31 @@ class _SignInForm extends StatelessWidget {
                 onPressed: (viewModel.isLoading || !hasInput) ? null : onSubmit,
               );
             },
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                "Don't have an account?",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              TextButton(
+                onPressed: viewModel.isLoading ? null : onRegister,
+                child: Text(
+                  'Register',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

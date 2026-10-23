@@ -15,7 +15,7 @@ class CreateAccountLedgerRequest {
   final String? description;
 
   /// Parent account group id — ledgers are classified under account groups.
-  final int? groupId;
+  final String? groupId;
 
   Map<String, dynamic> toJson() => {
     'name': name,

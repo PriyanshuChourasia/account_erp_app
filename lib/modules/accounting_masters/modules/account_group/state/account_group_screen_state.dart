@@ -26,7 +26,8 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
       if (!mounted) return;
       context.read<AccountGroupViewModel>().loadAccountGroups();
       final natureViewModel = context.read<AccountNatureViewModel>();
-      if (natureViewModel.accountNatures.isEmpty && !natureViewModel.isLoading) {
+      if (natureViewModel.accountNatures.isEmpty &&
+          !natureViewModel.isLoading) {
         natureViewModel.loadAccountNatures();
       }
     });
@@ -47,7 +48,10 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
     }
   }
 
-  Future<void> _confirmDelete(AccountGroupViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(
+    AccountGroupViewModel viewModel,
+    String id,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -188,105 +192,112 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Builder(builder: (context) {
-                                    final source =
-                                        viewModel.accountingGroups.isEmpty
-                                        ? AccountGroup.demo
-                                        : viewModel.accountingGroups;
-                                    final options = <(String, int?)>[
-                                      ('Primary', null),
-                                      for (final group in source)
-                                        (group.name, group.id),
-                                    ];
-                                    return Autocomplete<(String, int?)>(
-                                      displayStringForOption: (option) =>
-                                          option.$1,
-                                      optionsBuilder: (TextEditingValue value) {
-                                        final query = value.text
-                                            .trim()
-                                            .toLowerCase();
-                                        if (query.isEmpty) return options;
-                                        return options
-                                            .where(
-                                              (option) => option.$1
-                                                  .toLowerCase()
-                                                  .contains(query),
-                                            )
-                                            .toList();
-                                      },
-                                      onSelected: (option) {},
-                                      fieldViewBuilder: (
-                                        context,
-                                        controller,
-                                        focusNode,
-                                        _,
-                                      ) {
-                                        return TextField(
-                                          controller: controller,
-                                          focusNode: focusNode,
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            hintText: 'Search and select',
-                                            suffixIcon: const Icon(
-                                              Icons.arrow_drop_down_rounded,
-                                            ),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                  horizontal: 10,
-                                                  vertical: 8,
-                                                ),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      optionsViewBuilder: (
-                                        context,
-                                        onSelected,
-                                        options,
-                                      ) {
-                                        return Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Material(
-                                            elevation: 4,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            child: ConstrainedBox(
-                                              constraints: const BoxConstraints(
-                                                maxWidth: 480,
-                                              ),
-                                              child: ListView(
-                                                shrinkWrap: true,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 4,
-                                                    ),
-                                                children: [
-                                                  for (final option in options)
-                                                    ListTile(
-                                                      dense: true,
-                                                      leading: Icon(
-                                                        option.$2 == null
-                                                            ? Icons.home_rounded
-                                                            : Icons.account_tree_rounded,
-                                                        size: 20,
-                                                        color: AppColors
-                                                            .textSecondary,
+                                  child: Builder(
+                                    builder: (context) {
+                                      final source =
+                                          viewModel.accountingGroups.isEmpty
+                                          ? AccountGroup.demo
+                                          : viewModel.accountingGroups;
+                                      final options = <(String, String?)>[
+                                        ('Primary', null),
+                                        for (final group in source)
+                                          (group.name, group.id),
+                                      ];
+                                      return Autocomplete<(String, String?)>(
+                                        displayStringForOption: (option) =>
+                                            option.$1,
+                                        optionsBuilder:
+                                            (TextEditingValue value) {
+                                              final query = value.text
+                                                  .trim()
+                                                  .toLowerCase();
+                                              if (query.isEmpty) return options;
+                                              return options
+                                                  .where(
+                                                    (option) => option.$1
+                                                        .toLowerCase()
+                                                        .contains(query),
+                                                  )
+                                                  .toList();
+                                            },
+                                        onSelected: (option) {},
+                                        fieldViewBuilder:
+                                            (
+                                              context,
+                                              controller,
+                                              focusNode,
+                                              _,
+                                            ) {
+                                              return TextField(
+                                                controller: controller,
+                                                focusNode: focusNode,
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  hintText: 'Search and select',
+                                                  suffixIcon: const Icon(
+                                                    Icons
+                                                        .arrow_drop_down_rounded,
+                                                  ),
+                                                  contentPadding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
                                                       ),
-                                                      title: Text(option.$1),
-                                                      onTap: () =>
-                                                          onSelected(option),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                        optionsViewBuilder: (context, onSelected, options) {
+                                          return Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Material(
+                                              elevation: 4,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: ConstrainedBox(
+                                                constraints:
+                                                    const BoxConstraints(
+                                                      maxWidth: 480,
                                                     ),
-                                                ],
+                                                child: ListView(
+                                                  shrinkWrap: true,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 4,
+                                                      ),
+                                                  children: [
+                                                    for (final option
+                                                        in options)
+                                                      ListTile(
+                                                        dense: true,
+                                                        leading: Icon(
+                                                          option.$2 == null
+                                                              ? Icons
+                                                                    .home_rounded
+                                                              : Icons
+                                                                    .account_tree_rounded,
+                                                          size: 20,
+                                                          color: AppColors
+                                                              .textSecondary,
+                                                        ),
+                                                        title: Text(option.$1),
+                                                        onTap: () =>
+                                                            onSelected(option),
+                                                      ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
@@ -322,96 +333,96 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                           const SizedBox(width: 16),
                           Expanded(
                             flex: 2,
-                            child: Builder(builder: (context) {
-                              final natureSource = natures.isEmpty
-                                  ? AccountNature.demo
-                                  : natures;
-                              final natureOptions = <(String, int)>[
-                                for (final nature in natureSource)
-                                  (nature.name, nature.id),
-                              ];
-                              return Autocomplete<(String, int)>(
-                                displayStringForOption: (option) => option.$1,
-                                optionsBuilder: (TextEditingValue value) {
-                                  final query = value.text.trim().toLowerCase();
-                                  if (query.isEmpty) return natureOptions;
-                                  return natureOptions
-                                      .where(
-                                        (option) => option.$1
-                                            .toLowerCase()
-                                            .contains(query),
-                                      )
-                                      .toList();
-                                },
-                                onSelected: (option) {},
-                                fieldViewBuilder: (
-                                  context,
-                                  controller,
-                                  focusNode,
-                                  _,
-                                ) {
-                                  return TextField(
-                                    controller: controller,
-                                    focusNode: focusNode,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      hintText: 'Search and select',
-                                      suffixIcon: const Icon(
-                                        Icons.arrow_drop_down_rounded,
-                                      ),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 8,
-                                          ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                optionsViewBuilder: (
-                                  context,
-                                  onSelected,
-                                  options,
-                                ) {
-                                  return Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Material(
-                                      elevation: 4,
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 480,
-                                        ),
-                                        child: ListView(
-                                          shrinkWrap: true,
-                                          padding:
-                                              const EdgeInsets.symmetric(
-                                                vertical: 4,
-                                              ),
-                                          children: [
-                                            for (final option in options)
-                                              ListTile(
-                                                dense: true,
-                                                leading: Icon(
-                                                  Icons.category_rounded,
-                                                  size: 20,
-                                                  color: AppColors
-                                                      .textSecondary,
+                            child: Builder(
+                              builder: (context) {
+                                final natureSource = natures.isEmpty
+                                    ? AccountNature.demo
+                                    : natures;
+                                final natureOptions = <(String, String)>[
+                                  for (final nature in natureSource)
+                                    (nature.name, nature.id),
+                                ];
+                                return Autocomplete<(String, String)>(
+                                  displayStringForOption: (option) => option.$1,
+                                  optionsBuilder: (TextEditingValue value) {
+                                    final query = value.text
+                                        .trim()
+                                        .toLowerCase();
+                                    if (query.isEmpty) return natureOptions;
+                                    return natureOptions
+                                        .where(
+                                          (option) => option.$1
+                                              .toLowerCase()
+                                              .contains(query),
+                                        )
+                                        .toList();
+                                  },
+                                  onSelected: (option) {},
+                                  fieldViewBuilder:
+                                      (context, controller, focusNode, _) {
+                                        return TextField(
+                                          controller: controller,
+                                          focusNode: focusNode,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText: 'Search and select',
+                                            suffixIcon: const Icon(
+                                              Icons.arrow_drop_down_rounded,
+                                            ),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                  vertical: 8,
                                                 ),
-                                                title: Text(option.$1),
-                                                onTap: () =>
-                                                    onSelected(option),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                  optionsViewBuilder:
+                                      (context, onSelected, options) {
+                                        return Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Material(
+                                            elevation: 4,
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 480,
                                               ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                               );
+                                              child: ListView(
+                                                shrinkWrap: true,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 4,
+                                                    ),
+                                                children: [
+                                                  for (final option in options)
+                                                    ListTile(
+                                                      dense: true,
+                                                      leading: Icon(
+                                                        Icons.category_rounded,
+                                                        size: 20,
+                                                        color: AppColors
+                                                            .textSecondary,
+                                                      ),
+                                                      title: Text(option.$1),
+                                                      onTap: () =>
+                                                          onSelected(option),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                );
                               },
-                              );
-                            }),
+                            ),
                           ),
                         ],
                       ),
@@ -659,47 +670,47 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                       ),
                       const SizedBox(height: 20),
                       if (viewModel.error != null) ...[
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.error.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.error_outline_rounded,
-                              size: 18,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                viewModel.error!,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
-                                    ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.error.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.error_outline_rounded,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.error,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  viewModel.error!,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.error,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 20),
+              const SizedBox(width: 20),
               Expanded(
                 flex: 3,
                 child: viewModel.isLoading
@@ -714,8 +725,7 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                                 onEdit: (id) => _openForm(
                                   groups.firstWhere((g) => g.id == id),
                                 ),
-                                onDelete: (id) =>
-                                    _confirmDelete(viewModel, id),
+                                onDelete: (id) => _confirmDelete(viewModel, id),
                               )
                             : ListView.separated(
                                 itemCount: groups.length,
@@ -750,8 +760,8 @@ class _AccountGroupTable extends StatelessWidget {
   });
 
   final List<AccountGroup> groups;
-  final ValueChanged<int> onEdit;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onEdit;
+  final ValueChanged<String> onDelete;
 
   String _underName(AccountGroup group) {
     final parent = groups
@@ -782,7 +792,7 @@ class _AccountGroupTable extends StatelessWidget {
             for (final group in groups)
               DataRow(
                 cells: [
-                  DataCell(Text('${group.id}')),
+                  DataCell(Text(group.id)),
                   DataCell(
                     Text(
                       group.name,
@@ -939,18 +949,14 @@ class _YesNoChoice extends StatelessWidget {
                   ? Icons.radio_button_checked_rounded
                   : Icons.radio_button_off_rounded,
               size: 18,
-              color: selected
-                  ? AppColors.primary
-                  : AppColors.textSecondary,
+              color: selected ? AppColors.primary : AppColors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
               label,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: selected
-                    ? AppColors.primary
-                    : AppColors.textSecondary,
+                color: selected ? AppColors.primary : AppColors.textSecondary,
               ),
             ),
           ],

@@ -91,7 +91,7 @@ class AccountGroupViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteAccountGroup(int id) async {
+  Future<bool> deleteAccountGroup(String id) async {
     _error = null;
     notifyListeners();
     try {

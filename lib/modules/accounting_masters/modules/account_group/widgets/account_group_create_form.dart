@@ -17,7 +17,7 @@ class _ParentOption {
   const _ParentOption(this.name, this.id);
 
   final String name;
-  final int? id;
+  final String? id;
 }
 
 /// Full-page form for creating or editing an accounting group.
@@ -55,7 +55,7 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
     (option) => option.id == widget.initialGroup?.parentId,
     orElse: () => _primaryOption,
   );
-  late int? _accountNatureId = widget.initialGroup?.accountNatureId;
+  late String? _accountNatureId = widget.initialGroup?.accountNatureId;
 
   @override
   void initState() {
@@ -264,7 +264,7 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
                     const SizedBox(height: 24),
                     const _SectionLabel('Account Nature'),
                     const SizedBox(height: 16),
-                    FormField<int>(
+                    FormField<String>(
                       initialValue: _accountNatureId,
                       validator: (value) =>
                           value == null ? 'Select an account nature' : null,

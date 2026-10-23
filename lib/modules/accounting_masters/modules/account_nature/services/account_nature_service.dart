@@ -19,6 +19,6 @@ class AccountNatureService {
     data: request.toJson(),
   );
 
-  Future<Map<String, dynamic>> deleteAccountNature(int id) =>
+  Future<Map<String, dynamic>> deleteAccountNature(String id) =>
       _apiService.delete(AccountingApiConfig.accountNatureEndpoint(id));
 }

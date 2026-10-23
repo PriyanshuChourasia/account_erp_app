@@ -75,7 +75,7 @@ class AccountNatureViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteAccountNature(int id) async {
+  Future<bool> deleteAccountNature(String id) async {
     _error = null;
     notifyListeners();
     try {

@@ -21,13 +21,13 @@ class AccountGroupService {
   );
 
   Future<Map<String, dynamic>> updateAccountGroup(
-    int id,
+    String id,
     UpdateAccountGroupRequest request,
   ) => _apiService.put(
     AccountingApiConfig.accountGroupEndpoint(id),
     data: request.toJson(),
   );
 
-  Future<Map<String, dynamic>> deleteAccountGroup(int id) =>
+  Future<Map<String, dynamic>> deleteAccountGroup(String id) =>
       _apiService.delete(AccountingApiConfig.accountGroupEndpoint(id));
 }
