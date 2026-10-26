@@ -26,7 +26,7 @@ This domain has no models, services, repositories or viewModels of its own — t
 - No `initState`/`dispose` logic of its own — none needed since it holds no async state.
 
 ### AccountingMastersScreenState (`lib/modules/accounting_masters/state/accounting_masters_screen_state.dart`)
-**Purpose:** Renders the descriptive header text and a responsive grid (`GridView.extent`, max cross-axis extent 300, aspect ratio 1.35) of `MasterCard`s for each configured master, and handles navigating to the tapped master's screen.
+**Purpose:** Renders a responsive grid (`GridView.extent`, max cross-axis extent 130, square tiles) of small bordered `MasterCard`s (icon + title only) for each configured master, and handles navigating to the tapped master's screen.
 
 **UI elements & actions:**
 - A static `_masters` list defines three cards, each a record with `title`, `subtitle`, `icon`, `color`:
@@ -45,7 +45,7 @@ This domain has no models, services, repositories or viewModels of its own — t
 ## Widgets
 
 ### MasterCard (`lib/modules/accounting_masters/widgets/master_card.dart`)
-A `StatelessWidget` card used only by the index screen. Takes `title`, `subtitle`, `icon`, `color`, and `onTap`. Renders a `Card` with an `InkWell` (tap target for the whole card), a colored icon chip (icon tinted with 12% alpha of `color` as background), title/subtitle text (both single-line, ellipsized), and a trailing chevron (`Icons.chevron_right_rounded`). Purely presentational — the caller supplies the `onTap` callback (used by `AccountingMastersScreenState._openMaster`).
+A `StatelessWidget` card used only by the index screen. Takes `title`, `icon`, `color`, and `onTap`. Renders a small white `Card` with a thin border tinted by `color`, an icon in a circle tinted with 12% alpha of `color`, and the title centred below it (wraps to two lines, scales down with large system text). Purely presentational — the caller supplies the `onTap` callback (used by `AccountingMastersScreenState._openMaster`).
 
 ## Configs
 

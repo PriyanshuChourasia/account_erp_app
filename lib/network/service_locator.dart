@@ -41,12 +41,22 @@ import '../modules/organisational_masters/modules/financial_year/repository/fina
 import '../modules/organisational_masters/modules/financial_year/services/financial_year_service.dart';
 import '../modules/organisational_masters/modules/state/repository/state_repository.dart';
 import '../modules/organisational_masters/modules/state/services/state_service.dart';
+import '../modules/payroll_masters/modules/employee/repository/employee_repository.dart';
+import '../modules/payroll_masters/modules/employee/services/employee_service.dart';
+import '../modules/payroll_masters/modules/employee_category/repository/employee_category_repository.dart';
+import '../modules/payroll_masters/modules/employee_category/services/employee_category_service.dart';
+import '../modules/payroll_masters/modules/employee_group/repository/employee_group_repository.dart';
+import '../modules/payroll_masters/modules/employee_group/services/employee_group_service.dart';
 import '../modules/utility/modules/bank/repository/bank_repository.dart';
 import '../modules/utility/modules/bank/services/bank_service.dart';
 import '../modules/utility/modules/bank_branch/repository/bank_branch_repository.dart';
 import '../modules/utility/modules/bank_branch/services/bank_branch_service.dart';
 import '../modules/utility/modules/bank_type/repository/bank_type_repository.dart';
 import '../modules/utility/modules/bank_type/services/bank_type_service.dart';
+import '../modules/utility/modules/blood_group/repository/blood_group_repository.dart';
+import '../modules/utility/modules/blood_group/services/blood_group_service.dart';
+import '../modules/utility/modules/gender/repository/gender_repository.dart';
+import '../modules/utility/modules/gender/services/gender_service.dart';
 import 'api_service.dart';
 import 'dio_client.dart';
 import 'interceptors/auth_interceptor.dart';
@@ -214,6 +224,18 @@ Future<void> initServiceLocator({TokenStorage? tokenStorage}) async {
     ..registerLazySingleton<BankBranchRepository>(
       () => BankBranchRepository(globalService<BankBranchService>()),
     )
+    ..registerLazySingleton<BloodGroupService>(
+      () => BloodGroupService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<BloodGroupRepository>(
+      () => BloodGroupRepository(globalService<BloodGroupService>()),
+    )
+    ..registerLazySingleton<GenderService>(
+      () => GenderService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<GenderRepository>(
+      () => GenderRepository(globalService<GenderService>()),
+    )
     ..registerLazySingleton<DepartmentService>(
       () => DepartmentService(globalService<ApiService>()),
     )
@@ -225,6 +247,24 @@ Future<void> initServiceLocator({TokenStorage? tokenStorage}) async {
     )
     ..registerLazySingleton<DesignationRepository>(
       () => DesignationRepository(globalService<DesignationService>()),
+    )
+    ..registerLazySingleton<EmployeeService>(
+      () => EmployeeService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<EmployeeRepository>(
+      () => EmployeeRepository(globalService<EmployeeService>()),
+    )
+    ..registerLazySingleton<EmployeeCategoryService>(
+      () => EmployeeCategoryService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<EmployeeCategoryRepository>(
+      () => EmployeeCategoryRepository(globalService<EmployeeCategoryService>()),
+    )
+    ..registerLazySingleton<EmployeeGroupService>(
+      () => EmployeeGroupService(globalService<ApiService>()),
+    )
+    ..registerLazySingleton<EmployeeGroupRepository>(
+      () => EmployeeGroupRepository(globalService<EmployeeGroupService>()),
     );
 
   // ViewModels are NOT registered here — they are created (and owned) by the

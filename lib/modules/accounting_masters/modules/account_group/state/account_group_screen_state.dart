@@ -195,9 +195,7 @@ class AccountGroupScreenState extends State<AccountGroupScreen> {
                                   child: Builder(
                                     builder: (context) {
                                       final source =
-                                          viewModel.accountingGroups.isEmpty
-                                          ? AccountGroup.demo
-                                          : viewModel.accountingGroups;
+                                          viewModel.accountingGroups;
                                       final options = <(String, String?)>[
                                         ('Primary', null),
                                         for (final group in source)

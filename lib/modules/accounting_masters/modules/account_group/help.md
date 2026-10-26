@@ -6,7 +6,7 @@ Account Group is the master for the hierarchical classification of ledgers used 
 ## Architecture
 Full layered implementation:
 
-- `models/account_group.dart` — `AccountGroup` (read model, includes UI-only `icon`/`color` and `demo` fallback data).
+- `models/account_group.dart` — `AccountGroup` (read model, includes UI-only `icon`/`color`).
 - `models/create_account_group_request.dart` — `CreateAccountGroupRequest`.
 - `models/update_account_group_request.dart` — `UpdateAccountGroupRequest`.
 - `services/account_group_service.dart` — `AccountGroupService`, raw HTTP via `ApiService` and `AccountingApiConfig`.
@@ -86,7 +86,7 @@ Raw HTTP calls via `ApiService`, no parsing:
 ## Models
 
 ### AccountGroup (`models/account_group.dart`)
-Fields: `id` (int), `name` (String), `code` (int?), `alias` (String?), `description` (String?), `isActive` (bool, default `true`), `parentId` (int?, parent group in the hierarchy), `accountNatureId` (int?), `icon` (IconData, UI-only, default `Icons.account_tree_rounded`), `color` (Color, UI-only, default `AppColors.primary`). `fromJson` parses `id`, `name`, `code`, `alias`, `description`, `isActive`, `parentId`, `accountNatureId` from the backend `AccountGroupDTO`; `icon`/`color` are not set from JSON (they only exist on the static `demo` placeholder list of 8 sample groups used as fallback data when the backend list is empty, e.g. in the parent-picker).
+Fields: `id` (int), `name` (String), `code` (int?), `alias` (String?), `description` (String?), `isActive` (bool, default `true`), `parentId` (int?, parent group in the hierarchy), `accountNatureId` (int?), `icon` (IconData, UI-only, default `Icons.account_tree_rounded`), `color` (Color, UI-only, default `AppColors.primary`). `fromJson` parses `id`, `name`, `code`, `alias`, `description`, `isActive`, `parentId`, `accountNatureId` from the backend `AccountGroupDTO`; `icon`/`color` are not set from JSON and keep their defaults.
 
 ### CreateAccountGroupRequest (`models/create_account_group_request.dart`)
 Fields: `name` (String, required), `code` (int, required), `accountNatureId` (int, required), `alias` (String?), `description` (String?), `parentId` (int?). `toJson()` omits null `alias`/`description`/`parentId`.
@@ -107,7 +107,7 @@ Full-page `StatefulWidget` form (`Scaffold` + `AppBar`) for create or edit, dist
 - **Code** (`TextFormField`, numeric keyboard) — required; validator rejects empty ("Enter a group code") and non-numeric input ("Enter a valid number").
 - **Alias** (optional, word capitalization) — no validator.
 - **Description** (optional, sentence capitalization, 3 lines) — no validator.
-- **Under (parent group)** — an `Autocomplete<_ParentOption>` text field seeded with a synthetic "Primary" option (`id: null`, meaning no parent) plus one option per existing group (falling back to `AccountGroup.demo` if the live list is empty). Selecting an option sets `_parent` via `setState`.
+- **Under (parent group)** — an `Autocomplete<_ParentOption>` text field seeded with a synthetic "Primary" option (`id: null`, meaning no parent) plus one option per existing group (only "Primary" when there are none). Selecting an option sets `_parent` via `setState`.
 - **Account Nature** — a `Wrap` of `ChoiceChip`s, one per nature from `AccountNatureViewModel.accountNatures` (or `AccountNature.demo` fallback). Wrapped in a `FormField<int>` whose validator requires a selection ("Select an account nature"); selecting a chip updates `_accountNatureId` and calls `field.didChange`.
 - **Cancel** button — pops with no result.
 - **Save/Update button** (`FilledButton.icon`) — calls `_submit()`, which validates the form, parses the code, builds either an `UpdateAccountGroupRequest` (if editing) or `CreateAccountGroupRequest` (if creating), and pops it.

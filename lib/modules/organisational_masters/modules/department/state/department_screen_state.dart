@@ -258,7 +258,7 @@ class _DepartmentTable extends StatelessWidget {
                         letterSpacing: 0.3,
                       ),
                       columns: const [
-                        DataColumn(label: Text('#')),
+                        DataColumn(label: Text('SL No.')),
                         DataColumn(label: Text('Name')),
                         DataColumn(label: Text('Code')),
                         DataColumn(label: Text('Description')),

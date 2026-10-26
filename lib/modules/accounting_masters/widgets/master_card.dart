@@ -2,71 +2,71 @@ import 'package:flutter/material.dart';
 
 import '../../../config/theme/app_theme.dart';
 
-/// Card for a single accounting master, tappable to open its module screen.
+/// Small bordered card for a single accounting master: icon on top, title
+/// below. Tappable to open the master's module screen.
 class MasterCard extends StatelessWidget {
   const MasterCard({
     super.key,
     required this.title,
-    required this.subtitle,
     required this.icon,
     required this.color,
     required this.onTap,
   });
 
   final String title;
-  final String subtitle;
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: BorderSide(color: color.withValues(alpha: 0.35)),
+    );
     return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: Colors.white,
+      shape: shape,
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
+        customBorder: shape,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
+                  shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: color, size: 26),
+                child: Icon(icon, color: color, size: 24),
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+              const SizedBox(height: 8),
+              // Long titles wrap to a second line; the text only shrinks
+              // when even that won't fit (e.g. large system text).
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 110),
+                    child: Text(
                       title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.5,
+                        height: 1.2,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
             ],
           ),
         ),

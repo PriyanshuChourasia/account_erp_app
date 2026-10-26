@@ -19,7 +19,6 @@ class DesignationViewModel extends ChangeNotifier {
   String _query = '';
   int _page = 0;
   int _rowsPerPage = 10;
-  final Set<String> _togglingIds = {};
 
   /// Page-size choices offered by the table footer.
   static const List<int> rowsPerPageOptions = [10, 25, 50];
@@ -48,9 +47,6 @@ class DesignationViewModel extends ChangeNotifier {
     return filtered.sublist(start, end);
   }
 
-  /// Whether a status change for [id] is in flight.
-  bool isToggling(String id) => _togglingIds.contains(id);
-
   /// Designations filtered by the current search query.
   List<Designation> get filteredDesignations {
     final query = _query.trim().toLowerCase();
@@ -61,6 +57,8 @@ class DesignationViewModel extends ChangeNotifier {
               designation.name.toLowerCase().contains(query) ||
               designation.id.contains(query) ||
               (designation.code?.toLowerCase().contains(query) ?? false) ||
+              (parentNameOf(designation)?.toLowerCase().contains(query) ??
+                  false) ||
               (designation.description?.toLowerCase().contains(query) ?? false),
         )
         .toList();
@@ -101,34 +99,36 @@ class DesignationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Switches [designation] active/inactive via the update endpoint, then
-  /// reloads so the list reflects what the backend actually stored.
-  Future<bool> setActive(Designation designation, bool active) async {
-    _togglingIds.add(designation.id);
-    _error = null;
-    notifyListeners();
-    try {
-      await _repository.updateDesignation(
-        designation.id,
-        CreateDesignationRequest(
-          name: designation.name,
-          code: designation.code,
-          description: designation.description,
-          active: active,
-        ),
-      );
-      await loadDesignations();
-      return true;
-    } on AppException catch (error) {
-      _error = error.message;
-      return false;
-    } catch (_) {
-      _error = 'Something went wrong. Please try again.';
-      return false;
-    } finally {
-      _togglingIds.remove(designation.id);
-      notifyListeners();
+  /// Name of [designation]'s parent, or null for a top-level designation.
+  String? parentNameOf(Designation designation) {
+    final parentId = designation.parentId;
+    if (parentId == null) return null;
+    for (final candidate in _designations) {
+      if (candidate.id == parentId) return candidate.name;
     }
+    return null;
+  }
+
+  /// Designations that can be picked as the parent of [editing] (or of a new
+  /// designation when null): everything except [editing] itself and its
+  /// descendants, which the backend rejects as a cycle.
+  List<Designation> parentOptionsFor(Designation? editing) {
+    if (editing == null) return _designations;
+    final excluded = <String>{editing.id};
+    var grew = true;
+    while (grew) {
+      grew = false;
+      for (final candidate in _designations) {
+        if (candidate.parentId != null &&
+            excluded.contains(candidate.parentId) &&
+            excluded.add(candidate.id)) {
+          grew = true;
+        }
+      }
+    }
+    return _designations
+        .where((candidate) => !excluded.contains(candidate.id))
+        .toList();
   }
 
   Future<bool> addDesignation(CreateDesignationRequest request) async {

@@ -79,10 +79,9 @@ class _AccountGroupCreateFormState extends State<AccountGroupCreateForm> {
 
   List<_ParentOption> get _parentOptions {
     final groups = context.read<AccountGroupViewModel>().accountingGroups;
-    final source = groups.isEmpty ? AccountGroup.demo : groups;
     return [
       _primaryOption,
-      for (final group in source) _ParentOption(group.name, group.id),
+      for (final group in groups) _ParentOption(group.name, group.id),
     ];
   }
 

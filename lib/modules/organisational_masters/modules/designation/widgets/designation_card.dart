@@ -8,17 +8,15 @@ class DesignationCard extends StatelessWidget {
   const DesignationCard({
     super.key,
     required this.designation,
-    required this.onActiveChanged,
     required this.onEdit,
     required this.onDelete,
-    this.isToggling = false,
+    this.parentName,
   });
 
   final Designation designation;
-  final ValueChanged<bool> onActiveChanged;
 
-  /// True while a status change is being saved; disables the switch.
-  final bool isToggling;
+  /// Name of the parent designation, shown under the code when present.
+  final String? parentName;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
@@ -52,7 +50,10 @@ class DesignationCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    designation.code ?? '',
+                    [
+                      ?designation.code,
+                      if (parentName != null) 'Reports to $parentName',
+                    ].join(' · '),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -60,10 +61,8 @@ class DesignationCard extends StatelessWidget {
                 ],
               ),
             ),
-            Switch(
-              value: designation.isActive,
-              onChanged: isToggling ? null : onActiveChanged,
-            ),
+            // Read-only: the backend can't change status yet.
+            Switch(value: designation.isActive, onChanged: null),
             IconButton(
               tooltip: 'Edit designation',
               icon: const Icon(

@@ -23,7 +23,11 @@ class DesignationScreenState extends State<DesignationScreen> {
   Future<void> _openAddDialog() async {
     final result = await showDialog<CreateDesignationRequest>(
       context: context,
-      builder: (_) => const DesignationAddDialog(),
+      builder: (_) => DesignationAddDialog(
+        parentOptions: context.read<DesignationViewModel>().parentOptionsFor(
+          null,
+        ),
+      ),
     );
     if (result == null || !mounted) return;
     await context.read<DesignationViewModel>().addDesignation(result);
@@ -32,7 +36,12 @@ class DesignationScreenState extends State<DesignationScreen> {
   Future<void> _openEditDialog(Designation designation) async {
     final result = await showDialog<CreateDesignationRequest>(
       context: context,
-      builder: (_) => DesignationAddDialog(initialDesignation: designation),
+      builder: (_) => DesignationAddDialog(
+        initialDesignation: designation,
+        parentOptions: context.read<DesignationViewModel>().parentOptionsFor(
+          designation,
+        ),
+      ),
     );
     if (result == null || !mounted) return;
     await context.read<DesignationViewModel>().updateDesignation(
@@ -185,11 +194,9 @@ class DesignationScreenState extends State<DesignationScreen> {
                                             viewModel.pagedDesignations[index];
                                         return DesignationCard(
                                           designation: designation,
-                                          isToggling: viewModel.isToggling(
-                                            designation.id,
+                                          parentName: viewModel.parentNameOf(
+                                            designation,
                                           ),
-                                          onActiveChanged: (value) => viewModel
-                                              .setActive(designation, value),
                                           onEdit: () =>
                                               _openEditDialog(designation),
                                           onDelete: () => _confirmDelete(
@@ -258,9 +265,10 @@ class _DesignationTable extends StatelessWidget {
                         letterSpacing: 0.3,
                       ),
                       columns: const [
-                        DataColumn(label: Text('#')),
+                        DataColumn(label: Text('SL No.')),
                         DataColumn(label: Text('Name')),
                         DataColumn(label: Text('Code')),
+                        DataColumn(label: Text('Reports to')),
                         DataColumn(label: Text('Description')),
                         DataColumn(label: Text('Active')),
                         DataColumn(
@@ -287,6 +295,11 @@ class _DesignationTable extends StatelessWidget {
                               ),
                               DataCell(Text(designation.code ?? '—')),
                               DataCell(
+                                Text(
+                                  viewModel.parentNameOf(designation) ?? '—',
+                                ),
+                              ),
+                              DataCell(
                                 ConstrainedBox(
                                   constraints: const BoxConstraints(
                                     maxWidth: 360,
@@ -299,12 +312,7 @@ class _DesignationTable extends StatelessWidget {
                                 ),
                               ),
                               DataCell(
-                                _ActiveSwitch(
-                                  value: designation.isActive,
-                                  busy: viewModel.isToggling(designation.id),
-                                  onChanged: (value) =>
-                                      viewModel.setActive(designation, value),
-                                ),
+                                _ActiveSwitch(value: designation.isActive),
                               ),
                               DataCell(
                                 Align(
@@ -355,33 +363,20 @@ class _DesignationTable extends StatelessWidget {
   }
 }
 
-/// Active/inactive switch; shows a small spinner while the change is saved.
+/// Read-only active/inactive switch. The backend has no way to change a
+/// designation's status yet (every update forces it active), so this only
+/// displays it.
 class _ActiveSwitch extends StatelessWidget {
-  const _ActiveSwitch({
-    required this.value,
-    required this.busy,
-    required this.onChanged,
-  });
+  const _ActiveSwitch({required this.value});
 
   final bool value;
-  final bool busy;
-  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    if (busy) {
-      return const SizedBox(
-        width: 52,
-        child: Center(
-          child: SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      );
-    }
-    return Switch(value: value, onChanged: onChanged);
+    return Tooltip(
+      message: value ? 'Active' : 'Inactive',
+      child: Switch(value: value, onChanged: null),
+    );
   }
 }
 

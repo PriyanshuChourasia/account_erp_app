@@ -16,4 +16,15 @@ class UtilityApiConfig {
   static const String bankBranchAPI = "/bank_branches";
   static const String createBankBranchAPI = "$bankBranchAPI/create";
   static String bankBranchEndpoint(int id) => "$bankBranchAPI/$id";
+
+  /// blood groups
+  static const String bloodGroupAPI = "/blood_groups";
+  static const String createBloodGroupAPI = "$bloodGroupAPI/create";
+  static String bloodGroupEndpoint(int id) => "$bloodGroupAPI/$id";
+
+  /// genders
+  static const String genderAPI = "/genders";
+  static const String genderListAPI = "$genderAPI/list";
+  static const String createGenderAPI = "$genderAPI/create";
+  static String genderEndpoint(String id) => "$genderAPI/$id";
 }

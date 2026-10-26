@@ -9,9 +9,17 @@ import '../models/designation.dart';
 ///
 /// Pops a [CreateDesignationRequest] on save.
 class DesignationAddDialog extends StatefulWidget {
-  const DesignationAddDialog({super.key, this.initialDesignation});
+  const DesignationAddDialog({
+    super.key,
+    this.initialDesignation,
+    this.parentOptions = const [],
+  });
 
   final Designation? initialDesignation;
+
+  /// Designations selectable as the parent (already excludes the one being
+  /// edited and its descendants).
+  final List<Designation> parentOptions;
 
   @override
   State<DesignationAddDialog> createState() => _DesignationAddDialogState();
@@ -31,6 +39,15 @@ class _DesignationAddDialogState extends State<DesignationAddDialog> {
 
   bool get _isEditing => widget.initialDesignation != null;
 
+  /// Starts at the current parent so saving an edit never clears it. Falls
+  /// back to none if that parent is no longer in the list.
+  late String? _parentId =
+      widget.parentOptions.any(
+        (option) => option.id == widget.initialDesignation?.parentId,
+      )
+      ? widget.initialDesignation?.parentId
+      : null;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -47,6 +64,7 @@ class _DesignationAddDialogState extends State<DesignationAddDialog> {
         code: _codeController.text.trim().isEmpty
             ? null
             : _codeController.text.trim().toUpperCase(),
+        parentId: _parentId,
         description: _descriptionController.text.trim().isEmpty
             ? null
             : _descriptionController.text.trim(),
@@ -111,6 +129,32 @@ class _DesignationAddDialogState extends State<DesignationAddDialog> {
                     labelText: 'Code (optional)',
                     hintText: 'e.g. SR_ACC',
                   ),
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String?>(
+                  initialValue: _parentId,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Reports to (parent)',
+                    prefixIcon: Icon(Icons.account_tree_outlined),
+                  ),
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('None (top level)'),
+                    ),
+                    for (final option in widget.parentOptions)
+                      DropdownMenuItem<String?>(
+                        value: option.id,
+                        child: Text(
+                          option.code == null
+                              ? option.name
+                              : '${option.name} (${option.code})',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                  onChanged: (value) => setState(() => _parentId = value),
                 ),
                 const SizedBox(height: 16),
                 const _SectionLabel('Notes'),

@@ -62,6 +62,16 @@ import 'modules/utility/modules/terminal/viewModel/terminal_view_model.dart';
 import 'modules/utility/modules/bank/repository/bank_repository.dart';
 import 'modules/utility/modules/bank/viewModel/bank_view_model.dart';
 import 'modules/utility/modules/bank_branch/repository/bank_branch_repository.dart';
+import 'modules/utility/modules/blood_group/repository/blood_group_repository.dart';
+import 'modules/utility/modules/blood_group/viewModel/blood_group_view_model.dart';
+import 'modules/utility/modules/gender/repository/gender_repository.dart';
+import 'modules/utility/modules/gender/viewModel/gender_view_model.dart';
+import 'modules/payroll_masters/modules/employee/repository/employee_repository.dart';
+import 'modules/payroll_masters/modules/employee/viewModel/employee_view_model.dart';
+import 'modules/payroll_masters/modules/employee_category/repository/employee_category_repository.dart';
+import 'modules/payroll_masters/modules/employee_category/viewModel/employee_category_view_model.dart';
+import 'modules/payroll_masters/modules/employee_group/repository/employee_group_repository.dart';
+import 'modules/payroll_masters/modules/employee_group/viewModel/employee_group_view_model.dart';
 import 'modules/utility/modules/bank_branch/viewModel/bank_branch_view_model.dart';
 import 'modules/utility/modules/bank_type/repository/bank_type_repository.dart';
 import 'modules/utility/modules/bank_type/viewModel/bank_type_view_model.dart';
@@ -180,6 +190,25 @@ class AccountErpApp extends StatelessWidget {
             globalService<BankBranchRepository>(),
             globalService<BankRepository>(),
           ),
+        ),
+        ChangeNotifierProvider<BloodGroupViewModel>(
+          create: (_) =>
+              BloodGroupViewModel(globalService<BloodGroupRepository>()),
+        ),
+        ChangeNotifierProvider<GenderViewModel>(
+          create: (_) => GenderViewModel(globalService<GenderRepository>()),
+        ),
+        ChangeNotifierProvider<EmployeeViewModel>(
+          create: (_) =>
+              EmployeeViewModel(globalService<EmployeeRepository>()),
+        ),
+        ChangeNotifierProvider<EmployeeCategoryViewModel>(
+          create: (_) =>
+              EmployeeCategoryViewModel(globalService<EmployeeCategoryRepository>()),
+        ),
+        ChangeNotifierProvider<EmployeeGroupViewModel>(
+          create: (_) =>
+              EmployeeGroupViewModel(globalService<EmployeeGroupRepository>()),
         ),
         ChangeNotifierProvider<DepartmentViewModel>(
           create: (_) =>

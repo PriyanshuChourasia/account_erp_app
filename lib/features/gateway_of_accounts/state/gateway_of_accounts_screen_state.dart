@@ -4,18 +4,11 @@ import 'package:provider/provider.dart';
 import '../../../config/theme/app_theme.dart';
 import '../../../modules/organisational_masters/modules/company/models/create_company_request.dart';
 import '../../../modules/organisational_masters/modules/company/viewModel/company_view_model.dart';
-import '../../../modules/inventory_masters/modules/stock_item/screens/stock_item_screen.dart';
-import '../../../modules/utility/modules/database_opr/screens/database_opr_screen.dart';
-import '../../../modules/accounting_masters/modules/account_group/screens/account_group_screen.dart';
-import '../../../modules/accounting_masters/modules/account_ledger/screens/account_ledger_screen.dart';
-import '../../../modules/accounting_masters/modules/account_nature/screens/account_nature_screen.dart';
-import '../../../modules/developer_masters/modules/application_feature/screens/application_feature_screen.dart';
-import '../../../modules/developer_masters/modules/application_module/screens/application_module_screen.dart';
-import '../../../modules/organisational_masters/modules/country/screens/country_screen.dart';
-import '../../../modules/organisational_masters/modules/department/screens/department_screen.dart';
-import '../../../modules/organisational_masters/modules/designation/screens/designation_screen.dart';
-import '../../../modules/organisational_masters/modules/financial_year/screens/financial_year_screen.dart';
-import '../../../modules/organisational_masters/modules/state/screens/state_screen.dart';
+import '../../../modules/accounting_masters/screens/accounting_masters_screen.dart';
+import '../../../modules/inventory_masters/screens/inventory_masters_screen.dart';
+import '../../../modules/organisational_masters/screens/organisational_masters_screen.dart';
+import '../../../modules/payroll_masters/screens/payroll_masters_screen.dart';
+import '../../../modules/utility/screens/utility_screen.dart';
 import '../../../routing/app_routes.dart';
 import '../../auth/viewModel/auth_view_model.dart';
 import '../screens/gateway_of_accounts_screen.dart';
@@ -467,8 +460,8 @@ class _ActionsCard extends StatelessWidget {
   }
 }
 
-/// Right sub-panel: a plain list of organisational masters (Financial Year,
-/// Country, State, Currency Info).
+/// Right sub-panel: a grid of small cards, one per master domain, each
+/// opening that domain's index screen.
 class _MastersLadderCard extends StatelessWidget {
   const _MastersLadderCard({this.scrollable = true});
 
@@ -476,80 +469,58 @@ class _MastersLadderCard extends StatelessWidget {
   final bool scrollable;
 
   static const _items = [
-    (icon: Icons.calendar_month_rounded, label: 'Financial Year'),
-    (icon: Icons.public_rounded, label: 'Country'),
-    (icon: Icons.map_rounded, label: 'State'),
-    (icon: Icons.business_rounded, label: 'Department'),
-    (icon: Icons.work_rounded, label: 'Designation'),
-    (icon: Icons.currency_exchange_rounded, label: 'Currency Info'),
-    (icon: Icons.inventory_2_rounded, label: 'Stock Item'),
-    (icon: Icons.account_tree_rounded, label: 'Account Group'),
-    (icon: Icons.category_rounded, label: 'Account Nature'),
-    (icon: Icons.menu_book_rounded, label: 'Account Ledger'),
-    (icon: Icons.storage_rounded, label: 'Database Operations'),
-    (icon: Icons.apps_rounded, label: 'Application Modules'),
-    (icon: Icons.web_asset_rounded, label: 'Application Features'),
+    (
+      icon: Icons.account_balance_rounded,
+      label: 'Accounting',
+      color: Color(0xFF2E5BBA),
+    ),
+    (
+      icon: Icons.inventory_2_rounded,
+      label: 'Inventory',
+      color: Color(0xFF0F8A6B),
+    ),
+    (icon: Icons.payments_rounded, label: 'Payroll', color: Color(0xFFB7791F)),
+    (
+      icon: Icons.build_circle_rounded,
+      label: 'Utility',
+      color: Color(0xFF6B46C1),
+    ),
+    (
+      icon: Icons.corporate_fare_rounded,
+      label: 'Organisation',
+      color: Color(0xFFC53030),
+    ),
+    (icon: Icons.business_rounded, label: 'Company', color: Color(0xFF2B6CB0)),
   ];
 
   void _open(BuildContext context, int index) {
+    // The domain index screens are built to sit inside the dashboard shell,
+    // so give them their own Scaffold when pushed from here.
+    final Widget body;
     switch (index) {
       case 0:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const FinancialYearScreen()),
-        );
+        body = const AccountingMastersScreen();
       case 1:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const CountryScreen()));
+        body = const InventoryMastersScreen();
       case 2:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const StateScreen()));
+        body = const PayrollMastersScreen();
       case 3:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const DepartmentScreen()),
-        );
+        body = const UtilityScreen();
       case 4:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const DesignationScreen()),
-        );
-      case 6:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const StockItemScreen()),
-        );
-      case 7:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const AccountGroupScreen()),
-        );
-      case 8:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const AccountNatureScreen()),
-        );
-      case 9:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const AccountLedgerScreen()),
-        );
-      case 10:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const DatabaseOprScreen()),
-        );
-      case 11:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const ApplicationModuleScreen(),
-          ),
-        );
-      case 12:
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const ApplicationFeatureScreen(),
-          ),
-        );
+        body = const OrganisationalMastersScreen();
       default:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Currency master is coming soon.')),
-        );
+        Navigator.of(context).pushNamed(AppRoutes.companies);
+        return;
     }
+    final title = _items[index].label;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => Scaffold(
+          appBar: AppBar(title: Text(title)),
+          body: body,
+        ),
+      ),
+    );
   }
 
   @override
@@ -568,20 +539,24 @@ class _MastersLadderCard extends StatelessWidget {
             ),
           ),
         ),
-        ListView.separated(
+        // Small fixed-size tiles: as many per row as fit, each at most
+        // 120px wide.
+        GridView.extent(
+          maxCrossAxisExtent: 120,
           shrinkWrap: true,
           padding: EdgeInsets.zero,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: _items.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final item = _items[index];
-            return _MasterListItem(
-              icon: item.icon,
-              label: item.label,
-              onTap: () => _open(context, index),
-            );
-          },
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          children: [
+            for (final (index, item) in _items.indexed)
+              _MasterTile(
+                icon: item.icon,
+                label: item.label,
+                color: item.color,
+                onTap: () => _open(context, index),
+              ),
+          ],
         ),
       ],
     );
@@ -591,57 +566,65 @@ class _MastersLadderCard extends StatelessWidget {
       shadowColor: Colors.black.withValues(alpha: 0.15),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-        // In the side-by-side layouts a tall item list scrolls internally
-        // instead of overflowing when the card is given little height.
+        // In the side-by-side layouts the grid scrolls internally instead of
+        // overflowing when the card is given little height.
         child: scrollable ? SingleChildScrollView(child: content) : content,
       ),
     );
   }
 }
 
-/// One row of the [_MastersLadderCard] list.
-class _MasterListItem extends StatelessWidget {
-  const _MasterListItem({
+/// One small card of the [_MastersLadderCard] grid: icon on top, title below.
+class _MasterTile extends StatelessWidget {
+  const _MasterTile({
     required this.icon,
     required this.label,
+    required this.color,
     required this.onTap,
   });
 
   final IconData icon;
   final String label;
+  final Color color;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.15),
-              ),
-            ),
-            child: Row(
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withValues(alpha: 0.25)),
+          ),
+          // Scales down rather than overflowing with large system text.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 16, color: AppColors.primary),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    label,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                      color: AppColors.textPrimary,
-                    ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 24, color: color),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12.5,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],

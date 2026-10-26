@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../config/theme/app_theme.dart';
 import '../modules/account_nature/screens/account_nature_screen.dart';
 import '../modules/account_group/screens/account_group_screen.dart';
+import '../modules/account_ledger/screens/account_ledger_screen.dart';
 import '../modules/voucher_type/screens/voucher_type_screen.dart';
 import '../screens/accounting_masters_screen.dart';
 import '../widgets/master_card.dart';
@@ -13,23 +13,25 @@ class AccountingMastersScreenState extends State<AccountingMastersScreen> {
   static const _masters = [
     (
       title: 'Account Group',
-      subtitle: 'Group ledgers under assets, liabilities, income & expenses',
       icon: Icons.account_tree_rounded,
       color: Color(0xFF7C3AED),
     ),
     (
       title: 'Account Nature',
-      subtitle: 'Classify accounts by their nature',
       icon: Icons.category_rounded,
       color: Color(0xFF0D9488),
     ),
     (
       title: 'Voucher Type',
-      subtitle: 'Classify vouchers such as payment, receipt and journal',
       icon: Icons.receipt_long_rounded,
       color: Color(0xFF1D4ED8),
     ),
-    // Add more masters here: Ledger, ...
+    (
+      title: 'Account Ledger',
+      icon: Icons.menu_book_rounded,
+      color: Color(0xFFD97706),
+    ),
+    // Add more masters here.
   ];
 
   void _openMaster(int index) {
@@ -46,42 +48,29 @@ class AccountingMastersScreenState extends State<AccountingMastersScreen> {
         Navigator.of(context).push(
           MaterialPageRoute<void>(builder: (_) => const VoucherTypeScreen()),
         );
+      case 3:
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const AccountLedgerScreen()),
+        );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: GridView.extent(
+        maxCrossAxisExtent: 130,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
         children: [
-          Text(
-            'Manage your accounting master data.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
+          for (final (index, master) in _masters.indexed)
+            MasterCard(
+              title: master.title,
+              icon: master.icon,
+              color: master.color,
+              onTap: () => _openMaster(index),
             ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.extent(
-              maxCrossAxisExtent: 300,
-              mainAxisSpacing: 14,
-              crossAxisSpacing: 14,
-              childAspectRatio: 1.35,
-              children: [
-                for (final (index, master) in _masters.indexed)
-                  MasterCard(
-                    title: master.title,
-                    subtitle: master.subtitle,
-                    icon: master.icon,
-                    color: master.color,
-                    onTap: () => _openMaster(index),
-                  ),
-              ],
-            ),
-          ),
         ],
       ),
     );
