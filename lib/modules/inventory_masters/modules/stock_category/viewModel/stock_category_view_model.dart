@@ -75,7 +75,7 @@ class StockCategoryViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteStockCategory(int id) async {
+  Future<bool> deleteStockCategory(String id) async {
     _error = null;
     notifyListeners();
     try {

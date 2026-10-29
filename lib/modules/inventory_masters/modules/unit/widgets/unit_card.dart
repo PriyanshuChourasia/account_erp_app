@@ -14,8 +14,8 @@ class UnitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${unit.id}',
-      if (unit.code != null) unit.code!,
+      unit.id,
+      if (unit.symbol != null) unit.symbol!,
     ].join(' · ');
 
     return Card(
@@ -54,17 +54,6 @@ class UnitCard extends StatelessWidget {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  if (unit.description != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      unit.description!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

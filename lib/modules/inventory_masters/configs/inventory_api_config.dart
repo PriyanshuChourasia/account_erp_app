@@ -6,7 +6,15 @@ class InventoryApiConfig {
   static const String createStockGroupAPI = "$stockGroupAPI/create";
 
   /// units api
-  static const String createUnitAPI = "/units/create";
+  static const String unitAPI = "/units";
+  static const String unitListAPI = "$unitAPI/list";
+  static const String createUnitAPI = "$unitAPI/create";
+  static String unitEndpoint(String id) => "$unitAPI/$id";
+
+  /// stock items api
+  static const String stockItemAPI = "/stock_items";
+  static const String createStockItemAPI = "$stockItemAPI/create";
+  static String stockItemEndpoint(String id) => "$stockItemAPI/$id";
 
   /// stock category api
   static const String stockCategoryAPI = "/stock_categories";
@@ -19,6 +27,6 @@ class InventoryApiConfig {
   static const String uniqueQuantityCodeAPI = "/unique_quantity_codes";
   static const String createUniqueQuantityCodeAPI =
       "$uniqueQuantityCodeAPI/create";
-  static String uniqueQuantityCodeEndpoint(int id) =>
+  static String uniqueQuantityCodeEndpoint(String id) =>
       "$uniqueQuantityCodeAPI/$id";
 }

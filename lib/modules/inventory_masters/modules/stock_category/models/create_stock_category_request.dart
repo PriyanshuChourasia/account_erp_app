@@ -15,7 +15,7 @@ class CreateStockCategoryRequest {
   final String name;
   final String? code;
   final String? alias;
-  final int? parentId;
+  final String? parentId;
   final String? description;
 
   Map<String, dynamic> toJson() => {

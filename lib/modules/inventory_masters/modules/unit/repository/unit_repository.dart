@@ -1,6 +1,6 @@
 import '../../../../../core/app_exception.dart';
 import '../../../../../data/models/response_model_wrapper.dart';
-import '../models/create_unit_request.dart';
+import '../models/create_stock_unit_request.dart';
 import '../models/unit.dart';
 import '../services/unit_service.dart';
 
@@ -28,7 +28,7 @@ class UnitRepository {
         .toList();
   }
 
-  Future<void> createUnit(CreateUnitRequest request) async {
+  Future<void> createUnit(CreateStockUnitRequest request) async {
     final json = await _unitService.createUnit(request);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {
@@ -39,7 +39,7 @@ class UnitRepository {
     }
   }
 
-  Future<void> deleteUnit(int id) async {
+  Future<void> deleteUnit(String id) async {
     final json = await _unitService.deleteUnit(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

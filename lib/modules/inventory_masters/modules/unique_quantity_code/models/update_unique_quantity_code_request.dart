@@ -11,7 +11,7 @@ class UpdateUniqueQuantityCodeRequest {
     this.description,
   });
 
-  final int id;
+  final String id;
   final String name;
 
   /// GST UQC short code, e.g. `NOS`. Max 3 characters.

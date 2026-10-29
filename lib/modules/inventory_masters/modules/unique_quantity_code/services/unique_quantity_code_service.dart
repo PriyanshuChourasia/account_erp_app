@@ -21,7 +21,7 @@ class UniqueQuantityCodeService {
   );
 
   Future<Map<String, dynamic>> updateUniqueQuantityCode(
-    int id,
+    String id,
     UpdateUniqueQuantityCodeRequest request,
   ) => _apiService.put(
     InventoryApiConfig.uniqueQuantityCodeEndpoint(id),

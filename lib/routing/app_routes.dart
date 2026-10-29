@@ -28,4 +28,5 @@ class AppRoutes {
   static const String support = '/support';
   static const String profile = '/profile';
   static const String gatewayOfAccounts = '/gateway-of-accounts';
+  static const String stockItemForm = '/stock-items/add';
 }

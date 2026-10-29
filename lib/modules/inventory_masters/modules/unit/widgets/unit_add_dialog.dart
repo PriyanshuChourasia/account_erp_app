@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 import '../../../../../config/theme/app_theme.dart';
 import '../../unique_quantity_code/models/unique_quantity_code.dart';
 import '../../unique_quantity_code/viewModel/unique_quantity_code_view_model.dart';
-import '../models/create_unit_request.dart';
+import '../models/create_stock_unit_request.dart';
 import '../models/stock_unit_type.dart';
+import '../models/unit.dart';
+import '../viewModel/unit_view_model.dart';
 
 /// Uppercases whatever the user types into a field.
 class _UpperCaseTextFormatter extends TextInputFormatter {
@@ -22,9 +24,9 @@ class _UpperCaseTextFormatter extends TextInputFormatter {
   }
 }
 
-/// Dialog form for creating a new unit.
+/// Dialog form for creating a new stock unit.
 ///
-/// Pops a [CreateUnitRequest] on save.
+/// Pops a [CreateStockUnitRequest] on save.
 class UnitAddDialog extends StatefulWidget {
   const UnitAddDialog({super.key});
 
@@ -35,11 +37,16 @@ class UnitAddDialog extends StatefulWidget {
 class _UnitAddDialogState extends State<UnitAddDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _codeController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  final _symbolController = TextEditingController();
+  final _conversionFactorController = TextEditingController(text: '1');
+  final _decimalPlacesController = TextEditingController();
   StockUnitType _unitType = StockUnitType.simple;
   UniqueQuantityCode? _uqc;
+  bool _isActive = true;
+  Unit? _primaryUnit;
+  Unit? _secondaryUnit;
   double _uqcFieldWidth = 420;
+  String? _formError;
 
   @override
   void initState() {
@@ -55,24 +62,38 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
   @override
   void dispose() {
     _nameController.dispose();
-    _codeController.dispose();
-    _descriptionController.dispose();
+    _symbolController.dispose();
+    _conversionFactorController.dispose();
+    _decimalPlacesController.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (_unitType == StockUnitType.compound && _primaryUnit == null) {
+      setState(() => _formError = 'Select a primary unit for a compound unit.');
+      return;
+    }
+    setState(() => _formError = null);
     Navigator.of(context).pop(
-      CreateUnitRequest(
+      CreateStockUnitRequest(
         name: _nameController.text.trim(),
-        code: _codeController.text.trim().isEmpty
+        symbol: _symbolController.text.trim().isEmpty
             ? null
-            : _codeController.text.trim().toUpperCase(),
-        description: _descriptionController.text.trim().isEmpty
-            ? null
-            : _descriptionController.text.trim(),
+            : _symbolController.text.trim().toUpperCase(),
         unitType: _unitType,
         uqcId: _uqc?.id,
+        primaryUnitId: _unitType == StockUnitType.compound
+            ? _primaryUnit?.id
+            : null,
+        secondaryUnitId: _unitType == StockUnitType.compound
+            ? _secondaryUnit?.id
+            : null,
+        conversionFactor: _unitType == StockUnitType.compound
+            ? (double.tryParse(_conversionFactorController.text.trim()) ?? 1)
+            : null,
+        decimalPlaces: int.tryParse(_decimalPlacesController.text.trim()),
+        active: _isActive,
       ),
     );
   }
@@ -148,6 +169,77 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
     );
   }
 
+  List<Unit> get _unitOptions {
+    final units = context.read<UnitViewModel>().units;
+    return units.isEmpty ? Unit.demo : units;
+  }
+
+  Widget _buildUnitPicker({
+    required String label,
+    required Unit? value,
+    required ValueChanged<Unit?> onChanged,
+  }) {
+    return Autocomplete<Unit>(
+      initialValue: TextEditingValue(text: value?.name ?? ''),
+      displayStringForOption: (unit) =>
+          unit.symbol == null ? unit.name : '${unit.symbol} — ${unit.name}',
+      optionsBuilder: (TextEditingValue value) {
+        final query = value.text.trim().toLowerCase();
+        if (query.isEmpty) return _unitOptions;
+        return _unitOptions
+            .where(
+              (unit) =>
+                  unit.name.toLowerCase().contains(query) ||
+                  (unit.symbol?.toLowerCase().contains(query) ?? false),
+            )
+            .toList();
+      },
+      onSelected: (unit) => onChanged(unit),
+      fieldViewBuilder: (context, controller, focusNode, _) {
+        return TextField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            labelText: label,
+            hintText: 'Search and select a unit',
+            prefixIcon: const Icon(Icons.square_foot_rounded),
+            suffixIcon: const Icon(Icons.arrow_drop_down_rounded),
+          ),
+        );
+      },
+      optionsViewBuilder: (context, onSelected, options) {
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Material(
+            elevation: 4,
+            borderRadius: BorderRadius.circular(12),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: _uqcFieldWidth),
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                children: [
+                  for (final unit in options)
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(
+                        Icons.square_foot_rounded,
+                        size: 20,
+                        color: AppColors.textSecondary,
+                      ),
+                      title: Text(unit.name),
+                      subtitle: unit.symbol != null ? Text(unit.symbol!) : null,
+                      onTap: () => onSelected(unit),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -199,17 +291,28 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                 ),
                 const SizedBox(height: 14),
                 TextFormField(
-                  controller: _codeController,
+                  controller: _symbolController,
                   textCapitalization: TextCapitalization.characters,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9_-]')),
                     _UpperCaseTextFormatter(),
                   ],
                   decoration: const InputDecoration(
-                    labelText: 'Code (optional)',
+                    labelText: 'Symbol (optional)',
                     hintText: 'e.g. PCS',
                     prefixIcon: Icon(Icons.tag_rounded),
                   ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Switch(
+                      value: _isActive,
+                      onChanged: (value) => setState(() => _isActive = value),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text('Active'),
+                  ],
                 ),
                 const SizedBox(height: 14),
                 DropdownButtonFormField<StockUnitType>(
@@ -236,20 +339,75 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                     return _buildUniqueQuantityCodeField();
                   },
                 ),
-                const SizedBox(height: 20),
-                const _SectionLabel('Notes'),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _descriptionController,
-                  textCapitalization: TextCapitalization.sentences,
-                  minLines: 3,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Description (optional)',
-                    alignLabelWithHint: true,
-                    prefixIcon: Icon(Icons.notes_rounded),
+                if (_unitType == StockUnitType.compound) ...[
+                  const SizedBox(height: 14),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      _uqcFieldWidth = constraints.maxWidth;
+                      return _buildUnitPicker(
+                        label: 'Primary unit',
+                        value: _primaryUnit,
+                        onChanged: (unit) =>
+                            setState(() => _primaryUnit = unit),
+                      );
+                    },
                   ),
+                  const SizedBox(height: 14),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      _uqcFieldWidth = constraints.maxWidth;
+                      return _buildUnitPicker(
+                        label: 'Secondary unit',
+                        value: _secondaryUnit,
+                        onChanged: (unit) =>
+                            setState(() => _secondaryUnit = unit),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _conversionFactorController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Conversion factor',
+                      hintText: 'e.g. 12',
+                      prefixIcon: Icon(Icons.exposure_rounded),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _decimalPlacesController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: false,
+                    signed: false,
+                  ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: const InputDecoration(
+                    labelText: 'Decimal places (0–4, optional)',
+                    hintText: 'e.g. 2',
+                    prefixIcon: Icon(Icons.pin_outlined),
+                  ),
+                  validator: (value) {
+                    final parsed = int.tryParse(value ?? '');
+                    if (parsed == null) return null;
+                    if (parsed < 0 || parsed > 4) {
+                      return 'Decimal places must be between 0 and 4';
+                    }
+                    return null;
+                  },
                 ),
+                if (_formError != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    _formError!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

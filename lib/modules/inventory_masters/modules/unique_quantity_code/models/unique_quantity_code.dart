@@ -19,7 +19,7 @@ class UniqueQuantityCode {
     this.color = AppColors.primary,
   });
 
-  final int id;
+  final String id;
   final String name;
 
   /// GST UQC short code, e.g. `NOS`, `KGS`. Max 3 characters.
@@ -32,7 +32,7 @@ class UniqueQuantityCode {
 
   factory UniqueQuantityCode.fromJson(Map<String, dynamic> json) =>
       UniqueQuantityCode(
-        id: (json['id'] as num?)?.toInt() ?? 0,
+        id: json['id'] as String? ?? '',
         name: json['name'] as String? ?? '',
         code: json['code'] as String?,
         alias: json['alias'] as String?,
@@ -42,7 +42,7 @@ class UniqueQuantityCode {
 
   static const List<UniqueQuantityCode> demo = [
     UniqueQuantityCode(
-      id: 1,
+      id: '1',
       name: 'Numbers',
       code: 'NOS',
       description: 'Used for countable items',
@@ -50,7 +50,7 @@ class UniqueQuantityCode {
       color: Color(0xFF1D4ED8),
     ),
     UniqueQuantityCode(
-      id: 2,
+      id: '2',
       name: 'Kilograms',
       code: 'KGS',
       description: 'Unit of mass',
@@ -58,7 +58,7 @@ class UniqueQuantityCode {
       color: Color(0xFF059669),
     ),
     UniqueQuantityCode(
-      id: 3,
+      id: '3',
       name: 'Litre',
       code: 'LTR',
       description: 'Unit of volume',
@@ -66,7 +66,7 @@ class UniqueQuantityCode {
       color: Color(0xFFD97706),
     ),
     UniqueQuantityCode(
-      id: 4,
+      id: '4',
       name: 'Meters',
       code: 'MTR',
       description: 'Unit of length',
@@ -74,7 +74,7 @@ class UniqueQuantityCode {
       color: Color(0xFF7C3AED),
     ),
     UniqueQuantityCode(
-      id: 5,
+      id: '5',
       name: 'Boxes',
       code: 'BOX',
       isActive: false,

@@ -30,21 +30,17 @@ class ApiConfig {
   // ---- Stock group endpoints ----
   static const String stockGroupsEndpoint = '/stock-groups';
   static const String stockGroupCreateEndpoint = '/stock-groups/create';
-  static String stockGroupEndpoint(int id) => '/stock-groups/$id';
+  static String stockGroupEndpoint(String id) => '/stock-groups/$id';
 
   // ---- Stock category endpoints ----
   static const String stockCategoriesEndpoint = '/stock-categories';
   static const String stockCategoryCreateEndpoint = '/stock-categories/create';
-  static String stockCategoryEndpoint(int id) => '/stock-categories/$id';
+  static String stockCategoryEndpoint(String id) => '/stock-categories/$id';
 
   // ---- Stock item endpoints ----
   static const String stockItemsEndpoint = '/stock-items';
   static const String stockItemCreateEndpoint = '/stock-items/create';
-  static String stockItemEndpoint(int id) => '/stock-items/$id';
-
-  // ---- Unit endpoints ----
-  static const String unitCreateEndpoint = '/units/create';
-  static String unitEndpoint(int id) => '/units/$id';
+  static String stockItemEndpoint(String id) => '/stock-items/$id';
 
   // Endpoints that do not require an Authorization header.
   static const Set<String> publicEndpoints = {loginEndpoint, registerEndpoint};

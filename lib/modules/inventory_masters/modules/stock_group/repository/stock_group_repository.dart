@@ -31,7 +31,7 @@ class StockGroupRepository {
     required String name,
     String? code,
     String? alias,
-    int? parentId,
+    String? parentId,
     String? description,
     bool shouldAddQuantities = false,
     bool setAlterGstDetail = false,
@@ -54,7 +54,7 @@ class StockGroupRepository {
     }
   }
 
-  Future<void> deleteStockGroup(int id) async {
+  Future<void> deleteStockGroup(String id) async {
     final json = await _stockGroupService.deleteStockGroup(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

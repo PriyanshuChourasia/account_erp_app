@@ -14,7 +14,7 @@ class StockItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${item.id}',
+      item.id,
       if (item.code != null) item.code!,
       if (item.alias != null) 'aka ${item.alias}',
     ].join(' · ');

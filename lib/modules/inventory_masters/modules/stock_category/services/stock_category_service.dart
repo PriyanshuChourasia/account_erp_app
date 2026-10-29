@@ -23,6 +23,6 @@ class StockCategoryService {
     data: request.toJson(),
   );
 
-  Future<Map<String, dynamic>> deleteStockCategory(int id) =>
+  Future<Map<String, dynamic>> deleteStockCategory(String id) =>
       _apiService.delete(ApiConfig.stockCategoryEndpoint(id));
 }

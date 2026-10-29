@@ -20,7 +20,7 @@ class StockGroup {
     this.color = AppColors.primary,
   });
 
-  final int id;
+  final String id;
   final String name;
   final String? code;
   final String? alias;
@@ -32,7 +32,7 @@ class StockGroup {
   final Color color;
 
   factory StockGroup.fromJson(Map<String, dynamic> json) => StockGroup(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: json['id'] as String? ?? '',
     name: json['name'] as String? ?? '',
     code: json['code'] as String?,
     alias: json['alias'] as String?,
@@ -44,7 +44,7 @@ class StockGroup {
 
   static const List<StockGroup> demo = [
     StockGroup(
-      id: 1,
+      id: '1',
       name: 'Primary',
       code: 'PRIM',
       description: 'Root group for the stock tree',
@@ -53,7 +53,7 @@ class StockGroup {
       color: Color(0xFF1D4ED8),
     ),
     StockGroup(
-      id: 2,
+      id: '2',
       name: 'Trading Goods',
       code: 'TRAD',
       alias: 'Trading',
@@ -64,7 +64,7 @@ class StockGroup {
       color: Color(0xFF059669),
     ),
     StockGroup(
-      id: 3,
+      id: '3',
       name: 'Raw Materials',
       code: 'RAW',
       description: 'Inputs used in production',
@@ -73,7 +73,7 @@ class StockGroup {
       color: Color(0xFFD97706),
     ),
     StockGroup(
-      id: 4,
+      id: '4',
       name: 'Finished Goods',
       code: 'FIN',
       description: 'Ready-for-sale products',
@@ -83,7 +83,7 @@ class StockGroup {
       color: Color(0xFF7C3AED),
     ),
     StockGroup(
-      id: 5,
+      id: '5',
       name: 'Consumables',
       code: 'CONS',
       alias: 'Consumable Stores',

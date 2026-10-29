@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
-import '../models/create_unit_request.dart';
+import '../models/create_stock_unit_request.dart';
 import '../models/unit.dart';
 import '../screens/unit_screen.dart';
 import '../viewModel/unit_view_model.dart';
@@ -21,7 +21,7 @@ class UnitScreenState extends State<UnitScreen> {
   }
 
   Future<void> _openAddDialog() async {
-    final result = await showDialog<CreateUnitRequest>(
+    final result = await showDialog<CreateStockUnitRequest>(
       context: context,
       builder: (_) => const UnitAddDialog(),
     );
@@ -29,7 +29,7 @@ class UnitScreenState extends State<UnitScreen> {
     await context.read<UnitViewModel>().addUnit(result);
   }
 
-  Future<void> _confirmDelete(UnitViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(UnitViewModel viewModel, String id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -69,7 +69,7 @@ class UnitScreenState extends State<UnitScreen> {
                     child: TextField(
                       onChanged: viewModel.setQuery,
                       decoration: const InputDecoration(
-                        hintText: 'Search by name, code or ID...',
+                        hintText: 'Search by name, symbol or ID...',
                         prefixIcon: Icon(Icons.search_rounded),
                       ),
                     ),
@@ -158,7 +158,7 @@ class _UnitTable extends StatelessWidget {
   const _UnitTable({required this.units, required this.onDelete});
 
   final List<Unit> units;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -172,8 +172,7 @@ class _UnitTable extends StatelessWidget {
           columns: const [
             DataColumn(label: Text('ID')),
             DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Code')),
-            DataColumn(label: Text('Description')),
+            DataColumn(label: Text('Symbol')),
             DataColumn(label: Text('Status')),
             DataColumn(label: Text('')),
           ],
@@ -181,7 +180,7 @@ class _UnitTable extends StatelessWidget {
             for (final unit in units)
               DataRow(
                 cells: [
-                  DataCell(Text('${unit.id}')),
+                  DataCell(Text(unit.id)),
                   DataCell(
                     Text(
                       unit.name,
@@ -190,14 +189,7 @@ class _UnitTable extends StatelessWidget {
                       ),
                     ),
                   ),
-                  DataCell(Text(unit.code ?? '—')),
-                  DataCell(
-                    Text(
-                      unit.description ?? '—',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+                  DataCell(Text(unit.symbol ?? '—')),
                   DataCell(_StatusBadge(isActive: unit.isActive)),
                   DataCell(
                     IconButton(

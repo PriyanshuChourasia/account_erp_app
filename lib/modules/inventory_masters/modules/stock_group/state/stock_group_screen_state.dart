@@ -26,7 +26,7 @@ class StockGroupScreenState extends State<StockGroupScreen> {
             String name,
             String? code,
             String? alias,
-            int? parentId,
+            String? parentId,
             String? description,
             bool shouldAddQuantities,
             bool setAlterGstDetail,
@@ -44,7 +44,7 @@ class StockGroupScreenState extends State<StockGroupScreen> {
     );
   }
 
-  Future<void> _confirmDelete(StockGroupViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(StockGroupViewModel viewModel, String id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -175,7 +175,7 @@ class _StockGroupTable extends StatelessWidget {
   const _StockGroupTable({required this.groups, required this.onDelete});
 
   final List<StockGroup> groups;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +201,7 @@ class _StockGroupTable extends StatelessWidget {
             for (final group in groups)
               DataRow(
                 cells: [
-                  DataCell(Text('${group.id}')),
+                  DataCell(Text(group.id)),
                   DataCell(
                     Text(
                       group.name,

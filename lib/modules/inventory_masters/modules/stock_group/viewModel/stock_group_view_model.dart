@@ -62,7 +62,7 @@ class StockGroupViewModel extends ChangeNotifier {
     required String name,
     String? code,
     String? alias,
-    int? parentId,
+    String? parentId,
     String? description,
     bool shouldAddQuantities = false,
     bool setAlterGstDetail = false,
@@ -90,7 +90,7 @@ class StockGroupViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteStockGroup(int id) async {
+  Future<bool> deleteStockGroup(String id) async {
     _error = null;
     notifyListeners();
     try {

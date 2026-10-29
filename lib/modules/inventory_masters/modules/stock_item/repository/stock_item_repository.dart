@@ -1,5 +1,6 @@
 import '../../../../../core/app_exception.dart';
 import '../../../../../data/models/response_model_wrapper.dart';
+import '../models/create_stock_item_request.dart';
 import '../models/stock_item.dart';
 import '../services/stock_item_service.dart';
 
@@ -27,24 +28,8 @@ class StockItemRepository {
         .toList();
   }
 
-  Future<void> createStockItem({
-    required String name,
-    String? alias,
-    String? code,
-    String? description,
-    int? stockGroupId,
-    int? stockCategoryId,
-    int? unitId,
-  }) async {
-    final json = await _stockItemService.createStockItem({
-      'name': name,
-      'alias': ?alias,
-      'code': ?code,
-      'description': ?description,
-      'stockGroupId': ?stockGroupId,
-      'stockCategoryId': ?stockCategoryId,
-      'unitId': ?unitId,
-    });
+  Future<void> createStockItem(CreateStockItemRequest request) async {
+    final json = await _stockItemService.createStockItem(request);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {
       throw AppException(
@@ -54,7 +39,7 @@ class StockItemRepository {
     }
   }
 
-  Future<void> deleteStockItem(int id) async {
+  Future<void> deleteStockItem(String id) async {
     final json = await _stockItemService.deleteStockItem(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

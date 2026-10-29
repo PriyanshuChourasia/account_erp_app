@@ -24,8 +24,8 @@ There is no `models/`, `services/`, `repository/`, or `viewModel/` at the domain
 **Purpose:** Renders the index/listing screen of inventory masters — a grid of cards, one per master, that the user taps to open that master's own screen. This widget is embedded as a body inside a parent scaffold/nav shell (it returns a `Padding`/`Column`, not a `Scaffold`).
 
 **UI elements & actions:**
-- A static `_masters` list (a list of Dart records with `title`, `subtitle`, `icon`, `color`) drives the grid: **Stock Group**, **Stock Category**, **Unit**, **UQC**, **Stock Item** (in that order). A trailing comment (`// Add more masters here: Location, ...`) marks where future masters would be added.
-- `GridView.extent` (max cross-axis extent 300, aspect ratio 1.35) lays out one `MasterCard` per master.
+- A static `_masters` list (a list of Dart records with `title`, `icon`, `color`) drives the grid: **Stock Group**, **Stock Category**, **Unit**, **UQC**, **Stock Item** (in that order). A trailing comment (`// Add more masters here: Location, ...`) marks where future masters would be added.
+- `GridView.extent` (max cross-axis extent 130, square tiles) lays out one small bordered `MasterCard` (icon and title only) per master.
 - Tapping a `MasterCard` calls `_openMaster(index)`, which switches on the index and pushes the corresponding screen via `Navigator.of(context).push(MaterialPageRoute(...))`:
   - index 0 → `StockGroupScreen`
   - index 1 → `StockCategoryScreen`
@@ -41,7 +41,7 @@ None at the domain level.
 ## Repository / Service
 None at the domain level. `configs/inventory_api_config.dart`'s `InventoryApiConfig` defines endpoint path constants consumed by some sub-modules' `*Service` classes (see each sub-module's help.md):
 - `stockGroupAPI` = `/stock_groups`, `createStockGroupAPI` = `/stock_groups/create` — defined but **not** actually used by `stock_group`'s service, which instead uses the hyphenated paths from the global `ApiConfig` (`/stock-groups`, `/stock-groups/create`). This underscored variant appears to be dead/unused.
-- `createUnitAPI` = `/units/create` — used by `UnitService.fetchUnits()` (a GET against the "create" path; see the `unit` sub-module's help.md for this quirk).
+- `unitAPI` = `/units`, `unitListAPI` = `/units/list`, `createUnitAPI` = `/units/create`, `unitEndpoint(id)` = `/units/{id}` — used by `unit`'s service (create/delete/list all resolved through `InventoryApiConfig`).
 - `stockCategoryAPI` = `/stock_categories`, `stockCategoryListAPI` = `/stock_categories/list`, `createStockCategoryAPI` = `/stock_categories/create`, `stockCategoryTreeAPI` = `/stock_categories/all-category-tree` — used by `stock_category`'s service.
 - `uniqueQuantityCodeAPI` = `/unique_quantity_codes`, `createUniqueQuantityCodeAPI` = `/unique_quantity_codes/create`, `uniqueQuantityCodeEndpoint(id)` = `/unique_quantity_codes/{id}` — used by `unique_quantity_code`'s service.
 
@@ -51,7 +51,7 @@ None at the domain level.
 ## Widgets
 
 ### MasterCard (`lib/modules/inventory_masters/widgets/master_card.dart`)
-A `StatelessWidget` tile: an icon in a tinted rounded container, a title, a subtitle, and a trailing chevron, wrapped in a `Card`/`InkWell` that calls the supplied `onTap`. Used only by `InventoryMastersScreenState`'s grid — each sub-module has its own separate row-card widget for its own list screen (e.g. `StockGroupCard`, `StockCategoryCard`), which are distinct from this one.
+A small bordered `StatelessWidget` tile: an icon in a tinted circle with the title below it (up to two lines), wrapped in a `Card`/`InkWell` that calls the supplied `onTap`. Used only by `InventoryMastersScreenState`'s grid — each sub-module has its own separate row-card widget for its own list screen (e.g. `StockGroupCard`, `StockCategoryCard`), which are distinct from this one.
 
 ## Sub-modules
 

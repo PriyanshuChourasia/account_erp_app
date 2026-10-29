@@ -28,7 +28,10 @@ class StockCategoryScreenState extends State<StockCategoryScreen> {
     await context.read<StockCategoryViewModel>().addStockCategory(result);
   }
 
-  Future<void> _confirmDelete(StockCategoryViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(
+    StockCategoryViewModel viewModel,
+    String id,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -159,7 +162,7 @@ class _StockCategoryTable extends StatelessWidget {
   const _StockCategoryTable({required this.categories, required this.onDelete});
 
   final List<StockCategory> categories;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +186,7 @@ class _StockCategoryTable extends StatelessWidget {
             for (final category in categories)
               DataRow(
                 cells: [
-                  DataCell(Text('${category.id}')),
+                  DataCell(Text(category.id)),
                   DataCell(
                     Text(
                       category.name,

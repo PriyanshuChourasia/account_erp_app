@@ -19,7 +19,7 @@ class StockCategory {
     this.color = AppColors.primary,
   });
 
-  final int id;
+  final String id;
   final String name;
   final String? code;
   final String? alias;
@@ -30,7 +30,7 @@ class StockCategory {
   final Color color;
 
   factory StockCategory.fromJson(Map<String, dynamic> json) => StockCategory(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: json['id'] as String? ?? '',
     name: json['name'] as String? ?? '',
     code: json['code'] as String?,
     alias: json['alias'] as String?,
@@ -43,7 +43,7 @@ class StockCategory {
 
   static const List<StockCategory> demo = [
     StockCategory(
-      id: 1,
+      id: '1',
       name: 'Electronics',
       code: 'ELEC',
       description: 'Electronic goods and accessories',
@@ -51,7 +51,7 @@ class StockCategory {
       color: Color(0xFF1D4ED8),
     ),
     StockCategory(
-      id: 2,
+      id: '2',
       name: 'Furniture',
       code: 'FURN',
       alias: 'Furnishings',
@@ -60,7 +60,7 @@ class StockCategory {
       color: Color(0xFF059669),
     ),
     StockCategory(
-      id: 3,
+      id: '3',
       name: 'Consumables',
       code: 'CONS',
       isActive: false,
@@ -68,7 +68,7 @@ class StockCategory {
       color: Color(0xFFD97706),
     ),
     StockCategory(
-      id: 4,
+      id: '4',
       name: 'Stationery',
       code: 'STAT',
       description: 'Paper, pens and office supplies',

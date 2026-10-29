@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
+import '../../../../../routing/app_routes.dart';
 import '../../stock_category/viewModel/stock_category_view_model.dart';
 import '../../stock_group/viewModel/stock_group_view_model.dart';
 import '../../unit/viewModel/unit_view_model.dart';
+import '../models/create_stock_item_request.dart';
 import '../models/stock_item.dart';
+import '../screens/stock_item_form_screen.dart';
 import '../screens/stock_item_screen.dart';
 import '../viewModel/stock_item_view_model.dart';
-import '../widgets/stock_item_add_dialog.dart';
 import '../widgets/stock_item_card.dart';
 
 /// State for [StockItemScreen]. Kept out of the screen file to follow the
@@ -36,32 +38,16 @@ class StockItemScreenState extends State<StockItemScreen> {
     });
   }
 
-  Future<void> _openAddDialog() async {
-    final result =
-        await showDialog<
-          ({
-            String name,
-            String? alias,
-            String? code,
-            String? description,
-            int? stockGroupId,
-            int? stockCategoryId,
-            int? unitId,
-          })
-        >(context: context, builder: (_) => const StockItemAddDialog());
-    if (result == null || !mounted) return;
-    await context.read<StockItemViewModel>().addStockItem(
-      name: result.name,
-      alias: result.alias,
-      code: result.code,
-      description: result.description,
-      stockGroupId: result.stockGroupId,
-      stockCategoryId: result.stockCategoryId,
-      unitId: result.unitId,
+  Future<void> _openAddForm() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const StockItemFormScreen(),
+        settings: const RouteSettings(name: AppRoutes.stockItemForm),
+      ),
     );
   }
 
-  Future<void> _confirmDelete(StockItemViewModel viewModel, int id) async {
+  Future<void> _confirmDelete(StockItemViewModel viewModel, String id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -92,12 +78,12 @@ class StockItemScreenState extends State<StockItemScreen> {
     final units = context.watch<UnitViewModel>().units;
     final items = viewModel.filteredStockItems;
 
-    String groupName(int? id) =>
+    String groupName(String? id) =>
         groups.where((group) => group.id == id).firstOrNull?.name ?? '—';
-    String categoryName(int? id) =>
+    String categoryName(String? id) =>
         categories.where((category) => category.id == id).firstOrNull?.name ??
         '—';
-    String unitName(int? id) =>
+    String unitName(String? id) =>
         units.where((unit) => unit.id == id).firstOrNull?.name ?? '—';
 
     return Scaffold(
@@ -121,7 +107,7 @@ class StockItemScreenState extends State<StockItemScreen> {
                   ),
                   const SizedBox(width: 12),
                   FilledButton.icon(
-                    onPressed: _openAddDialog,
+                    onPressed: _openAddForm,
                     icon: const Icon(Icons.add_rounded, size: 18),
                     label: const Text('Add item'),
                   ),
@@ -212,10 +198,10 @@ class _StockItemTable extends StatelessWidget {
   });
 
   final List<StockItem> items;
-  final String Function(int?) groupName;
-  final String Function(int?) categoryName;
-  final String Function(int?) unitName;
-  final ValueChanged<int> onDelete;
+  final String Function(String?) groupName;
+  final String Function(String?) categoryName;
+  final String Function(String?) unitName;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -240,7 +226,7 @@ class _StockItemTable extends StatelessWidget {
             for (final item in items)
               DataRow(
                 cells: [
-                  DataCell(Text('${item.id}')),
+                  DataCell(Text(item.id)),
                   DataCell(
                     Text(
                       item.name,

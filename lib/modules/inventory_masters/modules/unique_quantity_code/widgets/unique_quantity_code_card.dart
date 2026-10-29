@@ -14,7 +14,7 @@ class UniqueQuantityCodeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final subtitle = [
-      '${uqc.id}',
+      uqc.id,
       if (uqc.code != null) uqc.code!,
       if (uqc.alias != null) 'aka ${uqc.alias}',
     ].join(' · ');

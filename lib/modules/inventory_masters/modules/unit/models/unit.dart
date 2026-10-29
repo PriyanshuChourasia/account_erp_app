@@ -12,13 +12,11 @@ class Unit {
     required this.id,
     required this.name,
     this.alias,
-    this.description,
-    this.code,
+    this.symbol,
     this.unitType,
     this.uqcId,
-    this.operator,
-    this.baseUnit1Id,
-    this.baseUnit2Id,
+    this.primaryUnitId,
+    this.secondaryUnitId,
     this.conversionFactor,
     this.decimalPlaces,
     this.isActive = true,
@@ -26,22 +24,22 @@ class Unit {
     this.color = AppColors.primary,
   });
 
-  final int id;
+  final String id;
   final String name;
   final String? alias;
-  final String? description;
-  final String? code;
+  final String? symbol;
 
   /// Whether the unit is [StockUnitType.simple] or [StockUnitType.compound].
   final StockUnitType? unitType;
 
   /// UQC (Unit Quantity Code) this unit maps to, e.g. `NOS`, `KGS`.
-  final int? uqcId;
+  final String? uqcId;
 
-  /// Arithmetic operator linking [baseUnit1Id] to [baseUnit2Id].
-  final String? operator;
-  final int? baseUnit1Id;
-  final int? baseUnit2Id;
+  /// Primary base unit of a compound unit, e.g. `Piece`.
+  final String? primaryUnitId;
+
+  /// Secondary base unit of a compound unit, e.g. `Dozen`.
+  final String? secondaryUnitId;
 
   /// Factor used when converting to/from the base unit(s).
   final double? conversionFactor;
@@ -51,66 +49,59 @@ class Unit {
   final Color color;
 
   factory Unit.fromJson(Map<String, dynamic> json) => Unit(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: json['id'] as String? ?? '',
     name: json['name'] as String? ?? '',
     alias: json['alias'] as String?,
-    description: json['description'] as String?,
-    code: json['code'] as String?,
+    symbol: json['symbol'] as String?,
     unitType: StockUnitType.fromWire(json['unitType'] as String?),
-    uqcId: (json['uqcId'] as num?)?.toInt(),
-    operator: json['operator'] as String?,
-    baseUnit1Id: (json['baseUnit1Id'] as num?)?.toInt(),
-    baseUnit2Id: (json['baseUnit2Id'] as num?)?.toInt(),
+    uqcId: json['uqcId'] as String?,
+    primaryUnitId: json['primaryUnitId'] as String?,
+    secondaryUnitId: json['secondaryUnitId'] as String?,
     conversionFactor: (json['conversionFactor'] as num?)?.toDouble(),
     decimalPlaces: (json['decimalPlaces'] as num?)?.toInt(),
-    isActive: json['isActive'] == true,
+    isActive: json['active'] == true,
   );
 
   static const List<Unit> demo = [
     Unit(
-      id: 1,
+      id: '1',
       name: 'Piece',
-      code: 'PCS',
-      description: 'Individual unit of an item',
+      symbol: 'PCS',
       icon: Icons.crop_square_rounded,
       color: Color(0xFF1D4ED8),
     ),
     Unit(
-      id: 2,
+      id: '2',
       name: 'Kilogram',
-      code: 'KG',
-      description: 'Unit of mass equal to 1000 grams',
+      symbol: 'KGS',
       icon: Icons.balance_rounded,
       color: Color(0xFF059669),
     ),
     Unit(
-      id: 3,
+      id: '3',
       name: 'Meter',
-      code: 'MTR',
-      description: 'Unit of length',
+      symbol: 'MTR',
       icon: Icons.straighten_rounded,
       color: Color(0xFFD97706),
     ),
     Unit(
-      id: 4,
+      id: '4',
       name: 'Liter',
-      code: 'LTR',
-      description: 'Unit of volume',
+      symbol: 'LTR',
       icon: Icons.local_drink_rounded,
       color: Color(0xFF7C3AED),
     ),
     Unit(
-      id: 5,
+      id: '5',
       name: 'Box',
-      code: 'BOX',
-      description: 'Standard shipping container',
+      symbol: 'BOX',
       icon: Icons.inventory_2_rounded,
       color: Color(0xFF3B82F6),
     ),
     Unit(
-      id: 6,
+      id: '6',
       name: 'Dozen',
-      code: 'DZN',
+      symbol: 'DZN',
       isActive: false,
       icon: Icons.grid_view_rounded,
       color: Color(0xFF0D9488),

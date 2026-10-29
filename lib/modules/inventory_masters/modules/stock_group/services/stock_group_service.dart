@@ -13,6 +13,6 @@ class StockGroupService {
   Future<Map<String, dynamic>> createStockGroup(Map<String, dynamic> data) =>
       _apiService.post(ApiConfig.stockGroupCreateEndpoint, data: data);
 
-  Future<Map<String, dynamic>> deleteStockGroup(int id) =>
+  Future<Map<String, dynamic>> deleteStockGroup(String id) =>
       _apiService.delete(ApiConfig.stockGroupEndpoint(id));
 }

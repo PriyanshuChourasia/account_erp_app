@@ -11,7 +11,7 @@ Implemented masters:
 - `stock_category/` — stock categories (`/stock-categories` API)
 - `unit/` — units of measurement (`/units` API)
 - `unique_quantity_code/` — GST unit quantity codes (`/uqcs` API)
-- `stock_item/` — inventory items (`/stock-items` API). Lean scaffold: name,
+- `stock_item/` — inventory items (`/stock_items` API). Lean scaffold: name,
   alias, code, description, stock group/category/unit links. GST/HSN and
   opening-balance fields are not modelled yet.
 

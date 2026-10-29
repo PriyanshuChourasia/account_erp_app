@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../config/theme/app_theme.dart';
 import '../modules/stock_category/screens/stock_category_screen.dart';
 import '../modules/stock_group/screens/stock_group_screen.dart';
 import '../modules/stock_item/screens/stock_item_screen.dart';
@@ -15,31 +14,18 @@ class InventoryMastersScreenState extends State<InventoryMastersScreen> {
   static const _masters = [
     (
       title: 'Stock Group',
-      subtitle: 'Classify inventory items into groups',
       icon: Icons.folder_special_rounded,
       color: Color(0xFF1D4ED8),
     ),
     (
       title: 'Stock Category',
-      subtitle: 'Categorise inventory items',
       icon: Icons.category_rounded,
       color: Color(0xFF059669),
     ),
-    (
-      title: 'Unit',
-      subtitle: 'Units of measurement for items',
-      icon: Icons.square_foot_rounded,
-      color: Color(0xFFD97706),
-    ),
-    (
-      title: 'UQC',
-      subtitle: 'GST unit quantity codes for items',
-      icon: Icons.straighten_rounded,
-      color: Color(0xFF7C3AED),
-    ),
+    (title: 'Unit', icon: Icons.square_foot_rounded, color: Color(0xFFD97706)),
+    (title: 'UQC', icon: Icons.straighten_rounded, color: Color(0xFF7C3AED)),
     (
       title: 'Stock Item',
-      subtitle: 'Individual inventory items you stock',
       icon: Icons.inventory_2_rounded,
       color: Color(0xFF059669),
     ),
@@ -75,37 +61,20 @@ class InventoryMastersScreenState extends State<InventoryMastersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: GridView.extent(
+        maxCrossAxisExtent: 130,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
         children: [
-          Text(
-            'Manage your inventory master data.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
+          for (final (index, master) in _masters.indexed)
+            MasterCard(
+              title: master.title,
+              icon: master.icon,
+              color: master.color,
+              onTap: () => _openMaster(index),
             ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.extent(
-              maxCrossAxisExtent: 300,
-              mainAxisSpacing: 14,
-              crossAxisSpacing: 14,
-              childAspectRatio: 1.35,
-              children: [
-                for (final (index, master) in _masters.indexed)
-                  MasterCard(
-                    title: master.title,
-                    subtitle: master.subtitle,
-                    icon: master.icon,
-                    color: master.color,
-                    onTap: () => _openMaster(index),
-                  ),
-              ],
-            ),
-          ),
         ],
       ),
     );

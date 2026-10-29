@@ -29,7 +29,7 @@ class _ParentOption {
   const _ParentOption(this.name, this.id);
 
   final String name;
-  final int? id;
+  final String? id;
 }
 
 /// Full-page form for creating a new stock category.

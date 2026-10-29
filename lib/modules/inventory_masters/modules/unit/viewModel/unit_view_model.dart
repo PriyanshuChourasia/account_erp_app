@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../../../core/app_exception.dart';
-import '../models/create_unit_request.dart';
+import '../models/create_stock_unit_request.dart';
 import '../models/unit.dart';
 import '../repository/unit_repository.dart';
 
@@ -31,8 +31,8 @@ class UnitViewModel extends ChangeNotifier {
         .where(
           (unit) =>
               unit.name.toLowerCase().contains(query) ||
-              unit.id.toString().contains(query) ||
-              (unit.code?.toLowerCase().contains(query) ?? false),
+              unit.id.toLowerCase().contains(query) ||
+              (unit.symbol?.toLowerCase().contains(query) ?? false),
         )
         .toList();
   }
@@ -58,7 +58,7 @@ class UnitViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addUnit(CreateUnitRequest request) async {
+  Future<bool> addUnit(CreateStockUnitRequest request) async {
     _error = null;
     notifyListeners();
     try {
@@ -74,7 +74,7 @@ class UnitViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteUnit(int id) async {
+  Future<bool> deleteUnit(String id) async {
     _error = null;
     notifyListeners();
     try {

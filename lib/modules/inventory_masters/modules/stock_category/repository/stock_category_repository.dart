@@ -58,7 +58,7 @@ class StockCategoryRepository {
     }
   }
 
-  Future<void> deleteStockCategory(int id) async {
+  Future<void> deleteStockCategory(String id) async {
     final json = await _stockCategoryService.deleteStockCategory(id);
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

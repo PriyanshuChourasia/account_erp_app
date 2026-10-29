@@ -156,7 +156,7 @@ class _UniqueQuantityCodeTable extends StatelessWidget {
   static const _statusColumnWidth = 84.0;
 
   final List<UniqueQuantityCode> uqcs;
-  final ValueChanged<int> onEdit;
+  final ValueChanged<String> onEdit;
 
   @override
   Widget build(BuildContext context) {

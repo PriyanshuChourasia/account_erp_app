@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../../../core/app_exception.dart';
+import '../models/create_stock_item_request.dart';
 import '../models/stock_item.dart';
 import '../repository/stock_item_repository.dart';
 
@@ -17,10 +18,46 @@ class StockItemViewModel extends ChangeNotifier {
   List<StockItem> _stockItems = const [];
   String _query = '';
 
+  /// Index of the multi-step create form the user is currently on.
+  int _currentStep = 0;
+
+  /// Draft request backing the multi-step create form.
+  CreateStockItemRequest draft = const CreateStockItemRequest(
+    name: '',
+    unitId: '',
+  );
+
   bool get isLoading => _isLoading;
   String? get error => _error;
   String get query => _query;
   List<StockItem> get stockItems => _stockItems;
+
+  int get currentStep => _currentStep;
+
+  /// Number of steps in the stock item create wizard.
+  int get stepCount => 3;
+
+  /// Moves the stock item create wizard to [step].
+  void goToStep(int step) {
+    _currentStep = step.clamp(0, stepCount - 1);
+    notifyListeners();
+  }
+
+  /// Advances the stock item create wizard to the next step.
+  void next() {
+    if (_currentStep < stepCount - 1) {
+      _currentStep += 1;
+      notifyListeners();
+    }
+  }
+
+  /// Moves the stock item create wizard back one step.
+  void back() {
+    if (_currentStep > 0) {
+      _currentStep -= 1;
+      notifyListeners();
+    }
+  }
 
   /// Stock items filtered by the current search query.
   List<StockItem> get filteredStockItems {
@@ -30,7 +67,7 @@ class StockItemViewModel extends ChangeNotifier {
         .where(
           (item) =>
               item.name.toLowerCase().contains(query) ||
-              item.id.toString().contains(query) ||
+              item.id.contains(query) ||
               (item.code?.toLowerCase().contains(query) ?? false) ||
               (item.alias?.toLowerCase().contains(query) ?? false),
         )
@@ -58,27 +95,11 @@ class StockItemViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addStockItem({
-    required String name,
-    String? alias,
-    String? code,
-    String? description,
-    int? stockGroupId,
-    int? stockCategoryId,
-    int? unitId,
-  }) async {
+  Future<bool> addStockItem(CreateStockItemRequest request) async {
     _error = null;
     notifyListeners();
     try {
-      await _repository.createStockItem(
-        name: name,
-        alias: alias,
-        code: code,
-        description: description,
-        stockGroupId: stockGroupId,
-        stockCategoryId: stockCategoryId,
-        unitId: unitId,
-      );
+      await _repository.createStockItem(request);
       await loadStockItems();
       return true;
     } on AppException catch (error) {
@@ -90,7 +111,7 @@ class StockItemViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteStockItem(int id) async {
+  Future<bool> deleteStockItem(String id) async {
     _error = null;
     notifyListeners();
     try {
