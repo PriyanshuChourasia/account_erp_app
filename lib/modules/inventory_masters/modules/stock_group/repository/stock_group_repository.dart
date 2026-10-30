@@ -29,21 +29,19 @@ class StockGroupRepository {
 
   Future<void> createStockGroup({
     required String name,
-    String? code,
     String? alias,
     String? parentId,
     String? description,
     bool shouldAddQuantities = false,
-    bool setAlterGstDetail = false,
+    bool setAlterGstDetails = false,
   }) async {
     final json = await _stockGroupService.createStockGroup({
       'name': name,
       'alias': ?alias,
-      'code': ?code,
       'description': ?description,
       'parentId': ?parentId,
       'shouldAddQuantities': shouldAddQuantities,
-      'setAlterGstDetail': setAlterGstDetail,
+      'setAlterGstDetails': setAlterGstDetails,
     });
     final wrapper = ResponseModelWrapper<dynamic>.fromJson(json);
     if (!wrapper.success) {

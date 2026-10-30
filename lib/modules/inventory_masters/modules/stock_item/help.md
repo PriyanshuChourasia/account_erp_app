@@ -10,10 +10,11 @@ Stock items are the individual inventory products actually stocked and traded (e
 - `models/create_stock_item_request.dart` — `CreateStockItemRequest`, the create-payload DTO (mirrors the backend `CreateStockItemDTO`).
 - `repository/stock_item_repository.dart` — `StockItemRepository`, unwraps `ResponseModelWrapper`, throws `AppException`.
 - `services/stock_item_service.dart` — `StockItemService`, raw HTTP calls via `ApiService`.
-- `viewModel/stock_item_view_model.dart` — `StockItemViewModel`, a `ChangeNotifier` holding the list, loading/error state, search query, and the multi-step create-form state (`currentStep`, `draft`, `goToStep`, `next`, `back`).
+- `viewModel/stock_item_view_model.dart` — `StockItemViewModel`, a `ChangeNotifier` holding the list, loading/error state, and search query.
 - `screens/stock_item_screen.dart` + `state/stock_item_screen_state.dart` — the list screen (`StockItemScreen` shell + `StockItemScreenState` body). This state class also reads and, if needed, triggers loads on the sibling `StockGroupViewModel`, `StockCategoryViewModel`, and `UnitViewModel` (from the `stock_group`, `stock_category`, and `unit` sub-modules) so it can resolve and display human-readable names for an item's `stockGroupId`/`stockCategoryId`/`unitId`.
 - `widgets/stock_item_card.dart` — `StockItemCard`, the row card for narrow layouts.
-- `widgets/stock_item_add_dialog.dart` — `StockItemAddDialog`, the multi-step create wizard, used by the screen.
+- `screens/stock_item_form_screen.dart` + `state/stock_item_form_screen_state.dart` — full-screen, single-page `Label : value` create form.
+- `widgets/stock_item_form/key_value_row.dart`, `form_section.dart` — `KeyValueRow` (label : field row) and `FormSection` (titled group) used by the form.
 
 ## Screens
 
@@ -46,14 +47,10 @@ Stock items are the individual inventory products actually stocked and traded (e
 Exposed state:
 - `isLoading` (bool), `error` (String?), `query` (String), `stockItems` (List<StockItem>).
 - `filteredStockItems` — filters by `query` matching name, id, code, or alias (case-insensitive).
-- `currentStep` (int) — index of the multi-step create form (`0` = Details, `1` = Classification, `2` = Pricing & stock).
-- `draft` (CreateStockItemRequest) — the mutable draft backing the multi-step create form.
-- `stepCount` (int) — number of wizard steps (3).
 
 Public methods:
 - `loadStockItems()` — sets `isLoading = true`, clears `error`, calls `_repository.fetchStockItems()`, stores into `_stockItems`; catches `AppException` (sets `error`) or generic error ("Something went wrong. Please try again."); resets `isLoading = false` and notifies in `finally`.
 - `setQuery(String value)` — sets `_query`, notifies.
-- `goToStep(int step)`, `next()`, `back()` — mutate and notify the wizard step state.
 - `addStockItem(CreateStockItemRequest request)` — clears `error`, calls `_repository.createStockItem(request)`, reloads via `loadStockItems()` on success, returns bool.
 - `deleteStockItem(String id)` — calls `_repository.deleteStockItem(id)`, reloads, returns bool.
 
@@ -88,10 +85,10 @@ Enum: `goods` (wireValue `'goods'`), `services` (wireValue `'services'`), `capit
 ### StockItemCard (`widgets/stock_item_card.dart`)
 Row card: icon in tinted container, name, "id · code · aka alias" subtitle, optional description, Active/Inactive pill, optional delete `IconButton`. Does not show group/category/unit (only the wide-screen table does).
 
-### StockItemAddDialog (`widgets/stock_item_add_dialog.dart`)
-Multi-step wizard dialog (`AlertDialog`-based):
-- Step 0 — Details: name (required, validated), code, alias, description, barcode, HSN/SAC, manufacture part no, article no/SKU, brand ID.
-- Step 1 — Classification: stock item type, type of supply, stock group, stock category, unit (required), alternate unit.
-- Step 2 — Pricing & stock: active switch, GST rate, purchase/selling price, opening quantity/value, current quantity, reorder level, minimum/maximum stock.
-
-The wizard reads and writes the draft only through the `StockItemViewModel` (`currentStep`, `draft`, `goToStep`, `next`, `back`). Navigation: Back (when past step 0) / Cancel / Next-or-Save. On Save it pops a `CreateStockItemRequest` (from the draft) consumed by `_openAddDialog` in the screen state.
+### Stock item form (`state/stock_item_form_screen_state.dart`)
+Full-screen, single-page form (no wizard). Every field is a `KeyValueRow` (`Label : value`).
+- Top left: Name (required, autofocus), Alias, Code.
+- Left column, "General": stock group, category, parent item, type, units (required), alternate units (required), active.
+- Right column: "Statutory details" (type of supply, GST rate 0–100, HSN 4/6/8 digits for goods, SAC 6 digits for services), "Price details", "Identification".
+- Bottom: "Stock levels & opening balance" (opening qty/value, current qty, reorder level, min/max stock; max ≥ min).
+- Two columns at ≥ 900px wide, one column below. Cmd/Ctrl+S saves, Esc cancels. Save calls `StockItemViewModel.addStockItem` and pops on success, else shows `ErrorHandler.showError`.

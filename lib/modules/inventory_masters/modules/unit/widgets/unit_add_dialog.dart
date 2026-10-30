@@ -131,7 +131,6 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
           decoration: const InputDecoration(
             labelText: 'UQC (optional)',
             hintText: 'Search and select a UQC',
-            prefixIcon: Icon(Icons.pin_outlined),
             suffixIcon: Icon(Icons.arrow_drop_down_rounded),
           ),
         );
@@ -202,7 +201,6 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
           decoration: InputDecoration(
             labelText: label,
             hintText: 'Search and select a unit',
-            prefixIcon: const Icon(Icons.square_foot_rounded),
             suffixIcon: const Icon(Icons.arrow_drop_down_rounded),
           ),
         );
@@ -283,7 +281,6 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                   decoration: const InputDecoration(
                     labelText: 'Name',
                     hintText: 'e.g. Piece',
-                    prefixIcon: Icon(Icons.square_foot_rounded),
                   ),
                   validator: (value) => (value == null || value.trim().isEmpty)
                       ? 'Enter a unit name'
@@ -300,7 +297,6 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                   decoration: const InputDecoration(
                     labelText: 'Symbol (optional)',
                     hintText: 'e.g. PCS',
-                    prefixIcon: Icon(Icons.tag_rounded),
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -320,7 +316,6 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                   isExpanded: true,
                   decoration: const InputDecoration(
                     labelText: 'Unit type',
-                    prefixIcon: Icon(Icons.category_outlined),
                   ),
                   items: [
                     for (final type in StockUnitType.values)
@@ -373,7 +368,6 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                     decoration: const InputDecoration(
                       labelText: 'Conversion factor',
                       hintText: 'e.g. 12',
-                      prefixIcon: Icon(Icons.exposure_rounded),
                     ),
                   ),
                 ],
@@ -388,7 +382,6 @@ class _UnitAddDialogState extends State<UnitAddDialog> {
                   decoration: const InputDecoration(
                     labelText: 'Decimal places (0–4, optional)',
                     hintText: 'e.g. 2',
-                    prefixIcon: Icon(Icons.pin_outlined),
                   ),
                   validator: (value) {
                     final parsed = int.tryParse(value ?? '');

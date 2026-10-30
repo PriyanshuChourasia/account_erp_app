@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../config/theme/app_theme.dart';
 import '../models/stock_group.dart';
 import '../viewModel/stock_group_view_model.dart';
-
-/// Uppercases whatever the user types into a field.
-class _UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    return newValue.copyWith(
-      text: newValue.text.toUpperCase(),
-      selection: newValue.selection,
-    );
-  }
-}
 
 /// Dialog form for creating a new stock group.
 ///
@@ -31,36 +16,74 @@ class StockGroupAddDialog extends StatefulWidget {
 }
 
 class _StockGroupAddDialogState extends State<StockGroupAddDialog> {
+  /// Built-in root option shown first in the Under list. Selecting it means
+  /// the group has no parent, so it is sent as a null `parentId`.
+  static const _primary = StockGroup(id: '', name: 'Primary');
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _codeController = TextEditingController();
   final _aliasController = TextEditingController();
   final _descriptionController = TextEditingController();
-  StockGroup? _parent;
+  final _parentController = TextEditingController();
+  final _parentFocusNode = FocusNode();
+  StockGroup _parent = _primary;
   bool _shouldAddQuantities = true;
-  bool _setAlterGstDetail = false;
+  bool _setAlterGstDetails = false;
 
   @override
   void initState() {
     super.initState();
+    _parentController.text = _primary.name;
+    _parentFocusNode.addListener(_onParentFocusChange);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final groups = context.read<StockGroupViewModel>().stockGroups;
-      if (groups.isEmpty) return;
-      setState(() {
-        _parent = groups.where((group) => group.name == 'Primary').firstOrNull;
-        _parent ??= groups.first;
-      });
+      final viewModel = context.read<StockGroupViewModel>();
+      if (viewModel.stockGroups.isEmpty) viewModel.loadStockGroups();
     });
+  }
+
+  void _selectParent(StockGroup group) {
+    setState(() => _parent = group);
+    _parentController.text = group.name;
+  }
+
+  /// When the Under box loses focus, show the selected group's name again so
+  /// half-typed search text never looks like a selection. A cleared box
+  /// falls back to [_primary].
+  void _onParentFocusChange() {
+    if (_parentFocusNode.hasFocus) return;
+    _selectParent(_parentController.text.trim().isEmpty ? _primary : _parent);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _codeController.dispose();
     _aliasController.dispose();
     _descriptionController.dispose();
+    _parentFocusNode.removeListener(_onParentFocusChange);
+    _parentFocusNode.dispose();
+    _parentController.dispose();
     super.dispose();
+  }
+
+  /// [_primary] followed by the loaded groups, filtered to those whose name or
+  /// code contains [text]. Shows every option while the box is empty or still
+  /// holds the selected group's name. A backend group named "Primary" is
+  /// hidden so it never duplicates the built-in option.
+  List<StockGroup> _filterGroups(List<StockGroup> groups, String text) {
+    final all = [
+      _primary,
+      ...groups.where((group) => group.name.toLowerCase() != 'primary'),
+    ];
+    final query = text.trim().toLowerCase();
+    if (query.isEmpty || text == _parent.name) return all;
+    return all
+        .where(
+          (group) =>
+              group.name.toLowerCase().contains(query) ||
+              (group.code?.toLowerCase().contains(query) ?? false),
+        )
+        .toList();
   }
 
   void _submit() {
@@ -70,22 +93,18 @@ class _StockGroupAddDialogState extends State<StockGroupAddDialog> {
       alias: _aliasController.text.trim().isEmpty
           ? null
           : _aliasController.text.trim(),
-      code: _codeController.text.trim().isEmpty
-          ? null
-          : _codeController.text.trim().toUpperCase(),
       description: _descriptionController.text.trim().isEmpty
           ? null
           : _descriptionController.text.trim(),
-      parentId: _parent?.id,
+      parentId: identical(_parent, _primary) ? null : _parent.id,
       shouldAddQuantities: _shouldAddQuantities,
-      setAlterGstDetail: _setAlterGstDetail,
+      setAlterGstDetails: _setAlterGstDetails,
     ));
   }
 
   @override
   Widget build(BuildContext context) {
     final groups = context.watch<StockGroupViewModel>().stockGroups;
-    final options = groups.isEmpty ? StockGroup.demo : groups;
 
     return AlertDialog(
       titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
@@ -107,162 +126,110 @@ class _StockGroupAddDialogState extends State<StockGroupAddDialog> {
           const Text('Add stock group'),
         ],
       ),
-      content: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const _SectionLabel('Details'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _nameController,
-                autofocus: true,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  hintText: 'e.g. Trading Goods',
-                  prefixIcon: Icon(Icons.folder_rounded),
-                ),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'Enter a group name'
-                    : null,
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _codeController,
-                      textCapitalization: TextCapitalization.characters,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[A-Za-z0-9_-]'),
-                        ),
-                        _UpperCaseTextFormatter(),
-                      ],
-                      decoration: const InputDecoration(
-                        labelText: 'Code',
-                        hintText: 'e.g. TRAD',
-                        prefixIcon: Icon(Icons.tag_rounded),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _aliasController,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: const InputDecoration(
-                        labelText: 'Alias (optional)',
-                        prefixIcon: Icon(Icons.alternate_email_rounded),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const _SectionLabel('Under'),
-              const SizedBox(height: 8),
-              Autocomplete<StockGroup>(
-                initialValue: TextEditingValue(
-                  text: _parent?.name ?? 'Primary',
-                ),
-                displayStringForOption: (group) => group.name,
-                optionsBuilder: (TextEditingValue value) {
-                  final query = value.text.trim().toLowerCase();
-                  if (query.isEmpty) return options;
-                  return options
-                      .where(
-                        (group) =>
-                            group.name.toLowerCase().contains(query) ||
-                            (group.code?.toLowerCase().contains(query) ??
-                                false),
-                      )
-                      .toList();
-                },
-                onSelected: (group) => setState(() => _parent = group),
-                fieldViewBuilder: (context, controller, focusNode, _) {
-                  return TextField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    decoration: const InputDecoration(
-                      labelText: 'Under',
-                      hintText: 'Search and select a parent group',
-                      prefixIcon: Icon(Icons.account_tree_outlined),
-                      suffixIcon: Icon(Icons.arrow_drop_down_rounded),
-                    ),
-                  );
-                },
-                optionsViewBuilder: (context, onSelected, options) {
-                  return Align(
-                    alignment: Alignment.topLeft,
-                    child: Material(
-                      elevation: 4,
-                      borderRadius: BorderRadius.circular(12),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 340),
-                        child: ListView(
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          children: [
-                            for (final group in options)
-                              ListTile(
-                                dense: true,
-                                leading: Icon(
-                                  Icons.folder_rounded,
-                                  size: 20,
-                                  color: AppColors.textSecondary,
-                                ),
-                                title: Text(group.name),
-                                subtitle: group.code != null
-                                    ? Text(group.code!)
-                                    : null,
-                                onTap: () => onSelected(group),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      content: SizedBox(
+        width: 640,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const _SectionLabel('Under'),
+                const SizedBox(height: 8),
+                LayoutBuilder(
+                  builder: (context, constraints) =>
+                      RawAutocomplete<StockGroup>(
+                        textEditingController: _parentController,
+                        focusNode: _parentFocusNode,
+                        displayStringForOption: (group) => group.name,
+                        optionsBuilder: (value) =>
+                            _filterGroups(groups, value.text),
+                        onSelected: _selectParent,
+                        fieldViewBuilder: (context, controller, focusNode, _) {
+                          return TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            decoration: InputDecoration(
+                              labelText: 'Under',
+                              hintText: 'Search and select a parent group',
+                              suffixIcon: const Icon(
+                                Icons.arrow_drop_down_rounded,
                               ),
-                          ],
-                        ),
+                            ),
+                          );
+                        },
+                        optionsViewBuilder: (context, onSelected, options) {
+                          return _ParentGroupOptions(
+                            width: constraints.maxWidth,
+                            groups: options.toList(),
+                            selected: _parent,
+                            onSelected: onSelected,
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              const _SectionLabel('Options'),
-              const SizedBox(height: 8),
-              SwitchListTile(
-                value: _shouldAddQuantities,
-                onChanged: (value) =>
-                    setState(() => _shouldAddQuantities = value),
-                contentPadding: EdgeInsets.zero,
-                secondary: const Icon(Icons.numbers_rounded),
-                title: const Text('Maintain quantities'),
-                subtitle: const Text('Enable quantity tracking for this group'),
-              ),
-              SwitchListTile(
-                value: _setAlterGstDetail,
-                onChanged: (value) =>
-                    setState(() => _setAlterGstDetail = value),
-                contentPadding: EdgeInsets.zero,
-                secondary: const Icon(Icons.settings_rounded),
-                title: const Text('Set/alter GST details'),
-                subtitle: const Text('Allow GST configuration on this group'),
-              ),
-              const SizedBox(height: 20),
-              const _SectionLabel('Notes'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _descriptionController,
-                textCapitalization: TextCapitalization.sentences,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  alignLabelWithHint: true,
-                  prefixIcon: Icon(Icons.notes_rounded),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                const _SectionLabel('Details'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _nameController,
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    hintText: 'e.g. Trading Goods',
+                  ),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? 'Enter a group name'
+                      : null,
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _aliasController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Alias (optional)',
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const _SectionLabel('Options'),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  value: _shouldAddQuantities,
+                  onChanged: (value) =>
+                      setState(() => _shouldAddQuantities = value),
+                  contentPadding: EdgeInsets.zero,
+                  secondary: const Icon(Icons.numbers_rounded),
+                  title: const Text('Maintain quantities'),
+                  subtitle: const Text(
+                    'Enable quantity tracking for this group',
+                  ),
+                ),
+                SwitchListTile(
+                  value: _setAlterGstDetails,
+                  onChanged: (value) =>
+                      setState(() => _setAlterGstDetails = value),
+                  contentPadding: EdgeInsets.zero,
+                  secondary: const Icon(Icons.settings_rounded),
+                  title: const Text('Set/alter GST details'),
+                  subtitle: const Text('Allow GST configuration on this group'),
+                ),
+                const SizedBox(height: 20),
+                const _SectionLabel('Notes'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _descriptionController,
+                  textCapitalization: TextCapitalization.sentences,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    alignLabelWithHint: true,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -278,6 +245,56 @@ class _StockGroupAddDialogState extends State<StockGroupAddDialog> {
           label: const Text('Save'),
         ),
       ],
+    );
+  }
+}
+
+/// Drop-down list shown under the Under box while it is focused; the
+/// [selected] group is highlighted with a check mark.
+class _ParentGroupOptions extends StatelessWidget {
+  const _ParentGroupOptions({
+    required this.width,
+    required this.groups,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final double width;
+  final List<StockGroup> groups;
+  final StockGroup? selected;
+  final ValueChanged<StockGroup> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Material(
+        elevation: 4,
+        borderRadius: BorderRadius.circular(8),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: width, maxHeight: 240),
+          child: ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            itemCount: groups.length,
+            itemBuilder: (context, index) {
+              final group = groups[index];
+              final isSelected = group.id == selected?.id;
+              return ListTile(
+                dense: true,
+                selected: isSelected,
+                selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
+                title: Text(group.name),
+                subtitle: group.code != null ? Text(group.code!) : null,
+                trailing: isSelected
+                    ? const Icon(Icons.check_rounded, color: AppColors.primary)
+                    : null,
+                onTap: () => onSelected(group),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

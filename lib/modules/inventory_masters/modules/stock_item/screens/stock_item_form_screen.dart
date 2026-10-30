@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../state/stock_item_form_screen_state.dart';
 
-/// Full-screen multi-step form for creating a new stock item.
+/// Full-screen single-page form for creating a new stock item.
 ///
 /// Opened as a route (e.g. via
 /// `Navigator.of(context).push(MaterialPageRoute(builder: (_) => const StockItemFormScreen()))`)

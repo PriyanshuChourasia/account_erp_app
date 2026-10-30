@@ -24,23 +24,21 @@ class StockGroupScreenState extends State<StockGroupScreen> {
         await showDialog<
           ({
             String name,
-            String? code,
             String? alias,
             String? parentId,
             String? description,
             bool shouldAddQuantities,
-            bool setAlterGstDetail,
+            bool setAlterGstDetails,
           })
         >(context: context, builder: (_) => const StockGroupAddDialog());
     if (result == null || !mounted) return;
     await context.read<StockGroupViewModel>().addStockGroup(
       name: result.name,
-      code: result.code,
       alias: result.alias,
       parentId: result.parentId,
       description: result.description,
       shouldAddQuantities: result.shouldAddQuantities,
-      setAlterGstDetail: result.setAlterGstDetail,
+      setAlterGstDetails: result.setAlterGstDetails,
     );
   }
 

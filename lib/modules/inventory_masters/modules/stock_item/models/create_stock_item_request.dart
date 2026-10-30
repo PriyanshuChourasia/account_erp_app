@@ -4,20 +4,20 @@ import 'type_of_supply.dart';
 /// Request payload for creating a stock item.
 ///
 /// Mirrors the backend `CreateStockItemDTO` record. Nullable fields are
-/// omitted from JSON so unset optional fields are not sent; `name` and `unitId`
-/// are the required identifiers.
+/// omitted from JSON so unset optional fields are not sent; `name`, `unitId`
+/// and `altUnitId` are the required identifiers.
 class CreateStockItemRequest {
   const CreateStockItemRequest({
     required this.name,
     this.code,
     this.alias,
-    this.description,
     this.stockItemType,
     this.typeOfSupply,
+    this.parentId,
     this.stockGroupId,
     this.stockCategoryId,
     required this.unitId,
-    this.altUnitId,
+    required this.altUnitId,
     this.gstRate,
     this.purchasePrice,
     this.sellingPrice,
@@ -40,13 +40,15 @@ class CreateStockItemRequest {
   final String name;
   final String? code;
   final String? alias;
-  final String? description;
 
   /// Whether the item is a tangible [StockItemType.goods] or a service.
   final StockItemType? stockItemType;
 
   /// The kind of supply this item represents.
   final TypeOfSupply? typeOfSupply;
+
+  /// Parent stock item this item belongs to (UUID), if any.
+  final String? parentId;
   final String? stockGroupId;
   final String? stockCategoryId;
 
@@ -54,7 +56,7 @@ class CreateStockItemRequest {
   final String unitId;
 
   /// Alternate unit of measurement for compound stock items (UUID).
-  final String? altUnitId;
+  final String altUnitId;
 
   final double? gstRate;
   final double? purchasePrice;
@@ -82,13 +84,13 @@ class CreateStockItemRequest {
     'name': name,
     if (code != null) 'code': code,
     if (alias != null) 'alias': alias,
-    if (description != null) 'description': description,
     if (stockItemType != null) 'stockItemType': stockItemType?.wireValue,
     if (typeOfSupply != null) 'typeOfSupply': typeOfSupply?.wireValue,
+    if (parentId != null) 'parentId': parentId,
     if (stockGroupId != null) 'stockGroupId': stockGroupId,
     if (stockCategoryId != null) 'stockCategoryId': stockCategoryId,
     'unitId': unitId,
-    if (altUnitId != null) 'altUnitId': altUnitId,
+    'altUnitId': altUnitId,
     if (gstRate != null) 'gstRate': gstRate,
     if (purchasePrice != null) 'purchasePrice': purchasePrice,
     if (sellingPrice != null) 'sellingPrice': sellingPrice,

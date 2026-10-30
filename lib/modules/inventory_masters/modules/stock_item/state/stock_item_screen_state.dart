@@ -6,7 +6,6 @@ import '../../../../../routing/app_routes.dart';
 import '../../stock_category/viewModel/stock_category_view_model.dart';
 import '../../stock_group/viewModel/stock_group_view_model.dart';
 import '../../unit/viewModel/unit_view_model.dart';
-import '../models/create_stock_item_request.dart';
 import '../models/stock_item.dart';
 import '../screens/stock_item_form_screen.dart';
 import '../screens/stock_item_screen.dart';

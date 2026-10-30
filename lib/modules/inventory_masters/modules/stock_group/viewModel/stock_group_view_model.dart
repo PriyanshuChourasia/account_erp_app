@@ -60,24 +60,22 @@ class StockGroupViewModel extends ChangeNotifier {
 
   Future<bool> addStockGroup({
     required String name,
-    String? code,
     String? alias,
     String? parentId,
     String? description,
     bool shouldAddQuantities = false,
-    bool setAlterGstDetail = false,
+    bool setAlterGstDetails = false,
   }) async {
     _error = null;
     notifyListeners();
     try {
       await _repository.createStockGroup(
         name: name,
-        code: code,
         alias: alias,
         parentId: parentId,
         description: description,
         shouldAddQuantities: shouldAddQuantities,
-        setAlterGstDetail: setAlterGstDetail,
+        setAlterGstDetails: setAlterGstDetails,
       );
       await loadStockGroups();
       return true;

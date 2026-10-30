@@ -4,7 +4,7 @@
 Stock groups classify inventory items into broad buckets (e.g. Trading Goods, Raw Materials, Finished Goods), and — unlike stock categories — carry two extra behavioral flags per group: whether the group should maintain quantities, and whether GST details can be set/altered at the group level. Like stock categories, groups can be nested under a parent group. This master lets a user browse, search, create and delete stock groups.
 
 ## Architecture
-- `models/stock_group.dart` — `StockGroup`, the DTO (includes UI-only `icon`/`color` and a `demo` fallback dataset).
+- `models/stock_group.dart` — `StockGroup`, the DTO (includes UI-only `icon`/`color`).
 - `repository/stock_group_repository.dart` — `StockGroupRepository`, unwraps `ResponseModelWrapper`, throws `AppException`.
 - `services/stock_group_service.dart` — `StockGroupService`, raw HTTP calls via `ApiService`.
 - `viewModel/stock_group_view_model.dart` — `StockGroupViewModel`, a `ChangeNotifier` holding the list, loading/error state, and search query.
@@ -49,14 +49,14 @@ Exposed state:
 Public methods:
 - `loadStockGroups()` — sets `isLoading = true`, clears `error`, calls `_repository.fetchStockGroups()`, stores into `_stockGroups`; catches `AppException` (sets `error` to message) or generic error ("Something went wrong. Please try again."); resets `isLoading = false` and notifies in `finally`.
 - `setQuery(String value)` — sets `_query`, notifies.
-- `addStockGroup({name, code, alias, parentId, description, shouldAddQuantities = false, setAlterGstDetail = false})` — clears `error`, calls `_repository.createStockGroup(...)` with all params, reloads via `loadStockGroups()` on success, returns bool.
+- `addStockGroup({name, alias, parentId, description, shouldAddQuantities = false, setAlterGstDetails = false})` — clears `error`, calls `_repository.createStockGroup(...)` with all params, reloads via `loadStockGroups()` on success, returns bool.
 - `deleteStockGroup(int id)` — calls `_repository.deleteStockGroup(id)`, reloads, returns bool.
 
 ## Repository / Service
 
 ### StockGroupRepository (`repository/stock_group_repository.dart`)
 - `fetchStockGroups()` — calls `service.fetchStockGroups()`, unwraps `ResponseModelWrapper`, throws `AppException('Could not load stock groups.')` on failure; maps `result` list to `List<StockGroup>` via `StockGroup.fromJson`; returns `[]` if not a list.
-- `createStockGroup({required name, code, alias, parentId, description, shouldAddQuantities = false, setAlterGstDetail = false})` — builds a JSON map inline using Dart's `?key: value` null-aware map-entry syntax (omits `alias`/`code`/`description`/`parentId` if null), calls `service.createStockGroup(map)`, throws `AppException('Could not create stock group.')` on failure.
+- `createStockGroup({required name, alias, parentId, description, shouldAddQuantities = false, setAlterGstDetails = false})` — builds a JSON map inline using Dart's `?key: value` null-aware map-entry syntax (omits `alias`/`description`/`parentId`; sends `setAlterGstDetails` to match the backend `CreateStockRequest` if null), calls `service.createStockGroup(map)`, throws `AppException('Could not create stock group.')` on failure.
 - `deleteStockGroup(int id)` — calls `service.deleteStockGroup(id)`, throws `AppException('Could not delete stock group.')` on failure.
 
 ### StockGroupService (`services/stock_group_service.dart`)
@@ -69,8 +69,7 @@ All three use the global hyphenated `ApiConfig` endpoints, not `InventoryApiConf
 ## Models
 
 ### StockGroup (`models/stock_group.dart`)
-Fields: `id` (int), `name` (String), `code` (String?), `alias` (String?), `description` (String?), `isActive` (bool, default true), `shouldAddQuantities` (bool, default false), `setAlterGstDetail` (bool, default false), `icon` (IconData, UI-only, default `Icons.folder_rounded`), `color` (Color, UI-only, default `AppColors.primary`). Has `fromJson` and a static `demo` list of 5 placeholder groups (Primary [inactive, root], Trading Goods, Raw Materials, Finished Goods, Consumables [inactive]).
-
+Fields: `id` (int), `name` (String), `code` (String?), `alias` (String?), `description` (String?), `isActive` (bool, default true), `shouldAddQuantities` (bool, default false), `setAlterGstDetail` (bool, default false), `icon` (IconData, UI-only, default `Icons.folder_rounded`), `color` (Color, UI-only, default `AppColors.primary`). Has `fromJson`. 
 There is no separate create-request DTO in this module — `createStockGroup` on the repository takes individual named parameters.
 
 ## Widgets
@@ -79,4 +78,4 @@ There is no separate create-request DTO in this module — `createStockGroup` on
 Row card: icon in tinted container, name, "id · code · aka alias" subtitle, optional description, Active/Inactive pill, an additional "Qty" pill shown only when `shouldAddQuantities` is true, and an optional delete `IconButton`.
 
 ### StockGroupAddDialog (`widgets/stock_group_add_dialog.dart`)
-`AlertDialog`-based create form, actively used by the screen. Fields: Name (required), Code (optional, auto-uppercased, restricted to `[A-Za-z0-9_-]`), Alias (optional), an "Under" `Autocomplete<StockGroup>` (options from existing groups or `StockGroup.demo`; defaults to the "Primary" group if present, else the first group, once loaded post-frame), two `SwitchListTile`s ("Maintain quantities" defaulting to `true`, "Set/alter GST details" defaulting to `false`), and a Description field. On Save, pops a Dart record `({name, alias, code, description, parentId, shouldAddQuantities, setAlterGstDetail})` consumed directly by `_openAddDialog` in the screen state.
+`AlertDialog`-based create form, actively used by the screen. 640px wide. Fields: an "Under" search-and-select box at the top (`RawAutocomplete<StockGroup>`; the list drops down on focus or typing, filters by name/code and marks the selected group with a check; a built-in "Primary" option is always first and selected by default and is sent as a null `parentId`; the rest are the loaded groups (no demo data; a backend group named "Primary" is hidden to avoid duplicates); clearing the box falls back to Primary), then Name (required), Alias (optional), two `SwitchListTile`s ("Maintain quantities" defaulting to `true`, "Set/alter GST details" defaulting to `false`), and a Description field. On Save, pops a Dart record `({name, alias, description, parentId, shouldAddQuantities, setAlterGstDetails})` consumed directly by `_openAddDialog` in the screen state.

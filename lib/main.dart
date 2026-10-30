@@ -32,6 +32,7 @@ import 'modules/inventory_masters/modules/stock_category/viewModel/stock_categor
 import 'modules/inventory_masters/modules/stock_group/repository/stock_group_repository.dart';
 import 'modules/inventory_masters/modules/stock_group/viewModel/stock_group_view_model.dart';
 import 'modules/inventory_masters/modules/stock_item/repository/stock_item_repository.dart';
+import 'modules/inventory_masters/modules/stock_item/screens/stock_item_form_screen.dart';
 import 'modules/inventory_masters/modules/stock_item/viewModel/stock_item_view_model.dart';
 import 'modules/inventory_masters/modules/unit/repository/unit_repository.dart';
 import 'modules/inventory_masters/modules/unit/viewModel/unit_view_model.dart';
@@ -243,6 +244,7 @@ class AccountErpApp extends StatelessWidget {
           AppRoutes.createDepartment: (_) => const DepartmentAddScreen(),
           AppRoutes.designations: (_) => const DesignationScreen(),
           AppRoutes.createDesignation: (_) => const DesignationAddScreen(),
+          AppRoutes.stockItemForm: (_) => const StockItemFormScreen(),
         },
       ),
     );
